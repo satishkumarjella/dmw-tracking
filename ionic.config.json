@@ -1,0 +1,7 @@
+{
+  "name": "dmw-tracking-app",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "angular-standalone"
+}

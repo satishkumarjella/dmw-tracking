@@ -1,0 +1,326 @@
+:host {
+  display: block;
+}
+
+$bg: #eef0f4;
+$surface: #fff;
+$dark: #1a1d24;
+$darker: #0f1117;
+$orange: #e8680a;
+$green: #16a34a;
+$red: #dc2626;
+$amber: #d97706;
+$border: #dde1e9;
+$muted: #6b7280;
+$silver: #9ca3af;
+
+.receiving-page {
+  background: $bg;
+  color: $dark;
+  min-height: 100vh;
+}
+
+header {
+  background: $darker;
+  border-bottom: 3px solid $orange;
+  padding: 0 48px;
+  height: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.page-band {
+  background: $dark;
+  padding: 24px 48px 20px;
+}
+
+.pb-inner {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.pb-title {
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: #fff;
+}
+
+.pb-sub {
+  font-size: .62rem;
+  letter-spacing: .28em;
+  color: $orange;
+  text-transform: uppercase;
+}
+
+main {
+  padding: 32px 48px 60px;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.scan-card,
+.panel-body,
+.modal-box {
+  background: $surface;
+  border: 1px solid $border;
+  border-radius: 12px;
+}
+
+.scan-card {
+  padding: 28px 32px;
+  margin-bottom: 28px;
+}
+
+.scan-row {
+  display: flex;
+  gap: 10px;
+}
+
+#poInput,
+input,
+select,
+textarea {
+  width: 100%;
+  padding: 11px 13px;
+  border: 1.5px solid $border;
+  border-radius: 8px;
+  background: #f8fafc;
+  outline: none;
+
+  &:focus {
+    border-color: $orange;
+    box-shadow: 0 0 0 3px rgba(232, 104, 10, .12);
+    background: #fff;
+  }
+}
+
+.scan-btn,
+.btn-new,
+.btn-submit {
+  background: $orange;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.clear-btn,
+.btn-cancel {
+  background: transparent;
+  border: 1.5px solid $border;
+  color: $muted;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.err-box {
+  margin-top: 12px;
+  padding: 12px 16px;
+  border-radius: 8px;
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  color: #b91c1c;
+}
+
+.wo-strip {
+  background: $dark;
+  border-radius: 12px 12px 0 0;
+  padding: 20px 28px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.wo-po {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: #fff;
+}
+
+.panel-body {
+  border-top: none;
+  border-radius: 0 0 12px 12px;
+  padding: 28px;
+}
+
+.chips {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 24px;
+}
+
+.chip {
+  flex: 1;
+  min-width: 110px;
+  background: #f8fafc;
+  border: 1px solid $border;
+  border-radius: 8px;
+  padding: 14px 16px;
+  text-align: center;
+}
+
+.c-val {
+  font-size: 1.5rem;
+  font-weight: 700;
+}
+
+.tbl-wrap {
+  overflow-x: auto;
+  border: 1px solid $border;
+  border-radius: 10px;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: .86rem;
+}
+
+thead {
+  background: $dark;
+
+  th {
+    padding: 12px 14px;
+    text-align: left;
+    color: #d1d5db;
+    white-space: nowrap;
+  }
+}
+
+tbody td {
+  padding: 12px 14px;
+  border-top: 1px solid $border;
+}
+
+.right {
+  text-align: right;
+}
+
+.center {
+  text-align: center;
+}
+
+.qty-req {
+  color: $amber;
+  font-weight: 700;
+}
+
+.qty-rcv,
+.no-open {
+  color: $green;
+  font-weight: 700;
+}
+
+.has-open {
+  color: $red;
+  font-weight: 700;
+}
+
+.prog-wrap {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 4px;
+}
+
+.prog-bar {
+  flex: 1;
+  height: 4px;
+  background: #e5e7eb;
+  border-radius: 99px;
+  overflow: hidden;
+  min-width: 50px;
+}
+
+.prog-fill {
+  height: 100%;
+  background: linear-gradient(90deg, $green, #4ade80);
+}
+
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, .55);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 32px 20px;
+  z-index: 500;
+}
+
+.modal-box {
+  width: 100%;
+  max-width: 700px;
+  padding: 32px;
+  position: relative;
+}
+
+.modal-close {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  background: none;
+  border: none;
+  font-size: 1.4rem;
+  cursor: pointer;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+
+  &.three {
+    grid-template-columns: 1fr 1fr 1fr;
+  }
+}
+
+.form-field {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 22px;
+}
+
+.toast {
+  position: fixed;
+  bottom: 28px;
+  right: 28px;
+  background: $green;
+  color: #fff;
+  padding: 13px 22px;
+  border-radius: 9px;
+  z-index: 600;
+}
+
+.mt-14 {
+  margin-top: 14px;
+}
+
+@media (max-width: 768px) {
+  header,
+  main {
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+
+  .page-band {
+    padding: 18px 16px;
+  }
+
+  .form-grid,
+  .form-grid.three,
+  .scan-row {
+    grid-template-columns: 1fr;
+    flex-direction: column;
+  }
+}

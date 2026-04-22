@@ -1,0 +1,864 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>ABM Components Status — DMW Portal</title>
+  <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Source+Sans+3:wght@400;500;600&family=Share+Tech+Mono&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --bg:        #f0f2f5;
+      --surface:   #ffffff;
+      --dark:      #1a1d24;
+      --darker:    #111318;
+      --orange:    #e8680a;
+      --blue:      #1a5fa8;
+      --blue-lt:   #eff6ff;
+      --blue-bd:   #bfdbfe;
+      --green:     #16a34a;
+      --green-lt:  #f0fdf4;
+      --green-bd:  #86efac;
+      --amber:     #d97706;
+      --amber-lt:  #fffbeb;
+      --amber-bd:  #fcd34d;
+      --red:       #dc2626;
+      --red-lt:    #fff1f2;
+      --red-bd:    #fca5a5;
+      --silver:    #9ca3af;
+      --border:    #e2e5ea;
+      --muted:     #6b7280;
+      --shadow-sm: 0 1px 3px rgba(0,0,0,.08);
+      --shadow-md: 0 4px 20px rgba(0,0,0,.11);
+      --shadow-lg: 0 12px 40px rgba(0,0,0,.15);
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: var(--bg);
+      color: var(--dark);
+      font-family: 'Source Sans 3', sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ══ HEADER ══ */
+    header {
+      background: var(--darker);
+      border-bottom: 3px solid var(--blue);
+      padding: 0 48px;
+      height: 80px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 2px 16px rgba(0,0,0,.35);
+    }
+    .logo-img {
+      height: 52px;
+      background: #fff;
+      border-radius: 4px;
+      padding: 3px 9px;
+    }
+    .header-right {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+    .back-btn {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      text-decoration: none;
+      font-family: 'Oswald', sans-serif;
+      font-size: .85rem;
+      font-weight: 500;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      color: #9ca3af;
+      border: 1px solid #2e3340;
+      background: #1e222c;
+      padding: 7px 16px;
+      border-radius: 5px;
+      transition: color .2s, border-color .2s;
+    }
+    .back-btn:hover { color: #fff; border-color: #4b5563; }
+    .back-btn svg { width: 14px; height: 14px; stroke: currentColor; fill: none; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
+    .clock-box {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: .78rem;
+      color: var(--blue);
+      border: 1px solid #2e3340;
+      background: #1e222c;
+      padding: 6px 13px;
+      border-radius: 4px;
+    }
+
+    /* ══ PAGE BAND ══ */
+    .page-band {
+      background: var(--dark);
+      padding: 28px 48px 24px;
+      position: relative;
+      overflow: hidden;
+    }
+    .page-band::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: repeating-linear-gradient(-55deg, transparent 0, transparent 38px, rgba(255,255,255,.018) 38px, rgba(255,255,255,.018) 40px);
+      pointer-events: none;
+    }
+    .page-band::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, var(--blue), var(--orange));
+    }
+    .page-band-inner {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      position: relative;
+      z-index: 1;
+    }
+    .page-icon {
+      width: 46px; height: 46px;
+      background: rgba(26,95,168,.18);
+      border: 1.5px solid rgba(26,95,168,.4);
+      border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .page-icon svg { width: 22px; height: 22px; stroke: #60a5fa; fill: none; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+    .page-band h2 {
+      font-family: 'Oswald', sans-serif;
+      font-size: 1.7rem;
+      font-weight: 700;
+      letter-spacing: .05em;
+      color: #fff;
+    }
+    .page-band .sub {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: .64rem;
+      letter-spacing: .28em;
+      color: #60a5fa;
+      text-transform: uppercase;
+      margin-top: 2px;
+    }
+
+    /* ══ MAIN ══ */
+    main {
+      flex: 1;
+      padding: 36px 48px 60px;
+      max-width: 1200px;
+      width: 100%;
+      margin: 0 auto;
+    }
+
+    /* ── Scan Card ── */
+    .scan-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 30px 34px;
+      box-shadow: var(--shadow-md);
+      margin-bottom: 32px;
+      position: relative;
+      overflow: hidden;
+    }
+    .scan-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, var(--blue), #60a5fa);
+    }
+    .scan-label {
+      font-family: 'Oswald', sans-serif;
+      font-size: 1.05rem;
+      font-weight: 600;
+      letter-spacing: .04em;
+      color: var(--dark);
+      margin-bottom: 5px;
+    }
+    .scan-hint {
+      font-size: .85rem;
+      color: var(--muted);
+      margin-bottom: 16px;
+    }
+    .scan-row {
+      display: flex;
+      gap: 10px;
+      align-items: stretch;
+    }
+    .scan-input-wrap {
+      position: relative;
+      flex: 1;
+    }
+    .scan-input-wrap svg {
+      position: absolute;
+      left: 13px; top: 50%;
+      transform: translateY(-50%);
+      width: 18px; height: 18px;
+      stroke: var(--silver);
+      fill: none; stroke-width: 1.8; stroke-linecap: round;
+      pointer-events: none;
+    }
+    #poInput {
+      width: 100%;
+      padding: 12px 14px 12px 42px;
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 1rem;
+      letter-spacing: .06em;
+      border: 2px solid var(--border);
+      border-radius: 8px;
+      background: #f8fafc;
+      color: var(--dark);
+      outline: none;
+      transition: border-color .2s, box-shadow .2s;
+    }
+    #poInput:focus {
+      border-color: var(--blue);
+      box-shadow: 0 0 0 3px rgba(26,95,168,.12);
+      background: #fff;
+    }
+    #poInput::placeholder { color: #c0c5ce; }
+    .scan-btn {
+      padding: 12px 26px;
+      font-family: 'Oswald', sans-serif;
+      font-size: .92rem;
+      font-weight: 600;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      background: var(--blue);
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background .2s, transform .15s;
+      white-space: nowrap;
+    }
+    .scan-btn:hover { background: #154f8e; transform: translateY(-1px); }
+    .scan-btn:active { transform: none; }
+    .clear-btn {
+      padding: 12px 18px;
+      font-family: 'Oswald', sans-serif;
+      font-size: .88rem;
+      background: transparent;
+      color: var(--muted);
+      border: 1.5px solid var(--border);
+      border-radius: 8px;
+      cursor: pointer;
+      transition: color .2s, border-color .2s;
+    }
+    .clear-btn:hover { color: var(--dark); border-color: #adb5bd; }
+    .msg-box {
+      display: none;
+      align-items: center;
+      gap: 10px;
+      padding: 13px 17px;
+      border-radius: 8px;
+      margin-top: 14px;
+      font-size: .9rem;
+      font-weight: 500;
+    }
+    .msg-box.error { background: #fef2f2; border: 1px solid #fecaca; color: #b91c1c; }
+    .msg-box svg { width: 18px; height: 18px; stroke: currentColor; fill: none; stroke-width: 2; flex-shrink: 0; }
+
+    /* ══ RESULT PANEL ══ */
+    #resultPanel {
+      display: none;
+      animation: fadeUp .4s ease forwards;
+    }
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(16px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ── PO Summary strip ── */
+    .po-strip {
+      background: var(--dark);
+      border-radius: 12px 12px 0 0;
+      padding: 22px 30px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+    .po-strip-left { display: flex; flex-direction: column; gap: 3px; }
+    .po-eyebrow {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: .62rem;
+      letter-spacing: .3em;
+      color: #60a5fa;
+      text-transform: uppercase;
+    }
+    .po-title {
+      font-family: 'Oswald', sans-serif;
+      font-size: 1.9rem;
+      font-weight: 700;
+      color: #fff;
+      letter-spacing: .04em;
+    }
+    .po-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 14px;
+      border-radius: 999px;
+      font-family: 'Oswald', sans-serif;
+      font-size: .78rem;
+      font-weight: 600;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      background: rgba(26,95,168,.2);
+      color: #93c5fd;
+      border: 1px solid rgba(26,95,168,.4);
+    }
+    .po-badge .bdot {
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: #60a5fa;
+      animation: blink 2s ease infinite;
+    }
+    @keyframes blink { 0%,100%{opacity:1} 50%{opacity:.35} }
+
+    /* ── Panel body ── */
+    .panel-body {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-top: none;
+      border-radius: 0 0 12px 12px;
+      padding: 30px 30px 36px;
+      box-shadow: var(--shadow-md);
+    }
+
+    /* Section label */
+    .sec-label {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: .62rem;
+      letter-spacing: .3em;
+      color: var(--blue);
+      text-transform: uppercase;
+      margin-bottom: 14px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .sec-label::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--border);
+    }
+
+    /* ── Mark # header card ── */
+    .mark-card {
+      display: flex;
+      align-items: center;
+      gap: 18px;
+      background: var(--blue-lt);
+      border: 1.5px solid var(--blue-bd);
+      border-radius: 10px;
+      padding: 18px 24px;
+      margin-bottom: 28px;
+    }
+    .mark-icon {
+      width: 48px; height: 48px;
+      background: var(--blue);
+      border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+    }
+    .mark-icon svg { width: 22px; height: 22px; stroke: #fff; fill: none; stroke-width: 1.8; stroke-linecap: round; }
+    .mark-details {}
+    .mark-sub {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: .6rem;
+      letter-spacing: .25em;
+      color: var(--blue);
+      text-transform: uppercase;
+      margin-bottom: 3px;
+    }
+    .mark-num {
+      font-family: 'Oswald', sans-serif;
+      font-size: 1.4rem;
+      font-weight: 700;
+      color: var(--dark);
+      letter-spacing: .03em;
+    }
+    .mark-desc {
+      font-size: .88rem;
+      color: var(--muted);
+      margin-top: 2px;
+    }
+
+    /* ── Summary chips ── */
+    .summary-chips {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-bottom: 28px;
+    }
+    .chip {
+      flex: 1;
+      min-width: 120px;
+      background: #f8fafc;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 14px 18px;
+      text-align: center;
+    }
+    .chip .c-label {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: .57rem;
+      letter-spacing: .2em;
+      color: var(--muted);
+      text-transform: uppercase;
+      margin-bottom: 6px;
+    }
+    .chip .c-val {
+      font-family: 'Oswald', sans-serif;
+      font-size: 1.5rem;
+      font-weight: 700;
+    }
+    .chip.blue    .c-val { color: var(--blue); }
+    .chip.green   .c-val { color: var(--green); }
+    .chip.amber   .c-val { color: var(--amber); }
+    .chip.red     .c-val { color: var(--red); }
+
+    /* ── ABM Table ── */
+    .table-wrap {
+      overflow-x: auto;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow-sm);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: .92rem;
+    }
+
+    thead {
+      background: var(--dark);
+      position: sticky;
+      top: 0;
+      z-index: 2;
+    }
+    thead th {
+      padding: 13px 18px;
+      text-align: left;
+      font-family: 'Oswald', sans-serif;
+      font-size: .78rem;
+      font-weight: 600;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      color: #d1d5db;
+      white-space: nowrap;
+      border-right: 1px solid #2e3340;
+    }
+    thead th:last-child { border-right: none; }
+    thead th.right { text-align: right; }
+    thead th.center { text-align: center; }
+
+    /* Column accent colors in header */
+    thead th.col-abm   { color: #93c5fd; border-bottom: 2px solid #1a5fa8; }
+    thead th.col-desc  { color: #d1d5db; }
+    thead th.col-req   { color: #fcd34d; border-bottom: 2px solid #d97706; }
+    thead th.col-po    { color: #d1d5db; }
+    thead th.col-rcv   { color: #86efac; border-bottom: 2px solid #16a34a; }
+    thead th.col-open  { color: #fca5a5; border-bottom: 2px solid #dc2626; }
+
+    tbody tr {
+      border-bottom: 1px solid var(--border);
+      transition: background .15s;
+    }
+    tbody tr:last-child { border-bottom: none; }
+    tbody tr:hover { background: #f5f8ff; }
+    tbody tr:nth-child(even) { background: #fafbfc; }
+    tbody tr:nth-child(even):hover { background: #f0f5ff; }
+
+    tbody td {
+      padding: 14px 18px;
+      border-right: 1px solid var(--border);
+      vertical-align: middle;
+    }
+    tbody td:last-child { border-right: none; }
+
+    /* ABM tag pill */
+    .abm-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--blue-lt);
+      border: 1.5px solid var(--blue-bd);
+      color: var(--blue);
+      font-family: 'Share Tech Mono', monospace;
+      font-size: .78rem;
+      font-weight: 700;
+      letter-spacing: .08em;
+      padding: 4px 10px;
+      border-radius: 6px;
+      white-space: nowrap;
+    }
+    .abm-tag::before {
+      content: '';
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: var(--blue);
+      flex-shrink: 0;
+    }
+
+    /* PO # tag */
+    .po-tag {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: .82rem;
+      color: var(--dark);
+      background: #f1f5f9;
+      border: 1px solid #cbd5e1;
+      padding: 3px 9px;
+      border-radius: 5px;
+      letter-spacing: .05em;
+    }
+
+    /* Qty cells */
+    .qty-req {
+      font-family: 'Oswald', sans-serif;
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: var(--amber);
+      text-align: right;
+    }
+    .qty-rcv {
+      font-family: 'Oswald', sans-serif;
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: var(--green);
+      text-align: right;
+    }
+    .qty-open {
+      font-family: 'Oswald', sans-serif;
+      font-size: 1.05rem;
+      font-weight: 700;
+      text-align: right;
+    }
+    .qty-open.has-open { color: var(--red); }
+    .qty-open.no-open  { color: var(--green); }
+
+    /* inline progress bar in rows */
+    .row-progress {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 5px;
+    }
+    .rp-bar {
+      flex: 1;
+      height: 5px;
+      background: #e5e7eb;
+      border-radius: 99px;
+      overflow: hidden;
+    }
+    .rp-fill {
+      height: 100%;
+      border-radius: 99px;
+      background: linear-gradient(90deg, #16a34a, #4ade80);
+    }
+    .rp-pct {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: .62rem;
+      color: var(--muted);
+      white-space: nowrap;
+    }
+
+    /* desc cell */
+    .desc-cell {
+      font-weight: 600;
+      color: var(--dark);
+    }
+    .desc-sub {
+      font-size: .78rem;
+      color: var(--muted);
+      margin-top: 2px;
+    }
+
+    /* ── Table footer totals ── */
+    tfoot tr { background: #f0f2f5; }
+    tfoot td {
+      padding: 12px 18px;
+      border-right: 1px solid var(--border);
+      font-family: 'Oswald', sans-serif;
+      font-weight: 700;
+      font-size: .9rem;
+      letter-spacing: .05em;
+      color: var(--dark);
+    }
+    tfoot td:last-child { border-right: none; }
+    tfoot td.tot-label {
+      font-size: .7rem;
+      letter-spacing: .2em;
+      font-family: 'Share Tech Mono', monospace;
+      color: var(--muted);
+      text-transform: uppercase;
+    }
+
+    /* ══ FOOTER ══ */
+    footer {
+      background: var(--darker);
+      border-top: 1px solid #1e222c;
+      padding: 14px 48px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .footer-logo { height: 26px; background: #fff; border-radius: 3px; padding: 2px 7px; opacity: .8; }
+    .footer-copy {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: .6rem;
+      letter-spacing: .15em;
+      color: #4b5563;
+      text-transform: uppercase;
+    }
+    .footer-copy span { color: var(--blue); }
+
+    @media (max-width: 768px) {
+      header, main, footer { padding-left: 16px; padding-right: 16px; }
+      .page-band { padding: 20px 16px; }
+      .summary-chips .chip { min-width: 90px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header>
+ <div class="header-right">
+    <a href="index.html" class="back-btn">
+      <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
+      Back to Portal
+    </a>
+    <div class="clock-box" id="clock">--:--:--</div>
+  </div>
+</header>
+
+<!-- PAGE BAND -->
+<div class="page-band">
+  <div class="page-band-inner">
+    <div class="page-icon">
+      <svg viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/><line x1="12" y1="12" x2="12" y2="16"/><line x1="10" y1="14" x2="14" y2="14"/></svg>
+    </div>
+    <div>
+      <div class="sub">// Module 02</div>
+      <h2>ABM COMPONENTS STATUS</h2>
+    </div>
+  </div>
+</div>
+
+<!-- MAIN -->
+<main>
+
+  <!-- SCAN CARD -->
+  <div class="scan-card">
+    <div class="scan-label">Production Order Lookup</div>
+    <div class="scan-hint">Enter or scan a Production Order number to view ABM component requirements and receiving status.</div>
+    <div class="scan-row">
+      <div class="scan-input-wrap">
+        <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M7 7h.01M17 7h.01M7 17h.01M17 17h.01M12 12h.01"/></svg>
+        <input type="text" id="poInput" placeholder="e.g. 25280-A01-01" autocomplete="off" spellcheck="false"/>
+      </div>
+      <button class="scan-btn" onclick="lookup()">&#128269; Search</button>
+      <button class="clear-btn" onclick="clearAll()">Clear</button>
+    </div>
+    <div class="msg-box error" id="errBox">
+      <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+      <span>Production Order not found. Please verify the number and try again.</span>
+    </div>
+  </div>
+
+  <!-- RESULT PANEL -->
+  <div id="resultPanel">
+
+    <!-- PO Strip -->
+    <div class="po-strip">
+      <div class="po-strip-left">
+        <div class="po-eyebrow">// Production Order</div>
+        <div class="po-title" id="dispPO">—</div>
+      </div>
+      <div class="po-badge">
+        <span class="bdot"></span>
+        <span>ABM Components Active</span>
+      </div>
+    </div>
+
+    <div class="panel-body">
+
+      <!-- Mark # -->
+      <div class="sec-label">Mark Identification</div>
+      <div class="mark-card">
+        <div class="mark-icon">
+          <svg viewBox="0 0 24 24"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>
+        </div>
+        <div class="mark-details">
+          <div class="mark-sub">Mark Number</div>
+          <div class="mark-num" id="dispMark">—</div>
+          <div class="mark-desc" id="dispMarkDesc">—</div>
+        </div>
+      </div>
+
+      <!-- Summary Chips -->
+      <div class="sec-label">Component Summary</div>
+      <div class="summary-chips" id="summaryChips">
+        <div class="chip blue">
+          <div class="c-label">Total ABMs</div>
+          <div class="c-val" id="chipTotal">—</div>
+        </div>
+        <div class="chip amber">
+          <div class="c-label">Total Req QTY</div>
+          <div class="c-val" id="chipReq">—</div>
+        </div>
+        <div class="chip green">
+          <div class="c-label">Total Received</div>
+          <div class="c-val" id="chipRcv">—</div>
+        </div>
+        <div class="chip red">
+          <div class="c-label">Total Open</div>
+          <div class="c-val" id="chipOpen">—</div>
+        </div>
+      </div>
+
+      <!-- ABM Table -->
+      <div class="sec-label">ABM Requirements &amp; Receiving Status</div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th class="col-abm">ABM</th>
+              <th class="col-desc">Description</th>
+              <th class="col-req right">Req QTY</th>
+              <th class="col-po">PO #</th>
+              <th class="col-rcv right">QTY Received</th>
+              <th class="col-open right">QTY Open</th>
+            </tr>
+          </thead>
+          <tbody id="abmTbody"></tbody>
+          <tfoot id="abmTfoot"></tfoot>
+        </table>
+      </div>
+
+    </div><!-- /panel-body -->
+  </div><!-- /resultPanel -->
+
+</main>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-copy">&copy; <span id="yr"></span> <span>Dearborn Mid-West Company</span> &nbsp;·&nbsp; ABM Components Module</div>
+</footer>
+
+<script>
+  // ── Clock ──
+  function tick() {
+    document.getElementById("clock").textContent =
+      new Date().toLocaleTimeString("en-US", { hour12: false });
+  }
+  tick(); setInterval(tick, 1000);
+  document.getElementById("yr").textContent = new Date().getFullYear();
+
+  // ── Data ──
+  const DB = {
+    "25280-A01-01": {
+      mark: "36785-A01-01-01",
+      markDesc: "Conveyor Drive Assembly — Section A01",
+      abms: [
+        { id: "ABM 1", desc: "Gear",  descSub: "Helical Drive Gear — 12T",  reqQty: 10, po: "46001", rcv: 5  },
+        { id: "ABM 2", desc: "Motor", descSub: "3HP AC Motor — 460V 60Hz",  reqQty: 20, po: "46002", rcv: 10 },
+        { id: "ABM 3", desc: "Drive", descSub: "Variable Frequency Drive",   reqQty: 25, po: "46003", rcv: 20 }
+      ]
+    }
+  };
+
+  function lookup() {
+    const raw = document.getElementById("poInput").value.trim().toUpperCase();
+    document.getElementById("errBox").style.display = "none";
+    document.getElementById("resultPanel").style.display = "none";
+
+    const rec = DB[raw];
+    if (!rec) {
+      document.getElementById("errBox").style.display = "flex";
+      return;
+    }
+    render(raw, rec);
+  }
+
+  function render(po, rec) {
+    document.getElementById("dispPO").textContent   = po;
+    document.getElementById("dispMark").textContent = rec.mark;
+    document.getElementById("dispMarkDesc").textContent = rec.markDesc;
+
+    // Summary totals
+    const totReq  = rec.abms.reduce((s,r) => s + r.reqQty, 0);
+    const totRcv  = rec.abms.reduce((s,r) => s + r.rcv, 0);
+    const totOpen = rec.abms.reduce((s,r) => s + (r.reqQty - r.rcv), 0);
+    document.getElementById("chipTotal").textContent = rec.abms.length;
+    document.getElementById("chipReq").textContent   = totReq;
+    document.getElementById("chipRcv").textContent   = totRcv;
+    document.getElementById("chipOpen").textContent  = totOpen;
+
+    // Table rows
+    const tbody = document.getElementById("abmTbody");
+    tbody.innerHTML = "";
+    rec.abms.forEach(r => {
+      const open = r.reqQty - r.rcv;
+      const pct  = Math.round((r.rcv / r.reqQty) * 100);
+      const tr = document.createElement("tr");
+      tr.innerHTML = `
+        <td><span class="abm-tag">${r.id}</span></td>
+        <td>
+          <div class="desc-cell">${r.desc}</div>
+          <div class="desc-sub">${r.descSub}</div>
+        </td>
+        <td class="qty-req">${r.reqQty}</td>
+        <td><span class="po-tag">${r.po}</span></td>
+        <td>
+          <div class="qty-rcv" style="text-align:right">${r.rcv}</div>
+          <div class="row-progress">
+            <div class="rp-bar"><div class="rp-fill" style="width:${pct}%"></div></div>
+            <div class="rp-pct">${pct}%</div>
+          </div>
+        </td>
+        <td class="qty-open ${open > 0 ? "has-open" : "no-open"}">${open}</td>
+      `;
+      tbody.appendChild(tr);
+    });
+
+    // Tfoot totals
+    const tfoot = document.getElementById("abmTfoot");
+    tfoot.innerHTML = `<tr>
+      <td class="tot-label" colspan="2">Totals</td>
+      <td class="qty-req">${totReq}</td>
+      <td></td>
+      <td class="qty-rcv" style="text-align:right">${totRcv}</td>
+      <td class="qty-open ${totOpen > 0 ? "has-open" : "no-open"}">${totOpen}</td>
+    </tr>`;
+
+    document.getElementById("resultPanel").style.display = "block";
+    document.getElementById("resultPanel").scrollIntoView({ behavior: "smooth", block: "start" });
+  }
+
+  function clearAll() {
+    document.getElementById("poInput").value = "";
+    document.getElementById("errBox").style.display = "none";
+    document.getElementById("resultPanel").style.display = "none";
+  }
+
+  document.getElementById("poInput").addEventListener("keydown", e => {
+    if (e.key === "Enter") lookup();
+  });
+</script>
+</body>
+</html>
