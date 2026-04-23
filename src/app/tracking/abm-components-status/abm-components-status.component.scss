@@ -1,30 +1,6 @@
 @import url('https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Source+Sans+3:wght@400;500;600&family=Share+Tech+Mono&display=swap');
 
 :host {
-  --bg:        #f0f2f5;
-  --surface:   #ffffff;
-  --dark:      #1a1d24;
-  --darker:    #111318;
-  --orange:    #e8680a;
-  --blue:      #1a5fa8;
-  --blue-lt:   #eff6ff;
-  --blue-bd:   #bfdbfe;
-  --green:     #16a34a;
-  --green-lt:  #f0fdf4;
-  --green-bd:  #86efac;
-  --amber:     #d97706;
-  --amber-lt:  #fffbeb;
-  --amber-bd:  #fcd34d;
-  --red:       #dc2626;
-  --red-lt:    #fff1f2;
-  --red-bd:    #fca5a5;
-  --silver:    #9ca3af;
-  --border:    #e2e5ea;
-  --muted:     #6b7280;
-  --shadow-sm: 0 1px 3px rgba(0,0,0,.08);
-  --shadow-md: 0 4px 20px rgba(0,0,0,.11);
-  --shadow-lg: 0 12px 40px rgba(0,0,0,.15);
-
   display: flex;
   flex-direction: column;
   min-height: 100vh;
@@ -34,55 +10,6 @@
 }
 
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-/* ══ HEADER ══ */
-header {
-  background: var(--darker);
-  border-bottom: 3px solid var(--blue);
-  padding: 0 48px;
-  height: 80px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  position: sticky;
-  top: 0;
-  z-index: 100;
-  box-shadow: 0 2px 16px rgba(0,0,0,.35);
-}
-.header-right {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  margin-left: auto;
-}
-.back-btn {
-  display: flex;
-  align-items: center;
-  gap: 7px;
-  text-decoration: none;
-  font-family: 'Oswald', sans-serif;
-  font-size: .85rem;
-  font-weight: 500;
-  letter-spacing: .1em;
-  text-transform: uppercase;
-  color: #9ca3af;
-  border: 1px solid #2e3340;
-  background: #1e222c;
-  padding: 7px 16px;
-  border-radius: 5px;
-  transition: color .2s, border-color .2s;
-}
-.back-btn:hover { color: #fff; border-color: #4b5563; }
-.back-btn svg { width: 14px; height: 14px; stroke: currentColor; fill: none; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
-.clock-box {
-  font-family: 'Share Tech Mono', monospace;
-  font-size: .78rem;
-  color: var(--blue);
-  border: 1px solid #2e3340;
-  background: #1e222c;
-  padding: 6px 13px;
-  border-radius: 4px;
-}
 
 /* ══ PAGE BAND ══ */
 .page-band {

@@ -2,24 +2,6 @@
   display: block;
 }
 
-:host {
-  --bg: #f0f2f5;
-  --surface: #ffffff;
-  --dark: #1a1d24;
-  --darker: #111318;
-  --orange: #e8680a;
-  --blue: #1a5fa8;
-  --green: #16a34a;
-  --amber: #d97706;
-  --red: #dc2626;
-  --silver: #9ca3af;
-  --border: #e2e5ea;
-  --muted: #6b7280;
-  --shadow-sm: 0 1px 3px rgba(0, 0, 0, .08);
-  --shadow-md: 0 4px 20px rgba(0, 0, 0, .11);
-  --shadow-lg: 0 12px 40px rgba(0, 0, 0, .14);
-}
-
 *,
 *::before,
 *::after {
@@ -29,65 +11,26 @@
 .wo-status-page {
   background: var(--bg);
   color: var(--dark);
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-}
-
-.header {
-  background: var(--darker);
-  border-bottom: 3px solid var(--orange);
-  padding: 0 48px;
-  height: 80px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  box-shadow: 0 2px 16px rgba(0, 0, 0, .35);
-}
-
-.logo-img {
-  height: 52px;
-  width: auto;
-  background: #fff;
-  border-radius: 4px;
-  padding: 3px 9px;
-}
-
-.header-right {
-  display: flex;
-  align-items: center;
-  gap: 20px;
-}
-
-.back-btn {
-  display: flex;
-  align-items: center;
-  gap: 7px;
-  text-decoration: none;
-  color: #9ca3af;
-  border: 1px solid #2e3340;
-  background: #1e222c;
-  padding: 7px 16px;
-  border-radius: 5px;
-}
-
-.clock-box {
-  color: var(--orange);
-  border: 1px solid #2e3340;
-  background: #1e222c;
-  padding: 6px 13px;
-  border-radius: 4px;
 }
 
 .page-band {
   background: var(--dark);
   padding: 28px 48px 24px;
+  position: relative;
+  overflow: hidden;
+  &::before {
+    content: ''; position: absolute;
+    top: 0; left: 0; right: 0; height: 3px;
+    background: linear-gradient(90deg, var(--blue, #1a5fa8), var(--orange));
+  }
 }
 
 .page-band-inner {
   display: flex;
   align-items: center;
   gap: 16px;
+  position: relative;
+  z-index: 1;
 }
 
 .page-icon {
@@ -130,6 +73,13 @@ main {
   border-radius: 12px;
   padding: 32px 36px;
   margin-bottom: 36px;
+  position: relative;
+  overflow: hidden;
+  &::before {
+    content: ''; position: absolute;
+    top: 0; left: 0; right: 0; height: 3px;
+    background: linear-gradient(90deg, var(--blue, #1a5fa8), var(--orange));
+  }
 }
 
 .scan-row {
@@ -175,6 +125,11 @@ main {
   background: var(--orange);
   color: #fff;
   border: none;
+  transition: background 0.2s, transform 0.15s;
+  &:hover {
+    background: #c25308;
+    transform: translateY(-1px);
+  }
 }
 
 .clear-btn {
@@ -182,6 +137,11 @@ main {
   background: transparent;
   color: var(--muted);
   border: 1.5px solid var(--border);
+  transition: color 0.2s, border-color 0.2s;
+  &:hover {
+    color: var(--dark);
+    border-color: var(--silver);
+  }
 }
 
 .msg-box.error {
@@ -244,7 +204,9 @@ main {
   height: 7px;
   border-radius: 50%;
   background: #4ade80;
+  animation: blink 2s ease infinite;
 }
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:.35} }
 
 .wo-body {
   border-top: none;

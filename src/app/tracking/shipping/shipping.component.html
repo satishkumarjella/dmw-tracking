@@ -1,18 +1,8 @@
-<header class="header">
-  <img class="logo-img" src="assets/dmw-logo.jpg" alt="DMW" />
+<ion-header class="ion-no-border">
+  <app-header logoSrc="assets/dmw-logo.jpg" backText="Back to Portal"></app-header>
+</ion-header>
 
-  <div class="header-right">
-    <a routerLink="/" class="back-btn">
-      <svg viewBox="0 0 24 24">
-        <polyline points="15 18 9 12 15 6"></polyline>
-      </svg>
-      Back to Portal
-    </a>
-
-    <div class="clock-box">{{ currentTime }}</div>
-  </div>
-</header>
-
+<ion-content [fullscreen]="true">
 <div class="page-band">
   <div class="pb-inner">
     <div class="pb-icon">
@@ -308,3 +298,4 @@
 </div>
 
 <div class="toast" *ngIf="toastMessage">{{ toastMessage }}</div>
+</ion-content>

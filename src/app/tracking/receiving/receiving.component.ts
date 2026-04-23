@@ -1,6 +1,9 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { RouterModule } from '@angular/router';
+import { IonHeader, IonContent } from "@ionic/angular/standalone";
+import { HeaderComponent } from '../../shared/header/header.component';
 
 interface ReceiptEntry {
   date: string;
@@ -19,7 +22,7 @@ interface ReceiptEntry {
 @Component({
   selector: 'app-receiving',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [IonHeader, CommonModule, FormsModule, HeaderComponent, IonContent, RouterModule],
   templateUrl: './receiving.component.html',
   styleUrls: ['./receiving.component.scss']
 })

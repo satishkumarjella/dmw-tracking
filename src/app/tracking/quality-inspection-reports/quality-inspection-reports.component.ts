@@ -1,7 +1,10 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
+import { RouterModule } from '@angular/router';
+import { IonHeader, IonContent } from '@ionic/angular/standalone';
+import { HeaderComponent } from '../../shared/header/header.component';
 
 interface ProductionRecord {
   po: string;
@@ -26,11 +29,11 @@ interface IssueItem {
 @Component({
   selector: 'app-quality-inspection-reports',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, HeaderComponent, IonHeader, IonContent, RouterModule],
   templateUrl: './quality-inspection-reports.component.html',
   styleUrls: ['./quality-inspection-reports.component.scss']
 })
-export class QualityInspectionReportsComponent implements OnInit {
+export class QualityInspectionReportsComponent implements OnInit, OnDestroy {
   poInput = '';
   showError = false;
 
@@ -46,6 +49,7 @@ export class QualityInspectionReportsComponent implements OnInit {
   girPdfUrl!: SafeResourceUrl;
   paintPdfUrl!: SafeResourceUrl;
   criticalSpecsImage = 'assets/images/critical-specs-placeholder.png';
+
 
   records: ProductionRecord[] = [
     {
@@ -84,6 +88,7 @@ export class QualityInspectionReportsComponent implements OnInit {
   constructor(private sanitizer: DomSanitizer) {}
 
   ngOnInit(): void {
+
     this.girPdfUrl = this.sanitizer.bypassSecurityTrustResourceUrl(
       'assets/sample/general-inspection-report.pdf'
     );
@@ -92,6 +97,8 @@ export class QualityInspectionReportsComponent implements OnInit {
       'assets/sample/paint-specs.pdf'
     );
   }
+
+  ngOnDestroy(): void {}
 
   lookup(): void {
     const value = this.poInput.trim().toUpperCase();

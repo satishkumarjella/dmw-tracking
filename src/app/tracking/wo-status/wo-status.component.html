@@ -1,24 +1,11 @@
-<div class="wo-status-page">
-  <header class="header">
-    <div class="header-left">
-      <img class="logo-img" src="assets/logo.png" alt="DMW Logo" />
-    </div>
+<ion-header class="ion-no-border">
+  <div class="wo-status-page">
+    <app-header clockFormat="dd/MM/yyyy HH:mm:ss"></app-header>
+  </div>
+</ion-header>
 
-    <div class="header-right">
-      <a class="back-btn" routerLink="/">
-        <svg viewBox="0 0 24 24">
-          <path d="M19 12H5"></path>
-          <path d="M12 19l-7-7 7-7"></path>
-        </svg>
-        Back
-      </a>
-
-      <div class="clock-box">
-        {{ currentTime | date:'dd/MM/yyyy HH:mm:ss' }}
-      </div>
-    </div>
-  </header>
-
+<ion-content [fullscreen]="true">
+  <div class="wo-status-page">
   <section class="page-band">
     <div class="page-band-inner">
       <div class="page-icon">
@@ -204,3 +191,4 @@
     </section>
   </main>
 </div>
+</ion-content>

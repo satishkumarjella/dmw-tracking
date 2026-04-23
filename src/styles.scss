@@ -1,4 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=Oswald:wght@300;400;500;600;700&family=Source+Sans+3:wght@400;500;600&family=Share+Tech+Mono&display=swap');
+@import './theme/modern-ui.scss';
 
 /* Global Theming & Variables */
 :root {
@@ -8,6 +9,17 @@
   --darker: #0f1117;
   --orange: #e8680a;
   --blue: #1a5fa8;
+  --blue-lt: #eff6ff;
+  --blue-bd: #bfdbfe;
+  --green: #16a34a;
+  --green-lt: #f0fdf4;
+  --green-bd: #86efac;
+  --amber: #d97706;
+  --amber-lt: #fffbeb;
+  --amber-bd: #fcd34d;
+  --red: #dc2626;
+  --red-lt: #fff1f2;
+  --red-bd: #fca5a5;
   --silver: #9ca3af;
   --border: #dde1e9;
   --muted: #6b7280;
@@ -26,18 +38,5 @@
 body {
   background: var(--bg);
   color: var(--dark);
-  font-family: 'Source Sans 3', sans-serif;
-}
-
-/* Dashboard Layout Constraints */
-app-dashboard {
-  display: flex;
-  flex-direction: column;
-  min-height: 100vh;
-}
-
-@media(max-width: 768px) {
-  app-dashboard {
-    padding-bottom: 76px; /* Offset for the fixed bottom navigation */
-  }
+  font-family: var(--ion-font-family, 'Inter', sans-serif);
 }

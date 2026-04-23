@@ -3,25 +3,8 @@
 }
 
 .quality-inspection-page {
-  --bg: #eef0f4;
-  --surface: #ffffff;
-  --dark: #1a1d24;
-  --darker: #0f1117;
-  --orange: #e8680a;
-  --blue: #1a5fa8;
-  --green: #16a34a;
-  --red: #dc2626;
-  --amber: #d97706;
-  --border: #dde1e9;
-  --muted: #6b7280;
-  --silver: #9ca3af;
-  --shadow-sm: 0 1px 4px rgba(0, 0, 0, 0.07);
-  --shadow-md: 0 6px 24px rgba(0, 0, 0, 0.1);
-  --shadow-lg: 0 16px 48px rgba(0, 0, 0, 0.15);
-
   background: var(--bg);
   color: var(--dark);
-  min-height: 100vh;
   font-family: Arial, Helvetica, sans-serif;
 }
 
@@ -280,7 +263,9 @@
   height: 6px;
   border-radius: 50%;
   background: #fb923c;
+  animation: blink 2s ease infinite;
 }
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:.35} }
 
 .panel-body {
   border-top: 0;
@@ -581,6 +566,7 @@
   align-items: center;
   justify-content: center;
   padding: 20px;
+  backdrop-filter: blur(4px);
 }
 
 .modal-box {

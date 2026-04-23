@@ -1,20 +1,20 @@
-<div class="receiving-page">
-  <header>
-    <div class="header-left">
-      <img class="logo-img" src="assets/logo.png" alt="DMW Logo" />
-    </div>
+<ion-header class="ion-no-border">
+  <div class="receiving-page">
+    <app-header clockFormat="MMM d, y, h:mm a"></app-header>
+  </div>
+</ion-header>
 
-    <div class="header-right">
-      <a class="back-btn" href="javascript:void(0)">
-        <span>Back</span>
-      </a>
-      <div class="clock-box">{{ today | date:'MMM d, y, h:mm a' }}</div>
-    </div>
-  </header>
-
+<ion-content [fullscreen]="true">
+  <div class="receiving-page">
   <section class="page-band">
     <div class="pb-inner">
-      <div class="pb-icon">📦</div>
+      <div class="pb-icon">
+        <svg viewBox="0 0 24 24">
+          <polyline points="8 17 12 21 16 17"></polyline>
+          <line x1="12" y1="12" x2="12" y2="21"></line>
+          <path d="M20.88 18.09A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.29"></path>
+        </svg>
+      </div>
       <div>
         <div class="pb-title">Receiving</div>
         <div class="pb-sub">DMW Portal</div>
@@ -41,6 +41,11 @@
       </div>
 
       <div class="err-box" *ngIf="showError">
+        <svg viewBox="0 0 24 24">
+          <circle cx="12" cy="12" r="10"></circle>
+          <line x1="12" y1="8" x2="12" y2="12"></line>
+          <line x1="12" y1="16" x2="12.01" y2="16"></line>
+        </svg>
         {{ errorMessage }}
       </div>
     </section>
@@ -232,3 +237,4 @@
     {{ toastMessage }}
   </div>
 </div>
+</ion-content>

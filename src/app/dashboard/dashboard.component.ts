@@ -3,18 +3,26 @@ import { Router, RouterModule, NavigationEnd } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { Subscription } from 'rxjs';
 import { filter } from 'rxjs/operators';
+import {
+  IonContent,
+  IonFooter,
+  IonRouterOutlet,
+  IonHeader
+} from '@ionic/angular/standalone';
+import { HeaderComponent } from '../shared/header/header.component';
 
 @Component({
   selector: 'app-dashboard',
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.scss'],
   standalone: true,
-  imports: [RouterModule, CommonModule]
+  imports: [RouterModule, CommonModule, HeaderComponent, IonContent,
+    IonFooter,
+    IonRouterOutlet,
+    IonHeader,]
 })
 export class DashboardComponent implements OnInit, OnDestroy {
-  currentTime: Date = new Date();
   currentYear: number = new Date().getFullYear();
-  private timerId: any;
   isDashboardRoute: boolean = true;
   private routerSub!: Subscription;
 
@@ -27,16 +35,9 @@ export class DashboardComponent implements OnInit, OnDestroy {
     });
   }
 
-  ngOnInit() {
-    this.timerId = setInterval(() => {
-      this.currentTime = new Date();
-    }, 1000);
-  }
+  ngOnInit() {}
 
   ngOnDestroy() {
-    if (this.timerId) {
-      clearInterval(this.timerId);
-    }
     if (this.routerSub) {
       this.routerSub.unsubscribe();
     }

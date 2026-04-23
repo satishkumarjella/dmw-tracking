@@ -2,18 +2,23 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
+import {
+  IonContent,
+  IonFooter,
+  IonRouterOutlet,
+  IonHeader
+} from '@ionic/angular/standalone';
+import { HeaderComponent } from '../../shared/header/header.component';
 
 @Component({
   selector: 'app-abm-components-status',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterModule],
+  imports: [CommonModule, FormsModule, RouterModule, HeaderComponent, IonContent, IonHeader],
   templateUrl: './abm-components-status.component.html',
   styleUrls: ['./abm-components-status.component.scss']
 })
 export class AbmComponentsStatusComponent implements OnInit, OnDestroy {
-  currentTime: Date = new Date();
   currentYear: number = new Date().getFullYear();
-  private timerId: any;
 
   poInput: string = '';
   hasError: boolean = false;
@@ -36,16 +41,9 @@ export class AbmComponentsStatusComponent implements OnInit, OnDestroy {
     }
   };
 
-  ngOnInit() {
-    this.timerId = setInterval(() => {
-      this.currentTime = new Date();
-    }, 1000);
-  }
+  ngOnInit() {}
 
   ngOnDestroy() {
-    if (this.timerId) {
-      clearInterval(this.timerId);
-    }
   }
 
   lookup() {

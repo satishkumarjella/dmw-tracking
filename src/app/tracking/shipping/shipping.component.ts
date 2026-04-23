@@ -1,6 +1,9 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { RouterModule } from '@angular/router';
+import { IonHeader, IonContent } from '@ionic/angular/standalone';
+import { HeaderComponent } from '../../shared/header/header.component';
 
 interface ShippingRecord {
   mark: string;
@@ -28,10 +31,9 @@ interface ShipmentItem {
   templateUrl: './shipping.component.html',
   styleUrls: ['./shipping.component.scss'],
   standalone: true,
-  imports: [CommonModule, FormsModule]
+  imports: [CommonModule, FormsModule, HeaderComponent, IonHeader, IonContent, RouterModule]
 })
 export class ShippingComponent implements OnInit, OnDestroy {
-  currentTime = '';
   currentYear = new Date().getFullYear();
 
   poInput = '';
@@ -55,8 +57,6 @@ export class ShippingComponent implements OnInit, OnDestroy {
     qtyOpen: 0
   };
 
-  private timer: any;
-
   DB: Record<string, ShippingRecord> = {
     '25280-A01-01': {
       mark: '36785-A01-01-01',
@@ -65,16 +65,9 @@ export class ShippingComponent implements OnInit, OnDestroy {
     }
   };
 
-  ngOnInit(): void {
-    this.tick();
-    this.timer = setInterval(() => this.tick(), 1000);
-  }
+  ngOnInit(): void {}
 
   ngOnDestroy(): void {
-    if (this.timer) {
-      clearInterval(this.timer);
-    }
-
     this.shipments.forEach(item => {
       if (item.docUrl) URL.revokeObjectURL(item.docUrl);
       if (item.picUrl) URL.revokeObjectURL(item.picUrl);
@@ -87,10 +80,6 @@ export class ShippingComponent implements OnInit, OnDestroy {
 
   get totalOpen(): number {
     return Math.max(0, (this.selectedRecord?.totalQty || 0) - this.totalShipped);
-  }
-
-  tick(): void {
-    this.currentTime = new Date().toLocaleTimeString('en-US', { hour12: false });
   }
 
   lookup(): void {

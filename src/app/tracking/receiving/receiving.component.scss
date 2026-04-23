@@ -17,28 +17,37 @@ $silver: #9ca3af;
 .receiving-page {
   background: $bg;
   color: $dark;
-  min-height: 100vh;
-}
-
-header {
-  background: $darker;
-  border-bottom: 3px solid $orange;
-  padding: 0 48px;
-  height: 80px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
 }
 
 .page-band {
   background: $dark;
   padding: 24px 48px 20px;
+  position: relative;
+  overflow: hidden;
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; height: 3px;
+    background: linear-gradient(90deg, var(--blue, #1a5fa8), $orange);
+  }
 }
 
 .pb-inner {
   display: flex;
   align-items: center;
   gap: 14px;
+  position: relative;
+  z-index: 1;
+}
+
+.pb-icon {
+  width: 44px; height: 44px;
+  border-radius: 8px;
+  display: grid; place-items: center;
+  background: rgba(232, 104, 10, 0.15);
+  border: 1.5px solid rgba(232, 104, 10, 0.35);
+  color: $orange;
+  svg { width: 22px; height: 22px; stroke: currentColor; fill: none; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
 }
 
 .pb-title {
@@ -71,6 +80,13 @@ main {
 .scan-card {
   padding: 28px 32px;
   margin-bottom: 28px;
+  position: relative;
+  overflow: hidden;
+  &::before {
+    content: ''; position: absolute;
+    top: 0; left: 0; right: 0; height: 3px;
+    background: linear-gradient(90deg, var(--blue, #1a5fa8), $orange);
+  }
 }
 
 .scan-row {
@@ -104,6 +120,11 @@ textarea {
   border: none;
   border-radius: 8px;
   cursor: pointer;
+  transition: background 0.2s, transform 0.15s;
+  &:hover {
+    background: #c25308;
+    transform: translateY(-1px);
+  }
 }
 
 .clear-btn,
@@ -113,6 +134,11 @@ textarea {
   color: $muted;
   border-radius: 8px;
   cursor: pointer;
+  transition: color 0.2s, border-color 0.2s;
+  &:hover {
+    color: $dark;
+    border-color: $silver;
+  }
 }
 
 .err-box {
@@ -249,6 +275,7 @@ tbody td {
   justify-content: center;
   padding: 32px 20px;
   z-index: 500;
+  backdrop-filter: blur(4px);
 }
 
 .modal-box {
