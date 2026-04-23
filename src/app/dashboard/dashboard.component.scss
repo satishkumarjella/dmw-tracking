@@ -9,19 +9,38 @@
   align-items: center;
   gap: 8px;
   font-family: 'Share Tech Mono', monospace;
-  font-size: .68rem;
+  font-size: 0.75rem;
+  padding: 4px 8px;
+  height: auto;
   letter-spacing: .14em;
   color: #9ca3af;
   text-transform: uppercase;
 }
 
 .dot {
-  width: 7px;
-  height: 7px;
+  width: 6px;
+  height: 6px;
   border-radius: 50%;
   background: #22c55e;
   box-shadow: 0 0 8px #22c55e88;
   animation: blink 2.4s ease infinite;
+}
+
+ .dashboard-layout {
+  display: flex;
+  flex-direction: column;
+  min-height: 100%;
+}
+
+.dashboard-header-container {
+  flex-shrink: 0;
+  position: relative;
+  z-index: 10;
+}
+
+.dashboard-router-container {
+  flex-grow: 1;
+  position: relative;
 }
 
 @keyframes blink {
@@ -60,7 +79,7 @@
 
 .hero-eyebrow {
   font-family: 'Share Tech Mono', monospace;
-  font-size: .68rem;
+  font-size: 0.75rem;
   letter-spacing: .4em;
   color: var(--orange);
   text-transform: uppercase;
@@ -69,21 +88,21 @@
   animation: fadeUp .55s .05s forwards;
 }
 
-.hero h1 {
+.hero h2 {
   font-family: 'Oswald', sans-serif;
-  font-size: clamp(2.2rem, 5.5vw, 4rem);
+  font-size: 1.5rem;
   font-weight: 700;
   letter-spacing: .06em;
   color: #fff;
   line-height: 1;
   opacity: 0;
   animation: fadeUp .55s .18s forwards;
-  margin: 0;
+  margin: 0 0 4px;
 }
 
 .hero-tagline {
   margin-top: 12px;
-  font-size: 1rem;
+  font-size: 0.875rem;
   color: #7d8898;
   letter-spacing: .04em;
   opacity: 0;
@@ -116,7 +135,7 @@
 
 .modules-section-title {
   font-family: 'Share Tech Mono', monospace;
-  font-size: .65rem;
+  font-size: 0.85rem;
   letter-spacing: .35em;
   color: var(--muted);
   text-transform: uppercase;
@@ -217,7 +236,7 @@
 
 .card-num {
   font-family: 'Share Tech Mono', monospace;
-  font-size: .58rem;
+  font-size: 0.75rem;
   letter-spacing: .3em;
   color: var(--card-accent, var(--orange));
   text-transform: uppercase;
@@ -225,7 +244,7 @@
 
 .card-title {
   font-family: 'Oswald', sans-serif;
-  font-size: 1.35rem;
+  font-size: 1.1rem;
   font-weight: 600;
   letter-spacing: .03em;
   color: var(--dark);
@@ -233,9 +252,9 @@
 }
 
 .card-desc {
-  font-size: .87rem;
+  font-size: 0.8rem;
   color: var(--muted);
-  line-height: 1.55;
+  line-height: 1.4;
   flex: 1;
 }
 
@@ -249,7 +268,7 @@
   align-items: center;
   gap: 6px;
   font-family: 'Oswald', sans-serif;
-  font-size: .8rem;
+  font-size: 0.8rem;
   font-weight: 600;
   letter-spacing: .1em;
   text-transform: uppercase;
@@ -260,8 +279,8 @@
 .card:hover .card-cta { gap: 11px; }
 
 .card-cta svg {
-  width: 13px;
-  height: 13px;
+  width: 16px;
+  height: 16px;
   stroke: currentColor;
   fill: none;
   stroke-width: 2.3;

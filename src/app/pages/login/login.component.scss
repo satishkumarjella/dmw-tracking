@@ -1,0 +1,114 @@
+.login-content {
+  --background: var(--primary-bg, #f8f9fa);
+}
+
+.login-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100%;
+  padding: 20px;
+}
+
+.login-card {
+  background: var(--card-bg, #ffffff);
+  border: 1px solid var(--border-color, #e9ecef);
+  border-radius: 12px;
+  padding: 40px;
+  width: 100%;
+  max-width: 460px;
+  box-shadow: var(--shadow-lg, 0 8px 24px rgba(0,0,0,0.12));
+  text-align: left;
+}
+
+.brand-eyebrow {
+  font-family: 'Courier New', monospace;
+  font-size: 0.85rem;
+  color: var(--accent-blue, #0056b3);
+  margin-bottom: 10px;
+}
+
+.login-title {
+  font-size: 1.8rem;
+  font-weight: 800;
+  color: var(--text-primary, #1a1a1a);
+  margin: 0 0 10px 0;
+  letter-spacing: -0.5px;
+}
+
+.login-subtitle {
+  font-size: 1rem;
+  color: var(--text-secondary, #6c757d);
+  margin-bottom: 30px;
+}
+
+.form-group {
+  margin-bottom: 20px;
+
+  label {
+    display: block;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--text-primary, #1a1a1a);
+    margin-bottom: 8px;
+  }
+
+  input {
+    width: 100%;
+    padding: 12px 15px;
+    font-size: 1rem;
+    border: 1px solid var(--border-color, #e9ecef);
+    border-radius: 6px;
+    background-color: var(--primary-bg, #f8f9fa);
+    color: var(--text-primary, #1a1a1a);
+    transition: border-color var(--transition-speed, 0.3s) ease, box-shadow var(--transition-speed, 0.3s) ease;
+
+    &:focus {
+      outline: none;
+      border-color: var(--accent-blue, #0056b3);
+      box-shadow: 0 0 0 3px rgba(0, 86, 179, 0.1);
+    }
+  }
+}
+
+.btn-primary {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  background-color: var(--accent-blue, #0056b3);
+  color: #ffffff;
+  border: none;
+  border-radius: 6px;
+  padding: 14px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color var(--transition-speed, 0.3s) ease;
+  margin-top: 10px;
+
+  &:hover:not(:disabled) {
+    background-color: var(--accent-hover, #004494);
+  }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+}
+
+.brand-stripe {
+  display: flex;
+  gap: 5px;
+  margin-top: 35px;
+
+  span {
+    height: 4px;
+    width: 40px;
+    border-radius: 2px;
+  }
+  .bs-o { background-color: #ffcc00; }
+  .bs-b { background-color: #0056b3; }
+  .bs-s { background-color: #333333; }
+}

@@ -1,7 +1,5 @@
 <ion-header class="ion-no-border">
-  <div class="abm-status-page">
-    <app-header></app-header>
-  </div>
+  <app-header backText="Back"></app-header>
 </ion-header>
 
 <ion-content [fullscreen]="true">
@@ -64,7 +62,7 @@
             <div class="ic-label">Mark Number</div>
             <div class="ic-value accent">{{ poData?.mark }}</div>
           </div>
-          <div class="info-cell" style="grid-column: span 3;">
+      <div class="info-cell span-3">
             <div class="ic-label">Description</div>
             <div class="ic-value">{{ poData?.markDesc }}</div>
           </div>
@@ -113,7 +111,7 @@
                 <td class="qty-req">{{ r.reqQty }}</td>
                 <td><span class="po-tag">{{ r.po }}</span></td>
                 <td>
-                  <div class="qty-rcv" style="text-align:right">{{ r.rcv }}</div>
+              <div class="qty-rcv">{{ r.rcv }}</div>
                   <div class="row-progress">
                     <div class="rp-bar"><div class="rp-fill" [style.width.%]="getPct(r.rcv, r.reqQty)"></div></div>
                     <div class="rp-pct">{{ getPct(r.rcv, r.reqQty) }}%</div>
@@ -127,7 +125,7 @@
                 <td class="tot-label" colspan="2">Totals</td>
                 <td class="qty-req">{{ totReq }}</td>
                 <td></td>
-                <td class="qty-rcv" style="text-align:right">{{ totRcv }}</td>
+            <td class="qty-rcv">{{ totRcv }}</td>
                 <td class="qty-open" [ngClass]="totOpen > 0 ? 'has-open' : 'no-open'">{{ totOpen }}</td>
               </tr>
             </tfoot>

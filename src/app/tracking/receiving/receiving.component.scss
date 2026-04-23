@@ -17,6 +17,7 @@ $silver: #9ca3af;
 .receiving-page {
   background: $bg;
   color: $dark;
+  font-size: 0.875rem;
 }
 
 .page-band {
@@ -51,15 +52,16 @@ $silver: #9ca3af;
 }
 
 .pb-title {
-  font-size: 1.6rem;
+  font-size: 1.25rem;
+  margin: 0;
   font-weight: 700;
   color: #fff;
 }
 
 .pb-sub {
-  font-size: .62rem;
+  font-size: 0.75rem;
   letter-spacing: .28em;
-  color: $orange;
+  color: #666;
   text-transform: uppercase;
 }
 

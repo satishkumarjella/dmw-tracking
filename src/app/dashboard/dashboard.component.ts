@@ -48,6 +48,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
   }
 
   navigateToRoute(path: string) {
+    console.log(path);
     this.router.navigate(['/dashboard/' + path]);
   }
 }

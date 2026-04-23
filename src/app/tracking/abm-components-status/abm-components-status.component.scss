@@ -11,6 +11,10 @@
 
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
+.abm-status-page {
+  font-size: 0.875rem;
+}
+
 /* ══ PAGE BAND ══ */
 .page-band {
   background: var(--dark);
@@ -49,7 +53,7 @@
 .page-icon svg { width: 22px; height: 22px; stroke: #60a5fa; fill: none; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
 .page-band h2 {
   font-family: 'Oswald', sans-serif;
-  font-size: 1.7rem;
+  font-size: 1.25rem;
   font-weight: 700;
   letter-spacing: .05em;
   color: #fff;
@@ -57,9 +61,9 @@
 }
 .page-band .sub {
   font-family: 'Share Tech Mono', monospace;
-  font-size: .64rem;
+  font-size: 0.75rem;
   letter-spacing: .28em;
-  color: #60a5fa;
+  color: #666;
   text-transform: uppercase;
   margin-top: 2px;
 }
@@ -268,6 +272,10 @@ main {
   flex: 1;
   height: 1px;
   background: var(--border);
+}
+
+.info-cell.span-3 {
+  grid-column: span 3;
 }
 
 /* ── Mark # header card ── */

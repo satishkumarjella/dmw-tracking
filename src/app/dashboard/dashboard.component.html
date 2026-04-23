@@ -1,14 +1,16 @@
 <ion-header class="ion-no-border" *ngIf="isDashboardRoute">
-  <app-header [showLogo]="false" [showBack]="false">
+  <app-header [showLogo]="true" [showBack]="false">
     <div class="status-pill"><div class="dot"></div>SYSTEMS ONLINE</div>
   </app-header>
 </ion-header>
 
 <ion-content [fullscreen]="true">
+  <div class="dashboard-layout">
+    <div class="dashboard-header-container">
   <section class="hero" *ngIf="isDashboardRoute">
     <div class="hero-inner">
       <div class="hero-eyebrow">// Integrated Operations Platform</div>
-      <h1>DEARBORN PROJECT PORTAL</h1>
+      <h2>DEARBORN PROJECT PORTAL</h2>
       <p class="hero-tagline">Dearborn Mid-West Company &nbsp;&middot;&nbsp; Select a Module to Begin</p>
       <div class="brand-stripe"><span class="bs-o"></span><span class="bs-b"></span><span class="bs-s"></span></div>
     </div>
@@ -27,11 +29,11 @@
       </a>
       <a (click)="navigateToRoute('abm-status')" class="card blue">
         <div class="icon-badge"><svg viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/><line x1="12" y1="12" x2="12" y2="16"/><line x1="10" y1="14" x2="14" y2="14"/></svg></div>
-        <span class="card-num" style="color:var(--blue)">// 02 &nbsp;&middot;&nbsp; Components</span>
+        <span class="card-num">// 02 &nbsp;&middot;&nbsp; Components</span>
         <div class="card-title">ABM Components Status</div>
         <div class="card-divider"></div>
         <p class="card-desc">Real-time component inventory, assembly build module tracking, BOM compliance, and parts availability.</p>
-        <div class="card-cta" style="color:var(--blue)">Open Module <svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></div>
+        <div class="card-cta">Open Module <svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></div>
       </a>
       <a (click)="navigateToRoute('quality-inspection')" class="card">
         <div class="icon-badge"><svg viewBox="0 0 24 24"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg></div>
@@ -45,11 +47,11 @@
     <div class="grid-bottom">
       <a (click)="navigateToRoute('shipping')" class="card blue">
         <div class="icon-badge"><svg viewBox="0 0 24 24"><rect x="1" y="3" width="15" height="13" rx="1"/><path d="M16 8h4l3 3v5h-7V8Z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg></div>
-        <span class="card-num" style="color:var(--blue)">// 04 &nbsp;&middot;&nbsp; Logistics Out</span>
+        <span class="card-num">// 04 &nbsp;&middot;&nbsp; Logistics Out</span>
         <div class="card-title">Shipping</div>
         <div class="card-divider"></div>
         <p class="card-desc">Manage outbound shipments, coordinate carriers, generate BOLs, and track delivery status.</p>
-        <div class="card-cta" style="color:var(--blue)">Open Module <svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></div>
+        <div class="card-cta">Open Module <svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></div>
       </a>
       <a (click)="navigateToRoute('receiving')" class="card">
         <div class="icon-badge"><svg viewBox="0 0 24 24"><polyline points="8 17 12 21 16 17"/><line x1="12" y1="12" x2="12" y2="21"/><path d="M20.88 18.09A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.29"/></svg></div>
@@ -62,7 +64,11 @@
     </div>
   </section>
 
-  <ion-router-outlet></ion-router-outlet>
+    </div>
+    <div class="dashboard-router-container">
+      <router-outlet></router-outlet>
+    </div>
+  </div>
 </ion-content>
 
 <!-- <ion-footer class="ion-no-border">

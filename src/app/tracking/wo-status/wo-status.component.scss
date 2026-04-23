@@ -11,6 +11,7 @@
 .wo-status-page {
   background: var(--bg);
   color: var(--dark);
+  font-size: 0.875rem;
 }
 
 .page-band {
@@ -47,10 +48,13 @@
 .page-band h2 {
   color: #fff;
   margin: 0;
+  font-size: 1.25rem;
+  font-weight: 600;
 }
 
 .sub {
-  color: var(--orange);
+  color: #666;
+  font-size: 0.75rem;
   margin-top: 2px;
 }
 
