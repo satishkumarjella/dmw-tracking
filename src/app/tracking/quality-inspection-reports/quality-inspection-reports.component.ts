@@ -3,8 +3,6 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { RouterModule } from '@angular/router';
-import { IonHeader, IonContent } from '@ionic/angular/standalone';
-import { HeaderComponent } from '../../shared/header/header.component';
 
 interface ProductionRecord {
   po: string;
@@ -29,7 +27,7 @@ interface IssueItem {
 @Component({
   selector: 'app-quality-inspection-reports',
   standalone: true,
-  imports: [CommonModule, FormsModule, HeaderComponent, IonHeader, IonContent, RouterModule],
+  imports: [CommonModule, FormsModule, RouterModule],
   templateUrl: './quality-inspection-reports.component.html',
   styleUrls: ['./quality-inspection-reports.component.scss']
 })
@@ -242,4 +240,6 @@ export class QualityInspectionReportsComponent implements OnInit, OnDestroy {
   private today(): string {
     return new Date().toISOString().split('T')[0];
   }
+
+  
 }

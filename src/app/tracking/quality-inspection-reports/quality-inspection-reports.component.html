@@ -1,265 +1,227 @@
-<ion-header class="ion-no-border">
-  <app-header backText="Back"></app-header>
-</ion-header>
-
-<ion-content [fullscreen]="true">
-<div class="quality-inspection-page">
-  <div class="page-band">
-    <div class="pb-inner">
-      <div class="pb-icon">
-        <svg viewBox="0 0 24 24">
-          <path d="M9 11l3 3L22 4"></path>
-          <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path>
-        </svg>
-      </div>
-
-      <div>
-        <div class="pb-sub">Module 03</div>
-        <div class="pb-title">Quality Inspection Reports</div>
-      </div>
-    </div>
-  </div>
-
-  <main class="page-content">
-    <section class="scan-card">
-      <div class="scan-lbl">Production Order Lookup</div>
-      <div class="scan-hint">
-        Enter or scan a Production Order number to access quality inspection tools.
-      </div>
-
-      <div class="scan-row">
-        <div class="scan-wrap">
-          <svg viewBox="0 0 24 24">
-            <rect x="3" y="3" width="18" height="18" rx="2"></rect>
-            <path d="M7 7h.01M17 7h.01M7 17h.01M17 17h.01M12 12h.01"></path>
-          </svg>
-
-          <input
-            type="text"
-            [(ngModel)]="poInput"
-            placeholder="e.g. 25280-A01-01"
-            (keydown.enter)="lookup()"
-          />
-        </div>
-
-        <button class="scan-btn" type="button" (click)="lookup()">Search</button>
-        <button class="clear-btn" type="button" (click)="clearAll()">Clear</button>
-      </div>
-
-      <div class="err-box" *ngIf="showError">
+<div class="quality-page">
+  <main>
+    <div class="state-banner error" *ngIf="showError">
+      <div class="state-icon">
         <svg viewBox="0 0 24 24">
           <circle cx="12" cy="12" r="10"></circle>
           <line x1="12" y1="8" x2="12" y2="12"></line>
           <line x1="12" y1="16" x2="12.01" y2="16"></line>
         </svg>
-        <span>Production Order not found. Please verify and try again.</span>
       </div>
-    </section>
+      <div>
+        <div class="state-title">PO Not Found</div>
+        <div class="state-text">No work order found for the entered PO number.</div>
+      </div>
+    </div>
 
-    <section *ngIf="selectedRecord" class="result-panel">
-      <div class="wo-strip">
-        <div>
-          <div class="wo-eyebrow">Production Order</div>
-          <div class="wo-po">{{ selectedRecord.po }}</div>
+    <div class="empty-search-state" *ngIf="!selectedRecord && !showError">
+      <div class="empty-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+          <circle cx="11" cy="11" r="8"></circle>
+          <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+        </svg>
+      </div>
+      <h3>No Production Order Selected</h3>
+      <p>Use the global search bar in the header to find a PO and view quality inspection details.</p>
+    </div>
+
+    <section id="resultPanel" *ngIf="selectedRecord">
+      <div class="wo-strip enhanced">
+        <div class="wo-main">
+          <div>
+            <div class="wo-eyebrow">Production Order</div>
+            <div class="wo-po">{{ selectedRecord.po }}</div>
+            <div class="wo-meta">
+              <span>Quality Module</span>
+              <span>•</span>
+              <span>{{ selectedRecord.mark }}</span>
+              <span>•</span>
+              <span>{{ selectedRecord.markDesc }}</span>
+            </div>
+          </div>
+
+          <div class="wo-actions">
+            <div class="wo-badge">
+              <span class="bd"></span>
+              Active
+            </div>
+            <button class="head-action" type="button" (click)="openFillModal()">+ Fill GIR</button>
+          </div>
         </div>
 
-        <div class="wo-badge">
-          <span class="bd"></span>
-          Quality Module Active
+        <div class="quality-kpis">
+          <div class="mini-kpi">
+            <span class="kpi-label">Inspection Mark</span>
+            <strong>{{ selectedRecord.mark }}</strong>
+          </div>
+          <div class="mini-kpi">
+            <span class="kpi-label">Open Issues</span>
+            <strong>{{ issues.length }}</strong>
+          </div>
+          <div class="mini-kpi">
+            <span class="kpi-label">Paint Spec</span>
+            <strong>{{ paintPdfUrl ? 'Available' : 'Pending' }}</strong>
+          </div>
+          <div class="mini-kpi">
+            <span class="kpi-label">Critical Specs</span>
+            <strong>{{ criticalSpecsImage ? 'Loaded' : 'Pending' }}</strong>
+          </div>
         </div>
       </div>
 
       <div class="panel-body">
-        <div class="sec-lbl">Mark Identification</div>
-
-        <div class="mark-card">
-          <div class="mark-icon">
-            <svg viewBox="0 0 24 24">
-              <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path>
-              <line x1="7" y1="7" x2="7.01" y2="7"></line>
-            </svg>
-          </div>
-
-          <div>
-            <div class="mark-sub">Mark Number</div>
-            <div class="mark-num">{{ selectedRecord.mark }}</div>
-            <div class="mark-desc">{{ selectedRecord.markDesc }}</div>
-          </div>
-        </div>
-
-        <div class="sec-lbl">Inspection Tools</div>
-
-        <div class="mod-grid">
-          <div
-            class="mod-card"
-            [class.active]="activeView === 'gir'"
-            (click)="setActiveView('gir')"
-          >
-            <div class="mc-icon orange">
-              <svg viewBox="0 0 24 24">
-                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8L14 2Z"></path>
-                <polyline points="14 2 14 8 20 8"></polyline>
-                <line x1="16" y1="13" x2="8" y2="13"></line>
-                <line x1="16" y1="17" x2="8" y2="17"></line>
+        <div class="summary-grid">
+          <div class="mark-card primary">
+            <div class="mark-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                <polyline points="22 4 12 14.01 9 11.01"></polyline>
               </svg>
             </div>
-            <div class="mc-title">General Inspection Log</div>
-            <div class="mc-hint">View, download, upload or fill the DMW inspection form</div>
+            <div>
+              <div class="mark-sub">Inspection Summary</div>
+              <div class="mark-num">{{ selectedRecord.mark }}</div>
+              <div class="mark-desc">{{ selectedRecord.markDesc }}</div>
+            </div>
           </div>
 
-          <div
-            class="mod-card"
-            [class.active]="activeView === 'issue'"
-            (click)="setActiveView('issue')"
-          >
-            <div class="mc-icon red">
-              <svg viewBox="0 0 24 24">
-                <circle cx="12" cy="12" r="10"></circle>
-                <line x1="12" y1="8" x2="12" y2="12"></line>
-                <line x1="12" y1="16" x2="12.01" y2="16"></line>
-              </svg>
-            </div>
-            <div class="mc-title">Report An Issue</div>
-            <div class="mc-hint">Log non-conformances and track corrective actions</div>
+          <div class="stat-card">
+            <span class="stat-label">Issue Log</span>
+            <strong>{{ issues.length }}</strong>
+            <small>Tracked non-conformances</small>
           </div>
 
-          <div
-            class="mod-card"
-            [class.active]="activeView === 'paint'"
-            (click)="setActiveView('paint')"
-          >
-            <div class="mc-icon blue">
-              <svg viewBox="0 0 24 24">
-                <path d="M19 4H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2z"></path>
-                <path d="M9 10h6"></path>
-                <path d="M9 14h4"></path>
-              </svg>
-            </div>
-            <div class="mc-title">WO A Paint Specs</div>
-            <div class="mc-hint">Stellantis master paint specifications and lube specs</div>
+          <div class="stat-card">
+            <span class="stat-label">Reports</span>
+            <strong>2</strong>
+            <small>GIR + Paint documents</small>
           </div>
 
-          <div
-            class="mod-card"
-            [class.active]="activeView === 'specs'"
-            (click)="setActiveView('specs')"
-          >
-            <div class="mc-icon green">
-              <svg viewBox="0 0 24 24">
-                <circle cx="11" cy="11" r="8"></circle>
-                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-                <line x1="11" y1="8" x2="11" y2="14"></line>
-                <line x1="8" y1="11" x2="14" y2="11"></line>
-              </svg>
-            </div>
-            <div class="mc-title">See Critical Specs</div>
-            <div class="mc-hint">Engineering assembly drawing with critical section callouts</div>
+          <div class="stat-card">
+            <span class="stat-label">Specs</span>
+            <strong>Ready</strong>
+            <small>Critical dimensions available</small>
           </div>
         </div>
 
-        <div class="sub-view" *ngIf="activeView === 'gir'">
-          <div class="sec-lbl">General Inspection Report DMW Form</div>
+        <div class="view-tabs enhanced" role="tablist" aria-label="Quality tabs">
+          <button role="tab" [attr.aria-selected]="activeView === 'gir'" [class.active]="activeView === 'gir'"
+            (click)="setActiveView('gir')">
+            <span class="tab-title">General Inspection</span>
+            <span class="tab-sub">PDF report</span>
+          </button>
+          <button role="tab" [attr.aria-selected]="activeView === 'issue'" [class.active]="activeView === 'issue'"
+            (click)="setActiveView('issue')">
+            <span class="tab-title">Issue Log</span>
+            <span class="tab-sub">{{ issues.length }} records</span>
+          </button>
+          <button role="tab" [attr.aria-selected]="activeView === 'paint'" [class.active]="activeView === 'paint'"
+            (click)="setActiveView('paint')">
+            <span class="tab-title">Paint Specs</span>
+            <span class="tab-sub">Coating standards</span>
+          </button>
+          <button role="tab" [attr.aria-selected]="activeView === 'specs'" [class.active]="activeView === 'specs'"
+            (click)="setActiveView('specs')">
+            <span class="tab-title">Critical Specs</span>
+            <span class="tab-sub">Visual sheet</span>
+          </button>
+        </div>
 
-          <div class="gir-layout">
-            <div class="gir-sidebar">
-              <button class="gir-action" type="button">
-                <span>Download</span>
-              </button>
-
-              <label class="gir-action upload">
-                <input type="file" hidden (change)="handleUpload($event)" />
-                <span>Upload</span>
-              </label>
-
-              <button class="gir-action fill" type="button" (click)="openFillModal()">
-                <span>Fill Online</span>
-              </button>
+        <div class="view-shell" *ngIf="activeView === 'gir'">
+          <div class="hist-header">
+            <div>
+              <h3>General Inspection Report</h3>
+              <p>Review the inspection documentation and submit new forms.</p>
             </div>
+            <button class="btn-new" type="button" (click)="openFillModal()">+ Fill GIR</button>
+          </div>
 
-            <div class="gir-embed">
-              <iframe
-                *ngIf="girPdfUrl"
-                [src]="girPdfUrl"
-                title="DMW General Inspection Report"
-              ></iframe>
+          <div class="content-panel pdf-panel">
+            <div class="panel-topline">Inspection Document Viewer</div>
+            <div class="pdf-container">
+              <iframe [src]="girPdfUrl" width="100%" height="600" style="border: none;"></iframe>
             </div>
           </div>
         </div>
 
-        <div class="sub-view" *ngIf="activeView === 'issue'">
-          <div class="issue-header-row">
-            <h3>Issue Log</h3>
-            <button class="btn-create" type="button" (click)="openIssueModal()">
-              Create Issue
-            </button>
+        <div class="view-shell" *ngIf="activeView === 'issue'">
+          <div class="hist-header">
+            <div>
+              <h3>Issue Log</h3>
+              <p>Track open NCRs, non-conformances, and audit findings.</p>
+            </div>
+            <button class="btn-new" type="button" (click)="openIssueModal()">+ Log Issue</button>
           </div>
 
-          <div class="issue-table-wrap">
-            <table class="issue-tbl">
-              <thead>
-                <tr>
-                  <th>#</th>
-                  <th>Date</th>
-                  <th>Project</th>
-                  <th>PO</th>
-                  <th>Description</th>
-                  <th>Containment</th>
-                  <th>Preventative</th>
-                  <th>Impact</th>
-                  <th>Resolution</th>
-                  <th>Source</th>
-                  <th>Recorded By</th>
-                  <th>Status</th>
-                </tr>
-              </thead>
-
-              <tbody *ngIf="issues.length; else noIssues">
-                <tr *ngFor="let issue of issues; let i = index">
-                  <td>{{ i + 1 < 10 ? ('0' + (i + 1)) : (i + 1) }}</td>
-                  <td>{{ issue.date }}</td>
-                  <td>{{ issue.project }}</td>
-                  <td>{{ issue.po }}</td>
-                  <td>{{ issue.description }}</td>
-                  <td>{{ issue.containment }}</td>
-                  <td>{{ issue.preventative }}</td>
-                  <td>{{ issue.impact }}</td>
-                  <td>{{ issue.resolution }}</td>
-                  <td>{{ issue.source }}</td>
-                  <td>{{ issue.recordedBy }}</td>
-                  <td>
-                    <span class="status-pill" [ngClass]="statusClass(issue.status)">
-                      {{ issue.status }}
-                    </span>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-
-            <ng-template #noIssues>
-              <div class="empty-state">
-                No issues reported yet for this production order.
-              </div>
-            </ng-template>
+          <div class="content-panel">
+            <div class="panel-topline">Quality Exceptions Register</div>
+            <div class="tbl-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Date</th>
+                    <th>Project</th>
+                    <th>PO</th>
+                    <th>Description</th>
+                    <th>Status</th>
+                    <th>Recorded By</th>
+                  </tr>
+                </thead>
+                <tbody *ngIf="issues.length; else emptyIssues">
+                  <tr *ngFor="let issue of issues">
+                    <td class="date-cell">{{ issue.date }}</td>
+                    <td class="po-cell">{{ issue.project }}</td>
+                    <td>{{ issue.po }}</td>
+                    <td>{{ issue.description }}</td>
+                    <td>
+                      <span class="status-badge" [ngClass]="statusClass(issue.status)">{{ issue.status }}</span>
+                    </td>
+                    <td>{{ issue.recordedBy }}</td>
+                  </tr>
+                </tbody>
+                <ng-template #emptyIssues>
+                  <tbody>
+                    <tr>
+                      <td colspan="6">
+                        <div class="empty-state">No issues logged yet. Click <strong>+ Log Issue</strong> to record an
+                          issue.</div>
+                      </td>
+                    </tr>
+                  </tbody>
+                </ng-template>
+              </table>
+            </div>
           </div>
         </div>
 
-        <div class="sub-view" *ngIf="activeView === 'paint'">
-          <div class="sec-lbl">WO A Paint Specs</div>
-          <div class="pdf-embed">
-            <iframe
-              *ngIf="paintPdfUrl"
-              [src]="paintPdfUrl"
-              title="WO A Paint Specs"
-            ></iframe>
+        <div class="view-shell" *ngIf="activeView === 'paint'">
+          <div class="hist-header">
+            <div>
+              <h3>Paint Specifications</h3>
+              <p>Review coating requirements and paint procedures.</p>
+            </div>
+          </div>
+
+          <div class="content-panel pdf-panel">
+            <div class="panel-topline">Coating Document Viewer</div>
+            <div class="pdf-container">
+              <iframe [src]="paintPdfUrl" width="100%" height="600" style="border: none;"></iframe>
+            </div>
           </div>
         </div>
 
-        <div class="sub-view" *ngIf="activeView === 'specs'">
-          <div class="sec-lbl">Critical Specifications</div>
-          <div class="specs-img-wrap">
-            <img [src]="criticalSpecsImage" alt="Critical specs drawing" />
-            <div class="specs-caption">
-              Critical Section Callouts - {{ selectedRecord.mark }}
+        <div class="view-shell" *ngIf="activeView === 'specs'">
+          <div class="hist-header">
+            <div>
+              <h3>Critical Specifications</h3>
+              <p>View critical dimensions and tolerances.</p>
+            </div>
+          </div>
+
+          <div class="content-panel">
+            <div class="panel-topline">Critical Specification Sheet</div>
+            <div class="img-container center">
+              <img [src]="criticalSpecsImage" alt="Critical Specs" />
             </div>
           </div>
         </div>
@@ -270,70 +232,74 @@
   <div class="modal-overlay" *ngIf="showFillModal" (click)="closeFillModalByOverlay($event)">
     <div class="modal-box">
       <button class="modal-close" type="button" (click)="closeFillModal()">×</button>
-      <div class="modal-title">Fill Inspection Form Online</div>
+      <div class="modal-title">Fill General Inspection Report</div>
+      <div class="modal-sub">Complete the quality inspection form details below.</div>
 
       <div class="form-grid">
         <div class="form-field">
-          <label>Job No.</label>
-          <input type="text" [(ngModel)]="fillForm.jobNo" />
+          <label>Job No</label>
+          <input type="text" [(ngModel)]="fillForm.jobNo" readonly />
         </div>
-
         <div class="form-field">
-          <label>W.O.</label>
-          <input type="text" [(ngModel)]="fillForm.wo" />
+          <label>Work Order / Assembly</label>
+          <input type="text" [(ngModel)]="fillForm.wo" readonly />
         </div>
+      </div>
 
+      <div class="form-grid mt-14">
         <div class="form-field">
           <label>Mark</label>
-          <input type="text" [(ngModel)]="fillForm.mark" />
+          <input type="text" [(ngModel)]="fillForm.mark" readonly />
         </div>
-
         <div class="form-field">
-          <label>Status</label>
+          <label>Status <span class="req">*</span></label>
           <select [(ngModel)]="fillForm.status">
-            <option>OK</option>
-            <option>Reject</option>
+            <option value="OK">OK</option>
+            <option value="Reject">Reject</option>
+            <option value="Rework">Rework</option>
           </select>
         </div>
+      </div>
 
+      <div class="form-grid mt-14">
         <div class="form-field">
           <label>Quantity</label>
           <input type="number" [(ngModel)]="fillForm.quantity" />
         </div>
-
         <div class="form-field">
           <label>Of</label>
           <input type="number" [(ngModel)]="fillForm.of" />
         </div>
       </div>
 
-      <div class="form-divider"></div>
-
-      <div class="form-grid full">
+      <div class="form-grid mt-14 single-col">
         <div class="form-field">
-          <label>Product Type</label>
-          <input type="text" [(ngModel)]="fillForm.productType" />
+          <label>Product Type / Description</label>
+          <input type="text" [(ngModel)]="fillForm.productType" readonly />
         </div>
+      </div>
 
+      <div class="form-grid mt-14 single-col">
         <div class="form-field">
           <label>Special Instructions</label>
-          <textarea [(ngModel)]="fillForm.instructions"></textarea>
+          <textarea rows="3" [(ngModel)]="fillForm.instructions"></textarea>
         </div>
+      </div>
 
+      <div class="form-grid mt-14">
         <div class="form-field">
-          <label>Inspector Name</label>
+          <label>Inspector Name <span class="req">*</span></label>
           <input type="text" [(ngModel)]="fillForm.inspectorName" />
         </div>
-
         <div class="form-field">
-          <label>Date</label>
+          <label>Date <span class="req">*</span></label>
           <input type="date" [(ngModel)]="fillForm.date" />
         </div>
       </div>
 
       <div class="form-actions">
         <button class="btn-cancel" type="button" (click)="closeFillModal()">Cancel</button>
-        <button class="btn-submit" type="button" (click)="submitFill()">Submit Report</button>
+        <button class="btn-submit" type="button" (click)="submitFill()">Submit</button>
       </div>
     </div>
   </div>
@@ -341,82 +307,63 @@
   <div class="modal-overlay" *ngIf="showIssueModal" (click)="closeIssueModalByOverlay($event)">
     <div class="modal-box">
       <button class="modal-close" type="button" (click)="closeIssueModal()">×</button>
-      <div class="modal-title">Create New Issue / Non-Conformance</div>
+      <div class="modal-title">Log New Issue</div>
+      <div class="modal-sub">Record a non-conformance or quality issue.</div>
 
       <div class="form-grid">
         <div class="form-field">
-          <label>Date</label>
+          <label>Date <span class="req">*</span></label>
           <input type="date" [(ngModel)]="issueForm.date" />
         </div>
-
         <div class="form-field">
           <label>Project</label>
-          <input type="text" [(ngModel)]="issueForm.project" />
+          <input type="text" [(ngModel)]="issueForm.project" readonly />
         </div>
+      </div>
 
+      <div class="form-grid mt-14">
         <div class="form-field">
-          <label>Production Order</label>
-          <input type="text" [(ngModel)]="issueForm.po" />
+          <label>PO Number</label>
+          <input type="text" [(ngModel)]="issueForm.po" readonly />
         </div>
+        <div class="form-field">
+          <label>Source</label>
+          <input type="text" [(ngModel)]="issueForm.source" placeholder="e.g. Audit, Inspection" />
+        </div>
+      </div>
 
+      <div class="form-grid mt-14 single-col">
+        <div class="form-field">
+          <label>Issue Description <span class="req">*</span></label>
+          <textarea rows="3" [(ngModel)]="issueForm.description"></textarea>
+        </div>
+      </div>
+
+      <div class="form-grid mt-14">
+        <div class="form-field">
+          <label>Containment Action</label>
+          <textarea rows="2" [(ngModel)]="issueForm.containment"></textarea>
+        </div>
+        <div class="form-field">
+          <label>Preventative Action</label>
+          <textarea rows="2" [(ngModel)]="issueForm.preventative"></textarea>
+        </div>
+      </div>
+
+      <div class="form-grid mt-14">
         <div class="form-field">
           <label>Impact</label>
-          <select [(ngModel)]="issueForm.impact">
-            <option value="">Select</option>
-            <option>Low</option>
-            <option>Medium</option>
-            <option>High</option>
-            <option>Critical</option>
-          </select>
+          <input type="text" [(ngModel)]="issueForm.impact" placeholder="e.g. High, Medium, Low" />
         </div>
-      </div>
-
-      <div class="form-grid full">
         <div class="form-field">
-          <label>Issue Description</label>
-          <textarea [(ngModel)]="issueForm.description"></textarea>
-        </div>
-
-        <div class="form-field">
-          <label>Issue Containment</label>
-          <textarea [(ngModel)]="issueForm.containment"></textarea>
-        </div>
-
-        <div class="form-field">
-          <label>Suggested Preventative Action</label>
-          <textarea [(ngModel)]="issueForm.preventative"></textarea>
-        </div>
-
-        <div class="form-field">
-          <label>Resolution</label>
-          <textarea [(ngModel)]="issueForm.resolution"></textarea>
-        </div>
-      </div>
-
-      <div class="form-grid">
-        <div class="form-field">
-          <label>Source of Non-Conformance</label>
-          <select [(ngModel)]="issueForm.source">
-            <option value="">Select</option>
-            <option>Design</option>
-            <option>Material</option>
-            <option>Process</option>
-            <option>Supplier</option>
-            <option>Human Error</option>
-            <option>Equipment</option>
-            <option>Other</option>
-          </select>
-        </div>
-
-        <div class="form-field">
-          <label>Recorded By</label>
-          <input type="text" [(ngModel)]="issueForm.recordedBy" />
+          <label>Recorded By <span class="req">*</span></label>
+          <input type="text" [(ngModel)]="issueForm.recordedBy" placeholder="Full name" />
         </div>
       </div>
 
       <div class="form-actions">
         <button class="btn-cancel" type="button" (click)="closeIssueModal()">Cancel</button>
-        <button class="btn-submit danger" type="button" (click)="submitIssue()">Submit Issue</button>
+        <button class="btn-submit" type="button" (click)="submitIssue()">Log Issue</button>
       </div>
     </div>
   </div>
@@ -425,4 +372,3 @@
     {{ toastMessage }}
   </div>
 </div>
-</ion-content>

@@ -2,8 +2,8 @@ import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
-import { IonHeader, IonContent } from "@ionic/angular/standalone";
-import { HeaderComponent } from '../../shared/header/header.component';
+import { HeaderComponent } from 'src/app/shared/header/header.component';
+import { IonHeader, IonContent } from '@ionic/angular/standalone';
 
 interface ReceiptEntry {
   date: string;
@@ -22,7 +22,7 @@ interface ReceiptEntry {
 @Component({
   selector: 'app-receiving',
   standalone: true,
-  imports: [IonHeader, CommonModule, FormsModule, HeaderComponent, IonContent, RouterModule],
+  imports: [IonHeader, CommonModule, FormsModule, RouterModule, HeaderComponent, IonContent],
   templateUrl: './receiving.component.html',
   styleUrls: ['./receiving.component.scss']
 })
@@ -58,7 +58,7 @@ export class ReceivingComponent {
     picUrl: ''
   };
 
-  scanPo(): void {
+  lookup(): void {
     if (!this.poInput.trim()) {
       this.showErrorMessage('Please enter or scan a Production Order number.');
       return;

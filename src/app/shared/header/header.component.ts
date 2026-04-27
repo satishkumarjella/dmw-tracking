@@ -22,8 +22,6 @@ import { RouterModule } from '@angular/router';
           </svg>
           <span>{{ backText }}</span>
         </a>
-        
-        <div class="clock-box" *ngIf="showClock">{{ currentTime | date:clockFormat }}</div>
       </div>
     </header>
   `,

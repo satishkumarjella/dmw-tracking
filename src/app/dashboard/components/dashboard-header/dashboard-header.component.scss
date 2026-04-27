@@ -1,0 +1,164 @@
+:host {
+  --accent-blue: #38bdf8;
+  --glass-bg: rgba(15, 23, 42, 0.8);
+  --glass-border: rgba(255, 255, 255, 0.1);
+  --text-primary: #f8fafc;
+  --text-muted: #64748b;
+}
+
+.portal-header {
+  .top-app-header {
+    --background: #0f172a;
+    height: 44px; // Shrink header height
+    border-bottom: 1px solid var(--glass-border);
+  }
+}
+
+.header-icon-btn {
+  --color: var(--text-muted);
+  width: 36px;
+  height: 36px;
+}
+
+/* Optimized Module Bar */
+.module-top-bar.compact-bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 12px;
+  background: #0b0f1a;
+  border-bottom: 1px solid var(--glass-border);
+
+  .glass-card {
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    border-radius: 10px;
+    backdrop-filter: blur(8px);
+    display: flex;
+    align-items: center;
+    padding: 4px 10px;
+    height: 38px; // Fixed compact height
+  }
+}
+
+/* Search Area Adjustments */
+.compact-search {
+  flex: 1.5;
+  
+  .search-controls {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    gap: 8px;
+  }
+
+  .status-dot {
+    width: 6px;
+    height: 6px;
+    background: #22c55e;
+    border-radius: 50%;
+    box-shadow: 0 0 6px #22c55e;
+    flex-shrink: 0;
+  }
+}
+
+.cyber-searchbar-mini {
+  --background: transparent;
+  --border-radius: 0;
+  --box-shadow: none;
+  --color: var(--text-primary);
+  --placeholder-font-size: 12px;
+  padding: 0;
+  height: 30px;
+
+  &::part(container) {
+    background: transparent;
+    border: none;
+    min-height: 30px;
+  }
+  
+  &::part(search-icon) { width: 14px; }
+}
+
+.mini-scan-btn {
+  background: rgba(56, 189, 248, 0.15);
+  border: none;
+  border-radius: 6px;
+  color: var(--accent-blue);
+  width: 28px;
+  height: 26px;
+  display: grid;
+  place-items: center;
+  font-size: 16px;
+}
+
+/* Info Area Adjustments */
+.compact-info {
+  flex: 1;
+  justify-content: space-between;
+
+  .info-text {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    overflow: hidden;
+  }
+
+  .mini-title {
+    margin: 0;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text-primary);
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+  }
+
+  .mini-badge {
+    font-size: 9px;
+    background: var(--accent-blue);
+    color: #0f172a;
+    padding: 1px 4px;
+    border-radius: 4px;
+    font-weight: 800;
+  }
+
+  .mini-info-btn {
+    background: transparent;
+    border: none;
+    color: var(--text-muted);
+    font-size: 18px;
+    display: flex;
+    padding: 0;
+  }
+}
+
+/* Popover Mini Styling */
+::ng-deep .custom-portal-popover::part(content) {
+  --background: #1e293b;
+  border-radius: 12px;
+  width: 180px;
+}
+
+::ng-deep .custom-portal-popover ion-item {
+  --min-height: 40px;
+  --padding-start: 10px;
+  font-size: 13px;
+}
+
+.item-icon-box {
+  font-size: 18px;
+  margin-right: 8px;
+}
+
+@media (max-width: 600px) {
+  .module-top-bar.compact-bar {
+    flex-direction: column;
+    height: auto;
+    padding: 8px;
+
+    .glass-card {
+      width: 100%;
+    }
+  }
+}

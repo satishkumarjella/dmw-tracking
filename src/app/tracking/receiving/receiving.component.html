@@ -1,88 +1,105 @@
-<ion-header class="ion-no-border">
-  <app-header backText="Back"></app-header>
-</ion-header>
-
-<ion-content [fullscreen]="true">
-  <div class="receiving-page">
-  <section class="page-band">
-    <div class="pb-inner">
-      <div class="pb-icon">
-        <svg viewBox="0 0 24 24">
-          <polyline points="8 17 12 21 16 17"></polyline>
-          <line x1="12" y1="12" x2="12" y2="21"></line>
-          <path d="M20.88 18.09A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.29"></path>
-        </svg>
-      </div>
-      <div>
-        <div class="pb-title">Receiving</div>
-        <div class="pb-sub">DMW Portal</div>
-      </div>
-    </div>
-  </section>
-
+<div class="receiving-page">
   <main>
-    <section class="scan-card">
-      <div class="scan-lbl">Scan / Enter Production Order</div>
-      <div class="scan-hint">Enter PO number to view receiving details and log receipts.</div>
-
-      <div class="scan-row">
-        <div class="scan-wrap">
-          <input
-            id="poInput"
-            type="text"
-            [(ngModel)]="poInput"
-            placeholder="Scan or type PO number" />
-        </div>
-
-        <button class="scan-btn" type="button" (click)="scanPo()">Scan</button>
-        <button class="clear-btn" type="button" (click)="clearSearch()">Clear</button>
-      </div>
-
-      <div class="err-box" *ngIf="showError">
+    <div class="state-banner error" *ngIf="showError">
+      <div class="state-icon">
         <svg viewBox="0 0 24 24">
           <circle cx="12" cy="12" r="10"></circle>
           <line x1="12" y1="8" x2="12" y2="12"></line>
           <line x1="12" y1="16" x2="12.01" y2="16"></line>
         </svg>
-        {{ errorMessage }}
       </div>
-    </section>
+      <div>
+        <div class="state-title">Lookup Error</div>
+        <div class="state-text">{{ errorMessage }}</div>
+      </div>
+    </div>
+
+    <div class="empty-search-state" *ngIf="!showResultPanel && !showError">
+      <div class="empty-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+          <circle cx="11" cy="11" r="8"></circle>
+          <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+        </svg>
+      </div>
+      <h3>No Production Order Selected</h3>
+      <p>Use the global search bar in the header to find a PO and view receiving details.</p>
+    </div>
 
     <section id="resultPanel" *ngIf="showResultPanel">
-      <div class="wo-strip">
-        <div>
-          <div class="wo-eyebrow">Production Order</div>
-          <div class="wo-po">{{ currentPo }}</div>
+      <div class="wo-strip enhanced">
+        <div class="wo-main">
+          <div>
+            <div class="wo-eyebrow">Production Order</div>
+            <div class="wo-po">{{ currentPo }}</div>
+            <div class="wo-meta">
+              <span>Receiving Module</span>
+              <span>•</span>
+              <span>Inbound Tracking</span>
+              <span>•</span>
+              <span>{{ receipts.length }} receipt(s)</span>
+            </div>
+          </div>
+
+          <div class="wo-actions">
+            <div class="wo-badge">
+              <span class="bd"></span>
+              Active
+            </div>
+            <button class="head-action" type="button" (click)="openModal()">+ New Receipt</button>
+          </div>
         </div>
 
-        <div class="wo-badge">
-          <span class="bd"></span>
-          Active
+        <div class="receiving-kpis">
+          <div class="mini-kpi amber">
+            <span class="kpi-label">Qty Required</span>
+            <strong>{{ currentTotalQty }}</strong>
+          </div>
+          <div class="mini-kpi green">
+            <span class="kpi-label">Qty Received</span>
+            <strong>{{ totalReceived }}</strong>
+          </div>
+          <div class="mini-kpi red">
+            <span class="kpi-label">Qty Open</span>
+            <strong>{{ totalOpen }}</strong>
+          </div>
+          <div class="mini-kpi blue">
+            <span class="kpi-label">Receipts</span>
+            <strong>{{ receipts.length }}</strong>
+          </div>
         </div>
       </div>
 
       <div class="panel-body">
-        <div class="mark-card">
-          <div class="mark-icon">✓</div>
-          <div>
-            <div class="mark-sub">Receiving Summary</div>
-            <div class="mark-num">{{ currentPo }}</div>
-            <div class="mark-desc">Track inbound deliveries and maintain receipt history.</div>
+        <div class="summary-grid">
+          <div class="mark-card primary">
+            <div class="mark-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M20 7L9 18l-5-5"></path>
+              </svg>
+            </div>
+            <div>
+              <div class="mark-sub">Receiving Summary</div>
+              <div class="mark-num">{{ currentPo }}</div>
+              <div class="mark-desc">Track inbound deliveries, receipt documents, and remaining open quantity for this production order.</div>
+            </div>
           </div>
-        </div>
 
-        <div class="chips">
-          <div class="chip amber">
-            <div class="c-lbl">Qty Required</div>
-            <div class="c-val">{{ currentTotalQty }}</div>
+          <div class="stat-card">
+            <span class="stat-label">Required</span>
+            <strong>{{ currentTotalQty }}</strong>
+            <small>Total expected quantity</small>
           </div>
-          <div class="chip green">
-            <div class="c-lbl">Qty Received</div>
-            <div class="c-val">{{ totalReceived }}</div>
+
+          <div class="stat-card">
+            <span class="stat-label">Received</span>
+            <strong>{{ totalReceived }}</strong>
+            <small>Inbound quantity logged</small>
           </div>
-          <div class="chip red">
-            <div class="c-lbl">Qty Open</div>
-            <div class="c-val">{{ totalOpen }}</div>
+
+          <div class="stat-card">
+            <span class="stat-label">Open</span>
+            <strong>{{ totalOpen }}</strong>
+            <small>Remaining to receive</small>
           </div>
         </div>
 
@@ -95,70 +112,87 @@
           <button class="btn-new" type="button" (click)="openModal()">+ New Receipt</button>
         </div>
 
-        <div class="tbl-wrap">
-          <table>
-            <thead>
-              <tr>
-                <th>#</th>
-                <th>Date Received</th>
-                <th>Truck # / RXO / Shipment #</th>
-                <th>Production Order #</th>
-                <th class="right">QTY Required</th>
-                <th class="right">QTY Received</th>
-                <th class="right">QTY Open</th>
-                <th>Received By</th>
-                <th class="center">Receipt Docs</th>
-                <th class="center">Picture</th>
-              </tr>
-            </thead>
+        <div class="content-panel">
+          <div class="panel-topline">Inbound Receipt Register</div>
 
-            <tbody *ngIf="receipts.length; else emptyState">
-              <tr *ngFor="let r of receipts; let i = index">
-                <td>{{ receipts.length - i }}</td>
-                <td class="date-cell">{{ fmtDate(r.date) }}</td>
-                <td><span class="truck-cell">{{ r.truck }}</span></td>
-                <td class="po-cell">{{ r.po }}</td>
-                <td class="qty-req right">{{ r.qtyReq }}</td>
-                <td>
-                  <div class="qty-rcv right">{{ r.qtyRcv }}</div>
-                  <div class="prog-wrap">
-                    <div class="prog-bar">
-                      <div class="prog-fill" [style.width.%]="getProgressPercent(r)"></div>
+          <div class="table-toolbar">
+            <div class="toolbar-meta">
+              <span class="meta-pill live">Live status</span>
+              <span class="meta-pill neutral">{{ receipts.length }} entries</span>
+            </div>
+          </div>
+
+          <div class="tbl-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>Date Received</th>
+                  <th>Truck # / RXO / Shipment #</th>
+                  <th>Production Order #</th>
+                  <th class="right">QTY Required</th>
+                  <th class="right">QTY Received</th>
+                  <th class="right">QTY Open</th>
+                  <th>Received By</th>
+                  <th class="center">Receipt Docs</th>
+                  <th class="center">Picture</th>
+                </tr>
+              </thead>
+
+              <tbody *ngIf="receipts.length; else emptyState">
+                <tr *ngFor="let r of receipts; let i = index">
+                  <td>{{ receipts.length - i }}</td>
+                  <td class="date-cell">{{ fmtDate(r.date) }}</td>
+                  <td><span class="truck-cell">{{ r.truck }}</span></td>
+                  <td class="po-cell">{{ r.po }}</td>
+                  <td class="qty-req right">{{ r.qtyReq }}</td>
+                  <td>
+                    <div class="qty-rcv right">{{ r.qtyRcv }}</div>
+                    <div class="prog-wrap">
+                      <div class="prog-bar">
+                        <div class="prog-fill" [style.width.%]="getProgressPercent(r)"></div>
+                      </div>
+                      <div class="prog-pct">{{ getProgressPercent(r) }}%</div>
                     </div>
-                    <div class="prog-pct">{{ getProgressPercent(r) }}%</div>
-                  </div>
-                </td>
-                <td class="qty-open right" [ngClass]="r.qtyOpen > 0 ? 'has-open' : 'no-open'">
-                  {{ r.qtyOpen }}
-                </td>
-                <td>{{ r.by }}</td>
-                <td class="center">
-                  <a *ngIf="r.docUrl; else noDoc" class="file-link doc" [href]="r.docUrl" [download]="r.docName">
-                    {{ r.docName }}
-                  </a>
-                  <ng-template #noDoc><span class="no-file">No doc</span></ng-template>
-                </td>
-                <td class="center">
-                  <a *ngIf="r.picUrl; else noPic" class="file-link pic" [href]="r.picUrl" target="_blank">
-                    {{ r.picName }}
-                  </a>
-                  <ng-template #noPic><span class="no-file">No image</span></ng-template>
-                </td>
-              </tr>
-            </tbody>
-          </table>
+                  </td>
+                  <td class="qty-open right" [ngClass]="r.qtyOpen > 0 ? 'has-open' : 'no-open'">
+                    {{ r.qtyOpen }}
+                  </td>
+                  <td>{{ r.by }}</td>
+                  <td class="center">
+                    <a *ngIf="r.docUrl; else noDoc"
+                       class="file-link doc"
+                       [href]="r.docUrl"
+                       [download]="r.docName">
+                      {{ r.docName }}
+                    </a>
+                    <ng-template #noDoc><span class="no-file">No doc</span></ng-template>
+                  </td>
+                  <td class="center">
+                    <a *ngIf="r.picUrl; else noPic"
+                       class="file-link pic"
+                       [href]="r.picUrl"
+                       target="_blank">
+                      {{ r.picName }}
+                    </a>
+                    <ng-template #noPic><span class="no-file">No image</span></ng-template>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
 
-          <ng-template #emptyState>
-            <tbody>
-              <tr>
-                <td colspan="10">
-                  <div class="empty-state">
-                    No receipts recorded yet. Click <strong>+ New Receipt</strong> to log the first delivery.
-                  </div>
-                </td>
-              </tr>
-            </tbody>
-          </ng-template>
+            <ng-template #emptyState>
+              <tbody>
+                <tr>
+                  <td colspan="10">
+                    <div class="empty-state">
+                      No receipts recorded yet. Click <strong>+ New Receipt</strong> to log the first delivery.
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </ng-template>
+          </div>
         </div>
       </div>
     </section>
@@ -173,53 +207,53 @@
 
       <div class="form-grid">
         <div class="form-field">
-          <label>Date Received <span class="req">*</span></label>
+         <label>Date Received <span class="req">*</span></label>
           <input type="date" [(ngModel)]="form.date" />
         </div>
 
         <div class="form-field">
-          <label>Truck # / RXO / Shipment # <span class="req">*</span></label>
+         <label>Truck # / RXO / Shipment # <span class="req">*</span></label>
           <input type="text" [(ngModel)]="form.truck" placeholder="e.g. RXO-78421 or TRK-12" />
         </div>
       </div>
 
       <div class="form-grid mt-14">
         <div class="form-field">
-          <label>Production Order #</label>
+         <label>Production Order #</label>
           <input type="text" [(ngModel)]="form.po" readonly />
         </div>
 
         <div class="form-field">
-          <label>Received By <span class="req">*</span></label>
+         <label>Received By <span class="req">*</span></label>
           <input type="text" [(ngModel)]="form.by" placeholder="Full name" />
         </div>
       </div>
 
       <div class="form-grid three mt-14">
         <div class="form-field">
-          <label>QTY Required</label>
+         <label>QTY Required</label>
           <input type="number" [(ngModel)]="form.qtyReq" readonly />
         </div>
 
         <div class="form-field">
-          <label>QTY Received <span class="req">*</span></label>
+         <label>QTY Received <span class="req">*</span></label>
           <input type="number" [(ngModel)]="form.qtyRcv" (input)="calcOpen()" min="0" />
         </div>
 
         <div class="form-field">
-          <label>QTY Open (auto)</label>
+         <label>QTY Open (auto)</label>
           <input type="number" [(ngModel)]="form.qtyOpen" readonly />
         </div>
       </div>
 
       <div class="form-grid mt-14">
         <div class="form-field">
-          <label>Upload Receipt Docs</label>
+         <label>Upload Receipt Docs</label>
           <input type="file" accept=".pdf,.doc,.docx,.xls,.xlsx" (change)="onFileChange($event, 'doc')" />
         </div>
 
         <div class="form-field">
-          <label>Upload Picture</label>
+         <label>Upload Picture</label>
           <input type="file" accept=".jpg,.jpeg,.png,.webp" (change)="onFileChange($event, 'pic')" />
         </div>
       </div>
@@ -235,4 +269,3 @@
     {{ toastMessage }}
   </div>
 </div>
-</ion-content>

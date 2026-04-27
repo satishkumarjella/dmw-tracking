@@ -1,0 +1,99 @@
+<section class="modules-section" [class.compact]="!isDashboardRoute">
+  <div class="sidebar-toggle ion-justify-content-center" *ngIf="!isDashboardRoute">
+    <div class="sidebar-logo" *ngIf="!isSidebarCollapsed">
+      <img src="assets/logo.png" alt="DMW Logo" />
+    </div>
+    <ion-button fill="clear" color="light" (click)="toggleSidebar.emit()" size="medium">
+      <ion-icon slot="icon-only" [name]="isSidebarCollapsed ? 'menu-outline' : 'chevron-back-outline'"></ion-icon>
+    </ion-button>
+  </div>
+
+  <div class="grid-bottom">
+    <a (click)="navigate.emit('wo-status')" class="card" [class.active]="activeModule === 'wo-status'">
+      <div class="icon-badge"><svg viewBox="0 0 24 24">
+          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8L14 2Z" />
+          <polyline points="14 2 14 8 20 8" />
+          <line x1="16" y1="13" x2="8" y2="13" />
+          <line x1="16" y1="17" x2="8" y2="17" />
+          <polyline points="10 9 9 9 8 9" />
+        </svg>
+        <span class="card-num">Work Orders</span>
+      </div>
+      <div class="card-title">WO Status</div>
+      <div class="card-divider"></div>
+      <p class="card-desc">Track open and closed work orders, monitor production milestones, and manage job progress in
+        real time.</p>
+      <div class="card-cta">Open Module <svg viewBox="0 0 24 24">
+          <line x1="5" y1="12" x2="19" y2="12" />
+          <polyline points="12 5 19 12 12 19" />
+        </svg></div>
+    </a>
+    <a (click)="navigate.emit('abm-status')" class="card blue" [class.active]="activeModule === 'abm-status'">
+      <div class="icon-badge"><svg viewBox="0 0 24 24">
+          <rect x="2" y="7" width="20" height="14" rx="2" />
+          <path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2" />
+          <line x1="12" y1="12" x2="12" y2="16" />
+          <line x1="10" y1="14" x2="14" y2="14" />
+        </svg>
+        <span class="card-num"> Components</span>
+      </div>
+      <div class="card-title">ABM Components Status</div>
+      <div class="card-divider"></div>
+      <p class="card-desc">Real-time component inventory, assembly build module tracking, BOM compliance, and parts
+        availability.</p>
+      <div class="card-cta">Open Module <svg viewBox="0 0 24 24">
+          <line x1="5" y1="12" x2="19" y2="12" />
+          <polyline points="12 5 19 12 12 19" />
+        </svg></div>
+    </a>
+    <a (click)="navigate.emit('quality-inspection')" class="card"
+      [class.active]="activeModule === 'quality-inspection'">
+      <div class="icon-badge"><svg viewBox="0 0 24 24">
+          <path d="M9 11l3 3L22 4" />
+          <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11" />
+        </svg>
+        <span class="card-num">Quality</span>
+      </div>
+      <div class="card-title">Quality Inspection Reports</div>
+      <div class="card-divider"></div>
+      <p class="card-desc">Inspection logs, NCR reports, PPAP records, first-article documentation, and audit trail
+        history.</p>
+      <div class="card-cta">Open Module <svg viewBox="0 0 24 24">
+          <line x1="5" y1="12" x2="19" y2="12" />
+          <polyline points="12 5 19 12 12 19" />
+        </svg></div>
+    </a>
+    <a (click)="navigate.emit('shipping')" class="card blue" [class.active]="activeModule === 'shipping'">
+      <div class="icon-badge"><svg viewBox="0 0 24 24">
+          <rect x="1" y="3" width="15" height="13" rx="1" />
+          <path d="M16 8h4l3 3v5h-7V8Z" />
+          <circle cx="5.5" cy="18.5" r="2.5" />
+          <circle cx="18.5" cy="18.5" r="2.5" />
+        </svg>
+        <span class="card-num">Logistics Out</span>
+      </div>
+      <div class="card-title">Shipping</div>
+      <div class="card-divider"></div>
+      <p class="card-desc">Manage outbound shipments, coordinate carriers, generate BOLs, and track delivery status.</p>
+      <div class="card-cta">Open Module <svg viewBox="0 0 24 24">
+          <line x1="5" y1="12" x2="19" y2="12" />
+          <polyline points="12 5 19 12 12 19" />
+        </svg></div>
+    </a>
+    <a (click)="navigate.emit('receiving')" class="card" [class.active]="activeModule === 'receiving'">
+      <div class="icon-badge"><svg viewBox="0 0 24 24">
+          <polyline points="8 17 12 21 16 17" />
+          <line x1="12" y1="12" x2="12" y2="21" />
+          <path d="M20.88 18.09A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.29" />
+        </svg><span class="card-num">Logistics In</span></div>
+      <div class="card-title">Receiving</div>
+      <div class="card-divider"></div>
+      <p class="card-desc">Process inbound receipts, verify purchase orders, log discrepancies, and confirm dock
+        deliveries.</p>
+      <div class="card-cta">Open Module <svg viewBox="0 0 24 24">
+          <line x1="5" y1="12" x2="19" y2="12" />
+          <polyline points="12 5 19 12 12 19" />
+        </svg></div>
+    </a>
+  </div>
+</section>

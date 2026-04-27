@@ -2,8 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
-import { IonHeader, IonContent } from '@ionic/angular/standalone';
-import { HeaderComponent } from '../../shared/header/header.component';
+import { IonContent } from "@ionic/angular/standalone";
 
 interface ShippingRecord {
   mark: string;
@@ -31,7 +30,7 @@ interface ShipmentItem {
   templateUrl: './shipping.component.html',
   styleUrls: ['./shipping.component.scss'],
   standalone: true,
-  imports: [CommonModule, FormsModule, HeaderComponent, IonHeader, IonContent, RouterModule]
+  imports: [IonContent, CommonModule, FormsModule, RouterModule]
 })
 export class ShippingComponent implements OnInit, OnDestroy {
   currentYear = new Date().getFullYear();

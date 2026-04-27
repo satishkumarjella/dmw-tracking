@@ -1,138 +1,169 @@
-<ion-header class="ion-no-border">
-  <app-header backText="Back"></app-header>
-</ion-header>
-
-<ion-content [fullscreen]="true">
-  <div class="abm-status-page">
-  <section class="page-band">
-    <div class="page-band-inner">
-      <div class="page-icon">
-        <svg viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/><line x1="12" y1="12" x2="12" y2="16"/><line x1="10" y1="14" x2="14" y2="14"/></svg>
-      </div>
-      <div>
-        <h2>ABM COMPONENTS STATUS</h2>
-        <div class="sub">DMW PRODUCTION TRACKING</div>
-      </div>
-    </div>
-  </section>
-
+<div class="abm-status-page">
   <main>
-    <section class="scan-card">
-      <div class="scan-label">Production Order Lookup</div>
-      <div class="scan-hint">Enter or scan a Production Order number to view ABM component requirements and receiving status.</div>
-      
-      <div class="scan-row">
-        <div class="scan-input-wrap">
-          <svg viewBox="0 0 24 24">
-            <circle cx="11" cy="11" r="8"></circle>
-            <path d="m21 21-4.35-4.35"></path>
-          </svg>
-          <input id="poInput" type="text" [(ngModel)]="poInput" (keydown.enter)="lookup()" placeholder="e.g. 25280-A01-01" autocomplete="off" spellcheck="false"/>
-        </div>
-        <button class="scan-btn" type="button" (click)="lookup()">Search</button>
-        <button class="clear-btn" type="button" (click)="clearAll()">Clear</button>
-      </div>
-      
-      <div class="msg-box error" *ngIf="hasError">
+    <div class="state-banner error" *ngIf="hasError">
+      <div class="state-icon">
         <svg viewBox="0 0 24 24">
           <circle cx="12" cy="12" r="10"></circle>
           <line x1="12" y1="8" x2="12" y2="12"></line>
           <line x1="12" y1="16" x2="12.01" y2="16"></line>
         </svg>
-        <span>Production Order not found. Please verify the number and try again.</span>
       </div>
-    </section>
-
-    <section *ngIf="showResult" class="wo-panel">
-      <div class="wo-header">
-        <div>
-          <div class="wo-po-num">{{ poData?.po }}</div>
-          <div class="wo-title">Production Order</div>
-        </div>
-        <div class="wo-status-badge">
-          <span class="bdot"></span>
-          <span>ABM Components Active</span>
-        </div>
+      <div>
+        <div class="state-title">Production Order Not Found</div>
+        <div class="state-text">Please verify the number and try again.</div>
       </div>
+    </div>
 
-      <div class="wo-body">
-        <div class="section-label">Mark Identification</div>
-        <div class="info-grid">
-          <div class="info-cell">
-            <div class="ic-label">Mark Number</div>
-            <div class="ic-value accent">{{ poData?.mark }}</div>
+    <div class="empty-search-state" *ngIf="!showResult && !hasError">
+      <div class="empty-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+          <circle cx="11" cy="11" r="8"></circle>
+          <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+        </svg>
+      </div>
+      <h3>No Production Order Selected</h3>
+      <p>Use the global search bar in the header to find a PO and view ABM Components
+        details.</p>
+    </div>
+
+    <div *ngIf="showResult" class="result-panel">
+      <div class="po-strip enhanced">
+        <div class="po-top">
+          <div class="po-strip-left">
+            <div class="po-eyebrow">Production Order</div>
+            <div class="po-title">{{ poData?.po }}</div>
+            <div class="po-meta">
+              <span>ABM Components Module</span>
+              <span>•</span>
+              <span>{{ poData?.mark || '—' }}</span>
+              <span>•</span>
+              <span>{{ poData?.markDesc || '—' }}</span>
+            </div>
           </div>
-      <div class="info-cell span-3">
-            <div class="ic-label">Description</div>
-            <div class="ic-value">{{ poData?.markDesc }}</div>
+
+          <div class="po-badge">
+            <span class="bdot"></span>
+            <span>ABM Components Active</span>
           </div>
         </div>
 
-        <div class="section-label">Component Summary</div>
-        <div class="qty-grid">
-          <div class="qty-card total">
-            <div class="qc-label">Total ABMs</div>
-            <div class="qc-num">{{ poData?.abms?.length || 0 }}</div>
+        <div class="hero-kpis">
+          <div class="mini-kpi blue">
+            <div class="k-label">Total ABMs</div>
+            <div class="k-val">{{ poData?.abms?.length || 0 }}</div>
           </div>
-          <div class="qty-card inproc">
-            <div class="qc-label">Total Req QTY</div>
-            <div class="qc-num">{{ totReq }}</div>
+          <div class="mini-kpi amber">
+            <div class="k-label">Req Qty</div>
+            <div class="k-val">{{ totReq }}</div>
           </div>
-          <div class="qty-card received">
-            <div class="qc-label">Total Received</div>
-            <div class="qc-num">{{ totRcv }}</div>
+          <div class="mini-kpi green">
+            <div class="k-label">Received</div>
+            <div class="k-val">{{ totRcv }}</div>
           </div>
-          <div class="qty-card backord">
-            <div class="qc-label">Total Open</div>
-            <div class="qc-num">{{ totOpen }}</div>
+          <div class="mini-kpi red">
+            <div class="k-label">Open Qty</div>
+            <div class="k-val">{{ totOpen }}</div>
           </div>
-        </div>
-
-        <div class="section-label">ABM Requirements &amp; Receiving Status</div>
-        <div class="table-wrap">
-          <table>
-            <thead>
-              <tr>
-                <th class="col-abm">ABM</th>
-                <th class="col-desc">Description</th>
-                <th class="col-req right">Req QTY</th>
-                <th class="col-po">PO #</th>
-                <th class="col-rcv right">QTY Received</th>
-                <th class="col-open right">QTY Open</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr *ngFor="let r of poData?.abms">
-                <td><span class="abm-tag">{{ r.id }}</span></td>
-                <td>
-                  <div class="desc-cell">{{ r.desc }}</div>
-                  <div class="desc-sub">{{ r.descSub }}</div>
-                </td>
-                <td class="qty-req">{{ r.reqQty }}</td>
-                <td><span class="po-tag">{{ r.po }}</span></td>
-                <td>
-              <div class="qty-rcv">{{ r.rcv }}</div>
-                  <div class="row-progress">
-                    <div class="rp-bar"><div class="rp-fill" [style.width.%]="getPct(r.rcv, r.reqQty)"></div></div>
-                    <div class="rp-pct">{{ getPct(r.rcv, r.reqQty) }}%</div>
-                  </div>
-                </td>
-                <td class="qty-open" [ngClass]="(r.reqQty - r.rcv) > 0 ? 'has-open' : 'no-open'">{{ r.reqQty - r.rcv }}</td>
-              </tr>
-            </tbody>
-            <tfoot>
-              <tr>
-                <td class="tot-label" colspan="2">Totals</td>
-                <td class="qty-req">{{ totReq }}</td>
-                <td></td>
-            <td class="qty-rcv">{{ totRcv }}</td>
-                <td class="qty-open" [ngClass]="totOpen > 0 ? 'has-open' : 'no-open'">{{ totOpen }}</td>
-              </tr>
-            </tfoot>
-          </table>
         </div>
       </div>
-    </section>
+
+      <div class="panel-body">
+        <div class="summary-grid">
+          <div class="mark-card primary">
+            <div class="mark-icon">
+              <svg viewBox="0 0 24 24">
+                <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path>
+                <line x1="7" y1="7" x2="7.01" y2="7"></line>
+              </svg>
+            </div>
+            <div class="mark-details">
+              <div class="mark-sub">Mark Number</div>
+              <div class="mark-num">{{ poData?.mark || '—' }}</div>
+              <div class="mark-desc">{{ poData?.markDesc || '—' }}</div>
+            </div>
+          </div>
+
+          <div class="stat-card blue">
+            <div class="stat-label">Total ABMs</div>
+            <div class="stat-value">{{ poData?.abms?.length || 0 }}</div>
+            <div class="stat-sub">Configured component records</div>
+          </div>
+
+          <div class="stat-card green">
+            <div class="stat-label">Receiving Status</div>
+            <div class="stat-value">{{ totRcv }}</div>
+            <div class="stat-sub">Units received into stock</div>
+          </div>
+
+          <div class="stat-card red">
+            <div class="stat-label">Open Balance</div>
+            <div class="stat-value">{{ totOpen }}</div>
+            <div class="stat-sub">Units pending receipt</div>
+          </div>
+        </div>
+
+        <div class="section-shell">
+          <div class="sec-label">ABM Requirements &amp; Receiving Status</div>
+
+          <div class="table-toolbar">
+            <div class="toolbar-meta">
+              <span class="meta-pill">Live overview</span>
+              <span class="meta-pill neutral">{{ poData?.abms?.length || 0 }} rows</span>
+            </div>
+          </div>
+
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th class="col-abm">ABM</th>
+                  <th class="col-desc">Description</th>
+                  <th class="col-req right">Req QTY</th>
+                  <th class="col-po">PO #</th>
+                  <th class="col-rcv right">QTY Received</th>
+                  <th class="col-open right">QTY Open</th>
+                </tr>
+              </thead>
+
+              <tbody>
+                <tr *ngFor="let r of poData?.abms">
+                  <td>
+                    <span class="abm-tag">{{ r.id }}</span>
+                  </td>
+                  <td>
+                    <div class="desc-cell">{{ r.desc }}</div>
+                    <div class="desc-sub">{{ r.descSub }}</div>
+                  </td>
+                  <td class="qty-req">{{ r.reqQty }}</td>
+                  <td><span class="po-tag">{{ r.po }}</span></td>
+                  <td>
+                    <div class="qty-rcv align-right">{{ r.rcv }}</div>
+                    <div class="row-progress">
+                      <div class="rp-bar">
+                        <div class="rp-fill" [style.width.%]="getPct(r.rcv, r.reqQty)"></div>
+                      </div>
+                      <div class="rp-pct">{{ getPct(r.rcv, r.reqQty) }}%</div>
+                    </div>
+                  </td>
+                  <td class="qty-open" [ngClass]="(r.reqQty - r.rcv) > 0 ? 'has-open' : 'no-open'">
+                    {{ r.reqQty - r.rcv }}
+                  </td>
+                </tr>
+              </tbody>
+
+              <tfoot>
+                <tr>
+                  <td class="tot-label" colspan="2">Totals</td>
+                  <td class="qty-req">{{ totReq }}</td>
+                  <td></td>
+                  <td class="qty-rcv align-right">{{ totRcv }}</td>
+                  <td class="qty-open" [ngClass]="totOpen > 0 ? 'has-open' : 'no-open'">{{ totOpen }}</td>
+                </tr>
+              </tfoot>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
   </main>
 </div>
-</ion-content>

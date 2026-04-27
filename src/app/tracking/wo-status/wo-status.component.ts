@@ -2,8 +2,6 @@ import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
-import { IonContent, IonHeader } from '@ionic/angular/standalone';
-import { HeaderComponent } from '../../shared/header/header.component';
 
 type StageState = 'done' | 'active' | 'pending';
 
@@ -35,7 +33,7 @@ interface StageConfig {
   templateUrl: './wo-status.component.html',
   styleUrls: ['./wo-status.component.scss'],
   standalone: true,
-  imports:[CommonModule, FormsModule, HeaderComponent, IonContent, IonHeader, RouterModule]
+  imports:[CommonModule, FormsModule, RouterModule]
 })
 export class WoStatusComponent {
   poInput = '';
@@ -103,7 +101,7 @@ export class WoStatusComponent {
 
   readonly workOrders: WorkOrder[] = [
     {
-      poNumber: 'PO12345',
+      poNumber: '25280-A01-01',
       title: 'WO-1042',
       customer: 'Target',
       style: 'TSH-908',

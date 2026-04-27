@@ -35,3 +35,83 @@
 /* @import "@ionic/angular/css/palettes/dark.always.css"; */
 /* @import "@ionic/angular/css/palettes/dark.class.css"; */
 @import '@ionic/angular/css/palettes/dark.system.css';
+
+/* src/global.scss */
+
+html {
+  /* 
+   * Ionic heavily relies on 'rem' units for typography and some sizing.
+   * By reducing the root font-size from the browser default (usually 16px) 
+   * to a smaller value like 14px, all 'rem' based sizes will scale down proportionally.
+   */
+  font-size: 14px; 
+}
+
+:root {
+  /* 
+   * 1. Maintain the same font family across the application.
+   * Specify your chosen font family here.
+   */
+  --ion-font-family: inherit; /* Or e.g., 'Roboto', 'Helvetica Neue', sans-serif */
+
+  /* 
+   * 2. Reduce the sizes of default spacings to make the UI more compact.
+   */
+  --ion-padding: 12px; /* Reduced from typical 16px */
+  --ion-margin: 12px;
+}
+
+/* 
+ * 3. Component-specific overrides for elements that use fixed pixel values.
+ * You can target specific Ionic components directly to reduce their block sizes.
+ */
+ion-item {
+  --min-height: 38px; /* Reduced from default 48px on MD / 44px on iOS */
+  --padding-start: 12px;
+  --inner-padding-end: 12px;
+}
+
+ion-item-divider {
+  --padding-top: 4px;
+  --padding-bottom: 4px;
+  min-height: 24px;
+}
+
+ion-segment-button {
+  min-height: 28px;
+  font-size: 12px;
+}
+
+ion-fab-button {
+  /* Scale down floating action buttons if needed */
+  --box-shadow: none;
+  transform: scale(0.85); 
+}
+
+/* 
+ * 4. Search Bar Enhancements for Mobile
+ * Provides a cleaner, more native look across devices with rounded corners and soft shadows.
+ */
+ion-searchbar {
+  --border-radius: 20px;
+  --box-shadow: 0 4px 16px rgba(0, 0, 0, 0.05);
+  --background: var(--ion-color-step-50, #f8f9fa);
+  --icon-color: var(--ion-color-primary, #3880ff);
+  --clear-button-color: var(--ion-color-medium, #92949c);
+  padding-top: 8px;
+  padding-bottom: 8px;
+}
+
+/* 
+ * 5. Title Enhancements
+ * Make application titles bolder and more distinct for a native mobile feel.
+ */
+ion-title {
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+ion-title[size="large"] {
+  font-weight: 800;
+  letter-spacing: -0.03em;
+}
