@@ -1,7 +1,9 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
+import { ConfigService } from '../../shared/config.service';
+import { ModuleLoaderComponent } from '../../shared/components/module-loader/module-loader.component';
 
 type StageState = 'done' | 'active' | 'pending';
 
@@ -33,9 +35,10 @@ interface StageConfig {
   templateUrl: './wo-status.component.html',
   styleUrls: ['./wo-status.component.scss'],
   standalone: true,
-  imports:[CommonModule, FormsModule, RouterModule]
+  imports: [CommonModule, FormsModule, RouterModule, ModuleLoaderComponent]
 })
-export class WoStatusComponent {
+export class WoStatusComponent implements OnInit, OnDestroy {
+  isLoading = true;
   poInput = '';
   errorMessage = '';
   selectedWo: WorkOrder | null = null;
@@ -124,8 +127,18 @@ export class WoStatusComponent {
     }
   ];
 
-  constructor() {}
+  constructor(private configService: ConfigService) {}
 
+  ngOnInit() {
+    this.configService.applyModuleTheme('wo-status');
+    setTimeout(() => {
+      this.isLoading = false;
+    }, 600);
+  }
+
+  ngOnDestroy() {
+    this.configService.applyModuleTheme(null);
+  }
   lookup(): void {
     const value = this.poInput.trim().toUpperCase();
 

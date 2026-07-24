@@ -2,15 +2,18 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
+import { ConfigService } from '../../shared/config.service';
+import { ModuleLoaderComponent } from '../../shared/components/module-loader/module-loader.component';
 
 @Component({
   selector: 'app-abm-components-status',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterModule],
+  imports: [CommonModule, FormsModule, RouterModule, ModuleLoaderComponent],
   templateUrl: './abm-components-status.component.html',
   styleUrls: ['./abm-components-status.component.scss']
 })
 export class AbmComponentsStatusComponent implements OnInit, OnDestroy {
+  isLoading = true;
   currentYear: number = new Date().getFullYear();
 
   poInput: string = '';
@@ -34,9 +37,18 @@ export class AbmComponentsStatusComponent implements OnInit, OnDestroy {
     }
   };
 
-  ngOnInit() {}
+  constructor(private configService: ConfigService) {}
 
-  ngOnDestroy() {}
+  ngOnInit() {
+    this.configService.applyModuleTheme('abm-status');
+    setTimeout(() => {
+      this.isLoading = false;
+    }, 600);
+  }
+
+  ngOnDestroy() {
+    this.configService.applyModuleTheme(null);
+  }
 
   lookup(): void {
     const raw = this.poInput.trim().toUpperCase();

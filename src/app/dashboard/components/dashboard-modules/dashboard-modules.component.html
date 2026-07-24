@@ -1,7 +1,6 @@
-<div class="hero" *ngIf="isDashboardRoute">
+<div class="hero" *ngIf="isDashboardRoute && configService.config() as config">
   <div class="hero-inner">
-    <div class="hero-eyebrow">DMW Tracking</div>
-    <h2>Project Portal v5.0</h2>
+    <div class="hero-eyebrow text-gradient">{{ config.vendorName }}</div>
     <div class="hero-tagline">Select a module below to manage operations</div>
     <div class="brand-stripe">
       <span class="bs-o"></span>

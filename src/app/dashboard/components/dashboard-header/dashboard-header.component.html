@@ -15,6 +15,11 @@
                 <div class="item-icon-box"><ion-icon name="person-circle-outline"></ion-icon></div>
                 <ion-label><div class="menu-title">Profile</div></ion-label>
               </ion-item>
+              <ion-item>
+                <div class="item-icon-box" style="color: var(--text-main);"><ion-icon [name]="isDark() ? 'moon-outline' : 'sunny-outline'"></ion-icon></div>
+                <ion-label><div class="menu-title" style="color: var(--text-main);">{{ isDark() ? 'Dark Mode' : 'Light Mode' }}</div></ion-label>
+                <ion-toggle slot="end" [checked]="isDark()" (ionChange)="toggleTheme()"></ion-toggle>
+              </ion-item>
               <ion-item button class="logout-item" (click)="loggedOut.emit()">
                 <div class="item-icon-box"><ion-icon name="log-out-outline"></ion-icon></div>
                 <ion-label><div class="menu-title">Sign Out</div></ion-label>
@@ -46,7 +51,7 @@
     <div class="glass-card compact-info">
       <div class="info-text">
         <h2 class="mini-title">{{ moduleTitle }}</h2>
-        <span class="mini-badge">DMW</span>
+        <span class="mini-badge" *ngIf="configService.config() as config">{{ config.vendorName.split(' ')[0] }}</span>
       </div>
       <button class="mini-info-btn" id="module-info-trigger">
         <ion-icon name="information-circle-outline"></ion-icon>

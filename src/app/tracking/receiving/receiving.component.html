@@ -1,5 +1,7 @@
 <div class="receiving-page">
-  <main>
+  <app-module-loader *ngIf="isLoading" moduleName="Receiving"></app-module-loader>
+  <ng-container *ngIf="!isLoading">
+    <main>
     <div class="state-banner error" *ngIf="showError">
       <div class="state-icon">
         <svg viewBox="0 0 24 24">
@@ -48,40 +50,14 @@
             <button class="head-action" type="button" (click)="openModal()">+ New Receipt</button>
           </div>
         </div>
-
-        <div class="receiving-kpis">
-          <div class="mini-kpi amber">
-            <span class="kpi-label">Qty Required</span>
-            <strong>{{ currentTotalQty }}</strong>
-          </div>
-          <div class="mini-kpi green">
-            <span class="kpi-label">Qty Received</span>
-            <strong>{{ totalReceived }}</strong>
-          </div>
-          <div class="mini-kpi red">
-            <span class="kpi-label">Qty Open</span>
-            <strong>{{ totalOpen }}</strong>
-          </div>
-          <div class="mini-kpi blue">
-            <span class="kpi-label">Receipts</span>
-            <strong>{{ receipts.length }}</strong>
-          </div>
-        </div>
       </div>
 
       <div class="panel-body">
         <div class="summary-grid">
-          <div class="mark-card primary">
-            <div class="mark-icon">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M20 7L9 18l-5-5"></path>
-              </svg>
-            </div>
-            <div>
-              <div class="mark-sub">Receiving Summary</div>
-              <div class="mark-num">{{ currentPo }}</div>
-              <div class="mark-desc">Track inbound deliveries, receipt documents, and remaining open quantity for this production order.</div>
-            </div>
+          <div class="stat-card primary-stat">
+            <span class="stat-label">Receiving Summary</span>
+            <strong>{{ currentPo }}</strong>
+            <small>{{ receipts.length }} receipt(s) logged</small>
           </div>
 
           <div class="stat-card">
@@ -268,4 +244,5 @@
   <div class="toast" *ngIf="toastMessage">
     {{ toastMessage }}
   </div>
+  </ng-container>
 </div>

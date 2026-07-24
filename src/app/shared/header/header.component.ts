@@ -1,6 +1,7 @@
 import { Component, Input, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
+import { ConfigService } from '../config.service';
 
 @Component({
   selector: 'app-header',
@@ -8,8 +9,8 @@ import { RouterModule } from '@angular/router';
   imports: [CommonModule, RouterModule],
   template: `
     <header class="header">
-      <div class="header-left" *ngIf="showLogo">
-        <img class="logo-img" [src]="logoSrc" alt="DMW Logo" />
+      <div class="header-left" *ngIf="showLogo && configService.config() as config">
+        <img class="logo-img" [src]="config.logoUrl" alt="{{ config.vendorName }} Logo" />
       </div>
       
       <div class="header-right">
@@ -29,7 +30,6 @@ import { RouterModule } from '@angular/router';
 })
 export class HeaderComponent implements OnInit, OnDestroy {
   @Input() showLogo: boolean = true;
-  @Input() logoSrc: string = 'assets/logo.png';
   @Input() showBack: boolean = true;
   @Input() backText: string = 'Back';
   @Input() backLink: string = '/dashboard';
@@ -38,6 +38,8 @@ export class HeaderComponent implements OnInit, OnDestroy {
   
   currentTime: Date = new Date();
   private timerId: any;
+  
+  constructor(public configService: ConfigService) {}
 
   ngOnInit() {
     this.timerId = setInterval(() => this.currentTime = new Date(), 1000);

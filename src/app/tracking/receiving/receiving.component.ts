@@ -1,9 +1,9 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
-import { HeaderComponent } from 'src/app/shared/header/header.component';
-import { IonHeader, IonContent } from '@ionic/angular/standalone';
+import { Component, OnInit, OnDestroy } from '@angular/core';
+import { ConfigService } from '../../shared/config.service';
+import { ModuleLoaderComponent } from '../../shared/components/module-loader/module-loader.component';
 
 interface ReceiptEntry {
   date: string;
@@ -22,11 +22,13 @@ interface ReceiptEntry {
 @Component({
   selector: 'app-receiving',
   standalone: true,
-  imports: [IonHeader, CommonModule, FormsModule, RouterModule, HeaderComponent, IonContent],
+
   templateUrl: './receiving.component.html',
-  styleUrls: ['./receiving.component.scss']
+  styleUrls: ['./receiving.component.scss'],
+  imports: [CommonModule, FormsModule, RouterModule, ModuleLoaderComponent]
 })
-export class ReceivingComponent {
+export class ReceivingComponent implements OnInit, OnDestroy {
+  isLoading = true;
   poInput = '';
   errorMessage = '';
   showError = false;
@@ -41,6 +43,19 @@ export class ReceivingComponent {
   receipts: ReceiptEntry[] = [];
 
   today: string = new Date().toISOString().split('T')[0]; // YYYY-MM-DD format for date input
+
+  constructor(private configService: ConfigService) {}
+
+  ngOnInit() {
+    this.configService.applyModuleTheme('receiving');
+    setTimeout(() => {
+      this.isLoading = false;
+    }, 600);
+  }
+
+  ngOnDestroy() {
+    this.configService.applyModuleTheme(null);
+  }
 
   form = {
     date: '',

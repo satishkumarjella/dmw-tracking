@@ -1,5 +1,7 @@
 <div class="shipping-page">
-  <main>
+  <app-module-loader *ngIf="isLoading" moduleName="Shipping"></app-module-loader>
+  <ng-container *ngIf="!isLoading">
+    <main>
     <div class="state-banner error" *ngIf="showError">
       <div class="state-icon">
         <svg viewBox="0 0 24 24">
@@ -48,43 +50,14 @@
             <button class="head-action" type="button" (click)="openModal()">+ New Shipment</button>
           </div>
         </div>
-
-        <div class="shipping-kpis">
-          <div class="mini-kpi amber">
-            <span class="kpi-label">Qty Required</span>
-            <strong>{{ selectedRecord.totalQty }}</strong>
-          </div>
-          <div class="mini-kpi green">
-            <span class="kpi-label">Qty Shipped</span>
-            <strong>{{ totalShipped }}</strong>
-          </div>
-          <div class="mini-kpi red">
-            <span class="kpi-label">Qty Open</span>
-            <strong>{{ totalOpen }}</strong>
-          </div>
-          <div class="mini-kpi blue">
-            <span class="kpi-label">Shipments</span>
-            <strong>{{ shipments.length }}</strong>
-          </div>
-        </div>
       </div>
 
       <div class="panel-body">
         <div class="summary-grid">
-          <div class="mark-card primary">
-            <div class="mark-icon">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <rect x="1" y="3" width="15" height="13"></rect>
-                <polygon points="16 8 20 8 23 11 23 16 16 16 16 8"></polygon>
-                <circle cx="5.5" cy="18.5" r="2.5"></circle>
-                <circle cx="18.5" cy="18.5" r="2.5"></circle>
-              </svg>
-            </div>
-            <div>
-              <div class="mark-sub">Shipping Summary</div>
-              <div class="mark-num">{{ selectedRecord.mark }}</div>
-              <div class="mark-desc">{{ selectedRecord.markDesc }}</div>
-            </div>
+          <div class="stat-card primary-stat">
+            <span class="stat-label">Shipping Summary</span>
+            <strong>{{ selectedRecord.mark }}</strong>
+            <small>{{ selectedRecord.markDesc }}</small>
           </div>
 
           <div class="stat-card">
@@ -266,4 +239,5 @@
   <div class="toast" *ngIf="toastMessage">
     {{ toastMessage }}
   </div>
+  </ng-container>
 </div>

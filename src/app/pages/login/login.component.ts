@@ -2,20 +2,24 @@ import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
-import { IonContent, IonItem, IonIcon, IonButton } from '@ionic/angular/standalone';
+import { ConfigService } from '../../shared/config.service';
+import { IonContent } from '@ionic/angular/standalone';
 
 @Component({
   selector: 'app-login',
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.scss'],
   standalone: true,
-  imports: [IonIcon, IonContent, FormsModule, CommonModule, IonItem, IonIcon, IonButton]
+  imports: [IonContent, FormsModule, CommonModule]
 })
 export class LoginComponent {
   email = '';
   password = '';
 
-  constructor(private router: Router) {}
+  constructor(
+    private router: Router,
+    public configService: ConfigService
+  ) {}
 
   onLogin() {
     if (this.email && this.password) {

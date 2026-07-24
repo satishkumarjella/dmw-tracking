@@ -1,0 +1,78 @@
+.dashboard-footer {
+  background: transparent;
+}
+
+.footer-glass {
+  background: var(--bg-surface-glass);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-top: 1px solid var(--border-subtle);
+  padding: 12px 24px;
+}
+
+.footer-content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  max-width: 1200px;
+  margin: 0 auto;
+  font-family: var(--font-family-base);
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+.footer-brand {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 500;
+  
+  .vendor-name {
+    color: var(--text-main);
+    font-weight: 600;
+  }
+}
+
+.footer-links {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+
+  a {
+    color: var(--text-muted);
+    text-decoration: none;
+    transition: color var(--transition-fast);
+
+    &:hover {
+      color: var(--color-primary);
+    }
+  }
+
+  .separator {
+    opacity: 0.5;
+  }
+}
+
+.footer-version {
+  .version-badge {
+    background: rgba(var(--color-primary-rgb), 0.1);
+    color: var(--color-primary);
+    padding: 2px 8px;
+    border-radius: var(--radius-pill);
+    font-weight: 600;
+    font-size: 0.7rem;
+    letter-spacing: 0.05em;
+  }
+}
+
+@media (max-width: 600px) {
+  .footer-content {
+    flex-direction: column;
+    gap: 8px;
+    text-align: center;
+  }
+  
+  .footer-glass {
+    padding-bottom: 76px; /* Space for mobile dock */
+  }
+}

@@ -1,5 +1,7 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { IonApp, IonRouterOutlet } from '@ionic/angular/standalone';
+import { ThemeService } from './shared/theme.service';
+import { ConfigService } from './shared/config.service';
 
 @Component({
   selector: 'app-root',
@@ -7,5 +9,10 @@ import { IonApp, IonRouterOutlet } from '@ionic/angular/standalone';
   imports: [IonApp, IonRouterOutlet],
 })
 export class AppComponent {
-  constructor() {}
+  private themeService = inject(ThemeService);
+  private configService = inject(ConfigService);
+  
+  constructor() {
+    this.configService.loadConfig();
+  }
 }

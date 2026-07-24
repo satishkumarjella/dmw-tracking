@@ -3,6 +3,8 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { RouterModule } from '@angular/router';
+import { ConfigService } from '../../shared/config.service';
+import { ModuleLoaderComponent } from '../../shared/components/module-loader/module-loader.component';
 
 interface ProductionRecord {
   po: string;
@@ -27,11 +29,12 @@ interface IssueItem {
 @Component({
   selector: 'app-quality-inspection-reports',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterModule],
+  imports: [CommonModule, FormsModule, RouterModule, ModuleLoaderComponent],
   templateUrl: './quality-inspection-reports.component.html',
   styleUrls: ['./quality-inspection-reports.component.scss']
 })
 export class QualityInspectionReportsComponent implements OnInit, OnDestroy {
+  isLoading = true;
   poInput = '';
   showError = false;
 
@@ -83,9 +86,13 @@ export class QualityInspectionReportsComponent implements OnInit, OnDestroy {
     recordedBy: ''
   };
 
-  constructor(private sanitizer: DomSanitizer) {}
+  constructor(private sanitizer: DomSanitizer, private configService: ConfigService) {}
 
   ngOnInit(): void {
+    this.configService.applyModuleTheme('quality-inspection');
+    setTimeout(() => {
+      this.isLoading = false;
+    }, 600);
 
     this.girPdfUrl = this.sanitizer.bypassSecurityTrustResourceUrl(
       'assets/sample/general-inspection-report.pdf'
@@ -96,7 +103,9 @@ export class QualityInspectionReportsComponent implements OnInit, OnDestroy {
     );
   }
 
-  ngOnDestroy(): void {}
+  ngOnDestroy(): void {
+    this.configService.applyModuleTheme(null);
+  }
 
   lookup(): void {
     const value = this.poInput.trim().toUpperCase();

@@ -1,6 +1,15 @@
-<ion-footer class="ion-no-border">
-  <footer>
-    <div class="footer-copy">&copy; {{ currentYear }}&nbsp;<span>Dearborn Mid-West Company</span>&nbsp;&middot;&nbsp;
-      Project Portal v5.0</div>
-  </footer>
+<ion-footer class="ion-no-border dashboard-footer" *ngIf="configService.config() as config">
+  <div class="footer-glass">
+    <div class="footer-content">
+      <div class="footer-brand">
+        <span class="copyright">&copy; {{ currentYear }}</span>
+        <span class="vendor-name">{{ config.vendorName }}</span>
+      </div>
+      <div class="footer-links">
+        <a href="#">Privacy Policy</a>
+        <span class="separator">&middot;</span>
+        <a href="#">Terms of Service</a>
+      </div>
+    </div>
+  </div>
 </ion-footer>

@@ -1,5 +1,7 @@
 <div class="quality-page">
-  <main>
+  <app-module-loader *ngIf="isLoading" moduleName="Quality Inspection"></app-module-loader>
+  <ng-container *ngIf="!isLoading">
+    <main>
     <div class="state-banner error" *ngIf="showError">
       <div class="state-icon">
         <svg viewBox="0 0 24 24">
@@ -48,41 +50,14 @@
             <button class="head-action" type="button" (click)="openFillModal()">+ Fill GIR</button>
           </div>
         </div>
-
-        <div class="quality-kpis">
-          <div class="mini-kpi">
-            <span class="kpi-label">Inspection Mark</span>
-            <strong>{{ selectedRecord.mark }}</strong>
-          </div>
-          <div class="mini-kpi">
-            <span class="kpi-label">Open Issues</span>
-            <strong>{{ issues.length }}</strong>
-          </div>
-          <div class="mini-kpi">
-            <span class="kpi-label">Paint Spec</span>
-            <strong>{{ paintPdfUrl ? 'Available' : 'Pending' }}</strong>
-          </div>
-          <div class="mini-kpi">
-            <span class="kpi-label">Critical Specs</span>
-            <strong>{{ criticalSpecsImage ? 'Loaded' : 'Pending' }}</strong>
-          </div>
-        </div>
       </div>
 
       <div class="panel-body">
         <div class="summary-grid">
-          <div class="mark-card primary">
-            <div class="mark-icon">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
-                <polyline points="22 4 12 14.01 9 11.01"></polyline>
-              </svg>
-            </div>
-            <div>
-              <div class="mark-sub">Inspection Summary</div>
-              <div class="mark-num">{{ selectedRecord.mark }}</div>
-              <div class="mark-desc">{{ selectedRecord.markDesc }}</div>
-            </div>
+          <div class="stat-card primary-stat">
+            <span class="stat-label">Inspection Mark</span>
+            <strong>{{ selectedRecord.mark }}</strong>
+            <small>{{ selectedRecord.markDesc }}</small>
           </div>
 
           <div class="stat-card">
@@ -99,7 +74,7 @@
 
           <div class="stat-card">
             <span class="stat-label">Specs</span>
-            <strong>Ready</strong>
+            <strong>{{ criticalSpecsImage ? 'Ready' : 'Pending' }}</strong>
             <small>Critical dimensions available</small>
           </div>
         </div>
@@ -371,4 +346,5 @@
   <div class="toast" *ngIf="toastMessage">
     {{ toastMessage }}
   </div>
+  </ng-container>
 </div>

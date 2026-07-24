@@ -1,0 +1,55 @@
+{
+  "vendorName": "DMW Tracking",
+  "logoUrl": "assets/logo.png",
+  "theme": {
+    "primary": "#4F46E5",
+    "secondary": "#0ea5e9"
+  },
+  "modules": [
+    {
+      "id": "wo-status",
+      "title": "WO Status",
+      "shortName": "Work Orders",
+      "desc": "Track open and closed work orders, monitor production milestones, and manage job progress in real time.",
+      "route": "wo-status",
+      "colorHex": "#3b82f6",
+      "iconSvg": "<svg viewBox=\"0 0 24 24\"><path d=\"M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8L14 2Z\" /><polyline points=\"14 2 14 8 20 8\" /><line x1=\"16\" y1=\"13\" x2=\"8\" y2=\"13\" /><line x1=\"16\" y1=\"17\" x2=\"8\" y2=\"17\" /><polyline points=\"10 9 9 9 8 9\" /></svg>"
+    },
+    {
+      "id": "abm-status",
+      "title": "ABM Components Status",
+      "shortName": "Components",
+      "desc": "Real-time component inventory, assembly build module tracking, BOM compliance, and parts availability.",
+      "route": "abm-status",
+      "colorHex": "#10b981",
+      "iconSvg": "<svg viewBox=\"0 0 24 24\"><rect x=\"2\" y=\"7\" width=\"20\" height=\"14\" rx=\"2\" /><path d=\"M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2\" /><line x1=\"12\" y1=\"12\" x2=\"12\" y2=\"16\" /><line x1=\"10\" y1=\"14\" x2=\"14\" y2=\"14\" /></svg>"
+    },
+    {
+      "id": "quality-inspection",
+      "title": "Quality Inspection Reports",
+      "shortName": "Quality",
+      "desc": "Inspection logs, NCR reports, PPAP records, first-article documentation, and audit trail history.",
+      "route": "quality-inspection",
+      "colorHex": "#f59e0b",
+      "iconSvg": "<svg viewBox=\"0 0 24 24\"><path d=\"M9 11l3 3L22 4\" /><path d=\"M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11\" /></svg>"
+    },
+    {
+      "id": "shipping",
+      "title": "Shipping",
+      "shortName": "Logistics Out",
+      "desc": "Manage outbound shipments, coordinate carriers, generate BOLs, and track delivery status.",
+      "route": "shipping",
+      "colorHex": "#8b5cf6",
+      "iconSvg": "<svg viewBox=\"0 0 24 24\"><rect x=\"1\" y=\"3\" width=\"15\" height=\"13\" rx=\"1\" /><path d=\"M16 8h4l3 3v5h-7V8Z\" /><circle cx=\"5.5\" cy=\"18.5\" r=\"2.5\" /><circle cx=\"18.5\" cy=\"18.5\" r=\"2.5\" /></svg>"
+    },
+    {
+      "id": "receiving",
+      "title": "Receiving",
+      "shortName": "Logistics In",
+      "desc": "Process inbound receipts, verify purchase orders, log discrepancies, and confirm dock deliveries.",
+      "route": "receiving",
+      "colorHex": "#ec4899",
+      "iconSvg": "<svg viewBox=\"0 0 24 24\"><polyline points=\"8 17 12 21 16 17\" /><line x1=\"12\" y1=\"12\" x2=\"12\" y2=\"21\" /><path d=\"M20.88 18.09A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.29\" /></svg>"
+    }
+  ]
+}

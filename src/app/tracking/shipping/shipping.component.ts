@@ -2,7 +2,8 @@ import { CommonModule } from '@angular/common';
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
-import { IonContent } from "@ionic/angular/standalone";
+import { ConfigService } from '../../shared/config.service';
+import { ModuleLoaderComponent } from '../../shared/components/module-loader/module-loader.component';
 
 interface ShippingRecord {
   mark: string;
@@ -30,9 +31,10 @@ interface ShipmentItem {
   templateUrl: './shipping.component.html',
   styleUrls: ['./shipping.component.scss'],
   standalone: true,
-  imports: [IonContent, CommonModule, FormsModule, RouterModule]
+  imports: [CommonModule, FormsModule, RouterModule, ModuleLoaderComponent]
 })
 export class ShippingComponent implements OnInit, OnDestroy {
+  isLoading = true;
   currentYear = new Date().getFullYear();
 
   poInput = '';
@@ -64,9 +66,17 @@ export class ShippingComponent implements OnInit, OnDestroy {
     }
   };
 
-  ngOnInit(): void {}
+  constructor(private configService: ConfigService) {}
+
+  ngOnInit(): void {
+    this.configService.applyModuleTheme('shipping');
+    setTimeout(() => {
+      this.isLoading = false;
+    }, 600);
+  }
 
   ngOnDestroy(): void {
+    this.configService.applyModuleTheme(null);
     this.shipments.forEach(item => {
       if (item.docUrl) URL.revokeObjectURL(item.docUrl);
       if (item.picUrl) URL.revokeObjectURL(item.picUrl);

@@ -1,5 +1,7 @@
 <div class="abm-status-page">
-  <main>
+  <app-module-loader *ngIf="isLoading" moduleName="ABM Components"></app-module-loader>
+  <ng-container *ngIf="!isLoading">
+    <main>
     <div class="state-banner error" *ngIf="hasError">
       <div class="state-icon">
         <svg viewBox="0 0 24 24">
@@ -26,7 +28,7 @@
         details.</p>
     </div>
 
-    <div *ngIf="showResult" class="result-panel">
+    <section id="resultPanel" *ngIf="showResult">
       <div class="po-strip enhanced">
         <div class="po-top">
           <div class="po-strip-left">
@@ -46,59 +48,32 @@
             <span>ABM Components Active</span>
           </div>
         </div>
-
-        <div class="hero-kpis">
-          <div class="mini-kpi blue">
-            <div class="k-label">Total ABMs</div>
-            <div class="k-val">{{ poData?.abms?.length || 0 }}</div>
-          </div>
-          <div class="mini-kpi amber">
-            <div class="k-label">Req Qty</div>
-            <div class="k-val">{{ totReq }}</div>
-          </div>
-          <div class="mini-kpi green">
-            <div class="k-label">Received</div>
-            <div class="k-val">{{ totRcv }}</div>
-          </div>
-          <div class="mini-kpi red">
-            <div class="k-label">Open Qty</div>
-            <div class="k-val">{{ totOpen }}</div>
-          </div>
-        </div>
       </div>
 
       <div class="panel-body">
         <div class="summary-grid">
-          <div class="mark-card primary">
-            <div class="mark-icon">
-              <svg viewBox="0 0 24 24">
-                <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path>
-                <line x1="7" y1="7" x2="7.01" y2="7"></line>
-              </svg>
-            </div>
-            <div class="mark-details">
-              <div class="mark-sub">Mark Number</div>
-              <div class="mark-num">{{ poData?.mark || '—' }}</div>
-              <div class="mark-desc">{{ poData?.markDesc || '—' }}</div>
-            </div>
+          <div class="stat-card primary-stat">
+            <span class="stat-label">Total ABMs</span>
+            <strong>{{ poData?.abms?.length || 0 }}</strong>
+            <small>Configured component records</small>
           </div>
 
-          <div class="stat-card blue">
-            <div class="stat-label">Total ABMs</div>
-            <div class="stat-value">{{ poData?.abms?.length || 0 }}</div>
-            <div class="stat-sub">Configured component records</div>
+          <div class="stat-card">
+            <span class="stat-label">Req Qty</span>
+            <strong>{{ totReq }}</strong>
+            <small>Total requested quantity</small>
           </div>
 
-          <div class="stat-card green">
-            <div class="stat-label">Receiving Status</div>
-            <div class="stat-value">{{ totRcv }}</div>
-            <div class="stat-sub">Units received into stock</div>
+          <div class="stat-card">
+            <span class="stat-label">Received</span>
+            <strong>{{ totRcv }}</strong>
+            <small>Units received into stock</small>
           </div>
 
-          <div class="stat-card red">
-            <div class="stat-label">Open Balance</div>
-            <div class="stat-value">{{ totOpen }}</div>
-            <div class="stat-sub">Units pending receipt</div>
+          <div class="stat-card">
+            <span class="stat-label">Open Balance</span>
+            <strong>{{ totOpen }}</strong>
+            <small>Units pending receipt</small>
           </div>
         </div>
 
@@ -164,6 +139,7 @@
           </div>
         </div>
       </div>
-    </div>
+    </section>
   </main>
+  </ng-container>
 </div>
