@@ -113,6 +113,10 @@
     font-weight: 600;
     color: var(--text-main);
     line-height: 1.3;
+
+    .mobile-title {
+        display: none;
+    }
 }
 
 .card-desc {
@@ -277,11 +281,8 @@
 }
 
 @media(max-width: 768px) {
+
     .modules-section.compact {
-        position: fixed;
-        bottom: 16px;
-        left: 16px;
-        right: 16px;
         padding: 8px;
         background: var(--bg-surface-glass);
         backdrop-filter: blur(20px);
@@ -289,11 +290,7 @@
         border: 1px solid var(--border-subtle);
         border-radius: var(--radius-xl);
         box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
-        z-index: 1000;
-        display: flex;
-        flex-direction: row;
-        justify-content: space-around;
-        gap: 6px;
+        display: block;
     }
 
     .modules-section.compact .sidebar-toggle {
@@ -301,15 +298,25 @@
     }
 
     .modules-section.compact .grid-bottom {
-        display: contents;
+        display: flex;
+        flex-direction: row;
+        justify-content: space-around;
+        align-items: flex-end;
+        gap: 4px;
+        width: 100%;
+        margin: 0;
+        padding: 0;
     }
 
     .modules-section.compact .card {
         flex: 1;
+        min-width: 0;
         padding: 4px;
         border: none;
         box-shadow: none;
         background: transparent;
+        display: flex;
+        flex-direction: column;
         align-items: center;
         gap: 4px;
         border-radius: var(--radius-lg);
@@ -327,11 +334,14 @@
         border-radius: 50%;
         background: transparent;
         border: none;
+        display: flex;
+        align-items: center;
+        justify-content: center;
     }
 
     .modules-section.compact .icon-badge svg {
-        width: 18px;
-        height: 18px;
+        width: 20px;
+        height: 20px;
         stroke: var(--text-muted);
     }
 
@@ -343,10 +353,17 @@
         color: var(--text-muted);
         font-family: var(--font-family-base);
         width: 100%;
-        display: -webkit-box;
-        -webkit-line-clamp: 2;
-        -webkit-box-orient: vertical;
+    }
+
+    .modules-section.compact .card-title .desktop-title {
+        display: none;
+    }
+
+    .modules-section.compact .card-title .mobile-title {
+        display: block;
+        white-space: nowrap;
         overflow: hidden;
+        text-overflow: ellipsis;
     }
 
     .modules-section.compact .card-desc,

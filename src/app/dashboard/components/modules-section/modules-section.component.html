@@ -16,7 +16,10 @@
           <span [innerHTML]="module.iconSvg | safeHtml"></span>
           <span class="card-num">{{ module.shortName }}</span>
         </div>
-        <div class="card-title">{{ module.title }}</div>
+        <div class="card-title">
+          <span class="desktop-title">{{ module.title }}</span>
+          <span class="mobile-title">{{ module.shortName }}</span>
+        </div>
         <div class="card-divider"></div>
         <p class="card-desc">{{ module.desc }}</p>
         <div class="card-cta">Open Module <svg viewBox="0 0 24 24">
