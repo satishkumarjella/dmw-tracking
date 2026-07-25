@@ -3,6 +3,7 @@ import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { ConfigService } from '../../shared/config.service';
+import { AuthService } from '../../shared/services/auth.service';
 import { IonContent } from '@ionic/angular/standalone';
 
 @Component({
@@ -13,21 +14,28 @@ import { IonContent } from '@ionic/angular/standalone';
   imports: [IonContent, FormsModule, CommonModule]
 })
 export class LoginComponent {
+  tenantId = '';
   email = '';
   password = '';
 
   constructor(
     private router: Router,
-    public configService: ConfigService
+    public configService: ConfigService,
+    private authService: AuthService
   ) {}
 
   onLogin() {
-    if (this.email && this.password) {
-      // TODO: Replace with actual authentication service logic
-      console.log('Authenticating:', this.email);
-      
-      // Navigate to the dashboard on successful login
-      this.router.navigate(['/dashboard']);
+    if (this.email && this.password && this.tenantId) {
+      this.authService.login(this.tenantId, this.email, this.password).subscribe({
+        next: (res) => {
+          this.router.navigate(['/dashboard']);
+        },
+        error: (err) => {
+          alert('Login failed: ' + (err.error?.message || 'Unknown error'));
+        }
+      });
+    } else {
+      alert('Please fill in all fields including Workspace Name.');
     }
   }
 }

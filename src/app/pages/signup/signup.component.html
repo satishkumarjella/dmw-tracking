@@ -8,6 +8,10 @@
 
       <form (ngSubmit)="onSignup()">
         <div class="form-group">
+          <label for="tenantId">Workspace Name</label>
+          <input type="text" id="tenantId" name="tenantId" [(ngModel)]="tenantId" required placeholder="Enter workspace name" />
+        </div>
+        <div class="form-group">
           <label for="email">Email Address</label>
           <input type="email" id="email" name="email" [(ngModel)]="email" required placeholder="Enter your email" />
         </div>

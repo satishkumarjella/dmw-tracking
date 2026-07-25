@@ -1,70 +1,27 @@
-# Specifies intentionally untracked files to ignore when using Git
-# http://git-scm.com/docs/gitignore
+# Ignore everything by default
+*
 
-*~
-*.sw[mnpcod]
-.tmp
-*.tmp
-*.tmp.*
-UserInterfaceState.xcuserstate
-$RECYCLE.BIN/
+# BUT DO NOT ignore these essential project configuration files and folders:
+!/.gitignore
+!/src/
+!/package.json
+!/package-lock.json
+!/angular.json
+!/tsconfig*.json
+!/ionic.config.json
 
-*.log
-log.txt
+# Inside the src/ folder, still ignore typical generated/build folders if they accidentally get put there
+/src/**/*.js
+/src/**/*.js.map
+/src/**/*.d.ts
 
+# Ignore IDE and system files even inside src
+/src/**/.DS_Store
+/src/**/Thumbs.db
 
-/.sourcemaps
-/.versions
-/coverage
-
-# Ionic
-/.ionic
-/www
-/platforms
-/plugins
-
-# Compiled output
-/dist
-/tmp
-/out-tsc
-/bazel-out
-
-# Node
+# Ensure node_modules, dist, www, etc., are never included even if the '*' rule above somehow misses them
 /node_modules
-npm-debug.log
-yarn-error.log
-
-# IDEs and editors
-.idea/
-.project
-.classpath
-.c9/
-*.launch
-.settings/
-*.sublime-project
-*.sublime-workspace
-
-# Visual Studio Code
-.vscode/*
-!.vscode/settings.json
-!.vscode/tasks.json
-!.vscode/launch.json
-!.vscode/extensions.json
-.history/*
-
-
-# Miscellaneous
+/dist
+/www
 /.angular
-/.angular/cache
-.sass-cache/
 /.nx
-/.nx/cache
-/connect.lock
-/coverage
-/libpeerconnection.log
-testem.log
-/typings
-
-# System files
-.DS_Store
-Thumbs.db
