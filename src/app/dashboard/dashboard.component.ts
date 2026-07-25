@@ -4,13 +4,13 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Subscription } from 'rxjs';
 import { filter } from 'rxjs/operators';
-import { IonContent } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import { settingsOutline, personCircleOutline, optionsOutline, helpCircleOutline, logOutOutline, chevronBackOutline, menuOutline, searchOutline, informationCircleOutline, barcodeOutline } from 'ionicons/icons';
 import { DashboardModulesComponent } from './components/dashboard-modules/dashboard-modules.component';
 import { DashboardFooterComponent } from './components/dashboard-footer/dashboard-footer.component';
 import { DashboardHeaderComponent } from './components/dashboard-header/dashboard-header.component';
 import { ModulesSectionComponent } from './components/modules-section/modules-section.component';
+import { AuthService } from '../shared/services/auth.service';
 
 @Component({
   selector: 'app-dashboard',
@@ -18,7 +18,7 @@ import { ModulesSectionComponent } from './components/modules-section/modules-se
   styleUrls: ['./dashboard.component.scss'],
   encapsulation: ViewEncapsulation.None,
   standalone: true,
-  imports: [FormsModule, RouterModule, CommonModule, IonContent,
+  imports: [FormsModule, RouterModule, CommonModule,
     DashboardHeaderComponent, DashboardFooterComponent, DashboardModulesComponent, ModulesSectionComponent]
 })
 export class DashboardComponent implements OnInit, OnDestroy {
@@ -30,7 +30,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
   activeChildComponent: any;
   private routerSub!: Subscription;
 
-  constructor(private router: Router) {
+  constructor(private router: Router, private authService: AuthService) {
     addIcons({ settingsOutline, personCircleOutline, optionsOutline, helpCircleOutline, logOutOutline, chevronBackOutline, menuOutline, searchOutline, informationCircleOutline, barcodeOutline });
     this.checkRoute(this.router.url);
     this.routerSub = this.router.events.pipe(
@@ -40,7 +40,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
     });
   }
 
-  ngOnInit() {}
+  ngOnInit() { }
 
   ngOnDestroy() {
     if (this.routerSub) {
@@ -114,7 +114,8 @@ export class DashboardComponent implements OnInit, OnDestroy {
   }
 
   logout() {
-    console.log('Logging out');
+    this.authService.logout();
+    this.router.navigate(['/login']);
   }
 
   startCameraScan() {

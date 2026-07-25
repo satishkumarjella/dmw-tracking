@@ -23,10 +23,10 @@
     backdrop-filter: blur(10px);
     border: 1px solid var(--border-subtle);
     border-radius: var(--radius-md);
-    padding: 20px;
+    padding: 16px;
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 8px;
     text-decoration: none;
     color: inherit;
     position: relative;
@@ -70,8 +70,8 @@
 }
 
 .icon-badge {
-    height: 44px;
-    width: 44px;
+    height: 38px;
+    width: 38px;
     border-radius: var(--radius-md);
     background: rgba(var(--card-accent-rgb, var(--color-primary-rgb)), 0.1);
     border: 1px solid rgba(var(--card-accent-rgb, var(--color-primary-rgb)), 0.2);
@@ -79,7 +79,7 @@
     align-items: center;
     justify-content: center;
     transition: all var(--transition-normal);
-    margin-bottom: 6px;
+    margin-bottom: 4px;
 
     .card-num {
         display: none;
@@ -93,8 +93,8 @@
 }
 
 .icon-badge svg {
-    width: 20px;
-    height: 20px;
+    width: 18px;
+    height: 18px;
     stroke: var(--card-accent, var(--color-primary));
     fill: none;
     stroke-width: 2;
@@ -109,7 +109,7 @@
 
 .card-title {
     font-family: var(--font-family-heading);
-    font-size: 1.1rem;
+    font-size: 1rem;
     font-weight: 600;
     color: var(--text-main);
     line-height: 1.3;
@@ -388,5 +388,56 @@
     .modules-section.compact .card.active .card-title {
         color: var(--card-accent, var(--color-primary));
         font-weight: 600;
+    }
+}
+@media (max-width: 600px) {
+    .modules-section:not(.compact) .grid-bottom {
+        gap: 12px;
+        padding: 0 16px;
+    }
+    .modules-section:not(.compact) .card {
+        padding: 16px;
+        gap: 6px;
+    }
+    .modules-section:not(.compact) .card-title {
+        font-size: 1rem;
+    }
+    .modules-section:not(.compact) .card-desc {
+        font-size: 0.8rem;
+    }
+    .modules-section:not(.compact) .icon-badge {
+        height: 36px;
+        width: 36px;
+        margin-bottom: 2px;
+    }
+    .modules-section:not(.compact) .icon-badge svg {
+        width: 18px;
+        height: 18px;
+    }
+}
+
+.card-header-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    width: 100%;
+    min-width: 0;
+}
+.card-header-row .card-title {
+    flex: 1;
+    min-width: 0;
+}
+.card-header-row .icon-badge {
+    margin-bottom: 0 !important;
+    flex-shrink: 0;
+}
+
+@media(max-width: 768px) {
+    .modules-section.compact .card-header-row {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 4px;
+        width: 100%;
     }
 }

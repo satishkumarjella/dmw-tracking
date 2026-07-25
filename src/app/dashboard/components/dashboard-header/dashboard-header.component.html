@@ -8,18 +8,43 @@
 
     <ion-popover trigger="settings-button" side="bottom" alignment="end" [dismissOnSelect]="true" cssClass="custom-portal-popover">
       <ng-template>
-        <ion-content class="ion-no-padding">
+        <ion-content class="ion-no-padding" [scrollY]="false">
           <div class="popover-inner">
             <ion-list lines="none">
+              <!-- Account Section -->
               <ion-item button (click)="profileOpened.emit()">
                 <div class="item-icon-box"><ion-icon name="person-circle-outline"></ion-icon></div>
-                <ion-label><div class="menu-title">Profile</div></ion-label>
+                <ion-label><div class="menu-title">My Profile</div></ion-label>
               </ion-item>
+              
+              <!-- Workspace Section -->
+              <ion-item button>
+                <div class="item-icon-box"><ion-icon name="business-outline"></ion-icon></div>
+                <ion-label><div class="menu-title">Workspace Settings</div></ion-label>
+              </ion-item>
+              <ion-item button>
+                <div class="item-icon-box"><ion-icon name="people-outline"></ion-icon></div>
+                <ion-label><div class="menu-title">Team Management</div></ion-label>
+              </ion-item>
+              <ion-item button>
+                <div class="item-icon-box"><ion-icon name="card-outline"></ion-icon></div>
+                <ion-label><div class="menu-title">Billing & Plans</div></ion-label>
+              </ion-item>
+
+              <!-- Preferences & Help -->
               <ion-item>
                 <div class="item-icon-box" style="color: var(--text-main);"><ion-icon [name]="isDark() ? 'moon-outline' : 'sunny-outline'"></ion-icon></div>
                 <ion-label><div class="menu-title" style="color: var(--text-main);">{{ isDark() ? 'Dark Mode' : 'Light Mode' }}</div></ion-label>
                 <ion-toggle slot="end" [checked]="isDark()" (ionChange)="toggleTheme()"></ion-toggle>
               </ion-item>
+              <ion-item button>
+                <div class="item-icon-box"><ion-icon name="help-circle-outline"></ion-icon></div>
+                <ion-label><div class="menu-title">Help & Documentation</div></ion-label>
+              </ion-item>
+
+              <div class="divider"></div>
+
+              <!-- Sign Out -->
               <ion-item button class="logout-item" (click)="loggedOut.emit()">
                 <div class="item-icon-box"><ion-icon name="log-out-outline"></ion-icon></div>
                 <ion-label><div class="menu-title">Sign Out</div></ion-label>

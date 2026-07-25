@@ -21,12 +21,12 @@ export const routes: Routes = [
     loadChildren: () => import('./dashboard/dashboard.routes').then((m) => m.dashboardRoutes),
   },
   {
-    path: 'home',
-    loadComponent: () => import('./home/home.page').then((m) => m.HomePage),
+    path: '',
+    redirectTo: 'login',
+    pathMatch: 'full',
   },
   {
-    path: '',
-    redirectTo: 'home',
-    pathMatch: 'full',
+    path: '**',
+    loadComponent: () => import('./pages/not-found/not-found.component').then((m) => m.NotFoundComponent),
   },
 ];

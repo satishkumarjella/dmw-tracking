@@ -12,13 +12,15 @@
     @for (module of config.modules; track module.id) {
       <a (click)="navigate.emit(module.route)" class="card" [class.active]="activeModule === module.id"
          [style.--card-accent]="module.colorHex" [style.--card-accent-rgb]="module.colorRgb">
-        <div class="icon-badge">
-          <span [innerHTML]="module.iconSvg | safeHtml"></span>
-          <span class="card-num">{{ module.shortName }}</span>
-        </div>
-        <div class="card-title">
-          <span class="desktop-title">{{ module.title }}</span>
-          <span class="mobile-title">{{ module.shortName }}</span>
+        <div class="card-header-row">
+          <div class="icon-badge">
+            <span [innerHTML]="module.iconSvg | safeHtml"></span>
+            <span class="card-num">{{ module.shortName }}</span>
+          </div>
+          <div class="card-title">
+            <span class="desktop-title">{{ module.title }}</span>
+            <span class="mobile-title">{{ module.shortName }}</span>
+          </div>
         </div>
         <div class="card-divider"></div>
         <p class="card-desc">{{ module.desc }}</p>

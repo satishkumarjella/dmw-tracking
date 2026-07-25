@@ -5,10 +5,12 @@ import { IonicModule } from '@ionic/angular';
 import { RouterModule, Router } from '@angular/router';
 import { AuthService } from '../../shared/services/auth.service';
 
+import { ConfigService } from '../../shared/config.service';
+
 @Component({
   selector: 'app-signup',
   templateUrl: './signup.component.html',
-  styleUrls: ['./signup.component.scss'],
+  styleUrls: ['../login/login.component.scss'],
   standalone: true,
   imports: [CommonModule, FormsModule, IonicModule, RouterModule]
 })
@@ -18,7 +20,11 @@ export class SignupComponent {
   password = '';
   confirmPassword = '';
 
-  constructor(private authService: AuthService, private router: Router) {}
+  constructor(
+    private authService: AuthService, 
+    private router: Router,
+    public configService: ConfigService
+  ) {}
 
   onSignup() {
     if (this.password !== this.confirmPassword) {

@@ -71,7 +71,7 @@
     border-radius: 50%;
     box-shadow: 0 0 6px var(--color-success);
     flex-shrink: 0;
-    animation: blink 2s infinite ease-in-out;
+    animation: pulse-smooth 2.5s infinite ease-in-out;
   }
 }
 
@@ -166,9 +166,10 @@
 ::ng-deep .custom-portal-popover::part(content) {
   --background: var(--bg-surface);
   border-radius: var(--radius-md);
-  width: 180px;
+  width: 240px;
   box-shadow: var(--shadow-lg);
   border: 1px solid var(--border-subtle);
+  overflow: hidden;
 }
 
 ::ng-deep .custom-portal-popover ion-item {
@@ -185,9 +186,10 @@
   color: var(--text-muted);
 }
 
-@keyframes blink {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.5; }
+@keyframes pulse-smooth {
+  0% { transform: scale(1); opacity: 1; box-shadow: 0 0 4px var(--color-success); }
+  50% { transform: scale(1.3); opacity: 0.7; box-shadow: 0 0 10px var(--color-success); }
+  100% { transform: scale(1); opacity: 1; box-shadow: 0 0 4px var(--color-success); }
 }
 
 @media (max-width: 600px) {
@@ -206,4 +208,9 @@
     flex: none;
     width: 100%;
   }
+}
+.divider {
+  height: 1px;
+  background: var(--border-subtle);
+  margin: 4px 10px;
 }

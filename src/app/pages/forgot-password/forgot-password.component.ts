@@ -5,10 +5,12 @@ import { IonicModule } from '@ionic/angular';
 import { RouterModule } from '@angular/router';
 import { AuthService } from '../../shared/services/auth.service';
 
+import { ConfigService } from '../../shared/config.service';
+
 @Component({
   selector: 'app-forgot-password',
   templateUrl: './forgot-password.component.html',
-  styleUrls: ['./forgot-password.component.scss'],
+  styleUrls: ['../login/login.component.scss'],
   standalone: true,
   imports: [CommonModule, FormsModule, IonicModule, RouterModule]
 })
@@ -16,7 +18,10 @@ export class ForgotPasswordComponent {
   tenantId = '';
   email = '';
 
-  constructor(private authService: AuthService) {}
+  constructor(
+    private authService: AuthService,
+    public configService: ConfigService
+  ) {}
 
   onResetPassword() {
     if (this.email && this.tenantId) {

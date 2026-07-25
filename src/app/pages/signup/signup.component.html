@@ -1,41 +1,81 @@
-<ion-content [fullscreen]="true" class="signup-content">
-  <div class="signup-container">
-    <div class="signup-card">
-      
-      <div class="brand-eyebrow">// Integrated Operations Platform</div>
-      <h1 class="signup-title">CREATE ACCOUNT</h1>
-      <p class="signup-subtitle">Sign up to access your modules</p>
-
-      <form (ngSubmit)="onSignup()">
-        <div class="form-group">
-          <label for="tenantId">Workspace Name</label>
-          <input type="text" id="tenantId" name="tenantId" [(ngModel)]="tenantId" required placeholder="Enter workspace name" />
-        </div>
-        <div class="form-group">
-          <label for="email">Email Address</label>
-          <input type="email" id="email" name="email" [(ngModel)]="email" required placeholder="Enter your email" />
-        </div>
-        <div class="form-group">
-          <label for="password">Password</label>
-          <input type="password" id="password" name="password" [(ngModel)]="password" required placeholder="Enter your password" />
-        </div>
-        <div class="form-group">
-          <label for="confirmPassword">Confirm Password</label>
-          <input type="password" id="confirmPassword" name="confirmPassword" [(ngModel)]="confirmPassword" required placeholder="Confirm your password" />
-        </div>
-        <button type="submit" class="btn-primary" [disabled]="!email || !password || password !== confirmPassword">
-          Sign Up 
-        </button>
-      </form>
-
-      <div class="brand-stripe">
-        <span class="bs-o"></span>
-        <span class="bs-b"></span>
-        <span class="bs-s"></span>
+<ion-content [fullscreen]="true" class="login-content">
+  <div class="login-wrapper animate-fade-in">
+    <!-- Left Side: Branding / Visual (Hidden on mobile) -->
+    <div class="login-visual">
+      <div class="visual-content animate-slide-up">
+        <h2 class="heading-font" *ngIf="configService.config() as config">{{ config.vendorName }}</h2>
+        <p>Join our enterprise operations platform.<br/>Monitor, track, and manage projects with ease.</p>
       </div>
+      <div class="gradient-overlay"></div>
+    </div>
 
-      <div class="login-link">
-        <p>Already have an account? <a routerLink="/login">Log in here</a></p>
+    <!-- Right Side: Signup Form -->
+    <div class="login-form-container">
+      <div class="glass-card login-card animate-slide-up">
+        <div class="brand-eyebrow">INTEGRATED PLATFORM</div>
+        <h1 class="heading-font login-title text-gradient">Create Account</h1>
+        <p class="login-subtitle">Sign up to access your modules</p>
+
+        <form (ngSubmit)="onSignup()">
+          <div class="form-group">
+            <label for="tenantId">Workspace Name</label>
+            <div class="input-wrapper">
+              <svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                <line x1="3" y1="9" x2="21" y2="9"></line>
+                <line x1="9" y1="21" x2="9" y2="9"></line>
+              </svg>
+              <input class="input-modern" type="text" id="tenantId" name="tenantId" [(ngModel)]="tenantId" required placeholder="vendor_a" />
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="email">Email Address</label>
+            <div class="input-wrapper">
+              <svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+                <polyline points="22,6 12,13 2,6"></polyline>
+              </svg>
+              <input class="input-modern" type="email" id="email" name="email" [(ngModel)]="email" required placeholder="name@company.com" />
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="password">Password</label>
+            <div class="input-wrapper">
+              <svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+              </svg>
+              <input class="input-modern" type="password" id="password" name="password" [(ngModel)]="password" required placeholder="••••••••" />
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="confirmPassword">Confirm Password</label>
+            <div class="input-wrapper">
+              <svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+              </svg>
+              <input class="input-modern" type="password" id="confirmPassword" name="confirmPassword" [(ngModel)]="confirmPassword" required placeholder="••••••••" />
+            </div>
+          </div>
+
+          <button type="submit" class="btn-premium login-btn" [disabled]="!email || !password || password !== confirmPassword">
+            <span>Sign Up</span>
+            <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M16 21v-2a4 4 0 0 0-4-4H5c-2.2 0-4 1.8-4 4v2"></path>
+              <circle cx="8.5" cy="7" r="4"></circle>
+              <line x1="20" y1="8" x2="20" y2="14"></line>
+              <line x1="23" y1="11" x2="17" y2="11"></line>
+            </svg>
+          </button>
+          
+          <div class="form-options" style="justify-content: center; margin-top: 24px; margin-bottom: 0;">
+            <a routerLink="/login" class="forgot-link">Already have an account? Log in here</a>
+          </div>
+        </form>
       </div>
     </div>
   </div>

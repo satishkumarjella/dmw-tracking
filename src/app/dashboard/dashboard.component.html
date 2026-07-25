@@ -1,7 +1,7 @@
 <div class="dashboard-layout" [class.has-sidebar]="!isDashboardRoute" [class.sidebar-collapsed]="isSidebarCollapsed" style="flex: 1;">
 
   <!-- SIDEBAR MODE (Starts from top of app layout) -->
-  <app-modules-section *ngIf="!isDashboardRoute"
+  <app-modules-section class="sidebar-mode-section" *ngIf="!isDashboardRoute"
     [isDashboardRoute]="isDashboardRoute"
     [isSidebarCollapsed]="isSidebarCollapsed"
     [activeModule]="activeModule"
@@ -24,12 +24,12 @@
       (cameraScanTriggered)="startCameraScan()">
     </app-dashboard-header>
 
-    <ion-content [fullscreen]="true">
-      <!-- DASHBOARD HERO -->
-      <app-dashboard-modules *ngIf="isDashboardRoute"></app-dashboard-modules>
+    <!-- DASHBOARD HERO (Static) -->
+    <app-dashboard-modules *ngIf="isDashboardRoute"></app-dashboard-modules>
 
+    <div class="dashboard-scroll-area">
       <!-- DASHBOARD MODULES GRID (Scrollable below hero) -->
-      <app-modules-section *ngIf="isDashboardRoute"
+      <app-modules-section class="grid-mode-section" *ngIf="isDashboardRoute"
         [isDashboardRoute]="isDashboardRoute"
         [activeModule]="activeModule"
         (navigate)="navigateToRoute($event)">
@@ -38,7 +38,7 @@
       <div class="dashboard-router-container">
         <router-outlet (activate)="onOutletActivate($event)"></router-outlet>
       </div>
-    </ion-content>
+    </div>
 
     <app-dashboard-footer *ngIf="isDashboardRoute"></app-dashboard-footer>
   </div>
