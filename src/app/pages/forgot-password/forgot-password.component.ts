@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { IonicModule } from '@ionic/angular';
 import { RouterModule } from '@angular/router';
 import { AuthService } from '../../shared/services/auth.service';
+import { ToastService } from '../../shared/services/toast.service';
 
 import { ConfigService } from '../../shared/config.service';
 
@@ -20,21 +21,22 @@ export class ForgotPasswordComponent {
 
   constructor(
     private authService: AuthService,
-    public configService: ConfigService
+    public configService: ConfigService,
+    private toastService: ToastService
   ) {}
 
   onResetPassword() {
     if (this.email && this.tenantId) {
       this.authService.forgotPassword(this.tenantId, this.email).subscribe({
         next: (res) => {
-          alert('If that email exists, a reset link has been sent.');
+          this.toastService.success('If that email exists, a reset link has been sent.');
         },
         error: (err) => {
-          alert('Request failed: ' + (err.error?.message || 'Unknown error'));
+          this.toastService.error('Request failed: ' + (err.error?.message || 'Unknown error'));
         }
       });
     } else {
-      alert('Please fill in all fields.');
+      this.toastService.error('Please fill in all fields.');
     }
   }
 }

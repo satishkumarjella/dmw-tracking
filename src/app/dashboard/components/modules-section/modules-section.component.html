@@ -10,25 +10,51 @@
 
   <div class="grid-bottom" *ngIf="configService.config() as config">
     @for (module of config.modules; track module.id) {
-      <a (click)="navigate.emit(module.route)" class="card" [class.active]="activeModule === module.id"
-         [style.--card-accent]="module.colorHex" [style.--card-accent-rgb]="module.colorRgb">
-        <div class="card-header-row">
-          <div class="icon-badge">
-            <span [innerHTML]="module.iconSvg | safeHtml"></span>
-            <span class="card-num">{{ module.shortName }}</span>
+      <ng-container *ngIf="hasAccess(module.id)">
+        <a (click)="navigate.emit(module.route)" class="card" [class.active]="activeModule === module.id"
+           [style.--card-accent]="module.colorHex" [style.--card-accent-rgb]="module.colorRgb">
+          <div class="card-header-row">
+            <div class="icon-badge">
+              <span [innerHTML]="module.iconSvg | safeHtml"></span>
+              <span class="card-num">{{ module.shortName }}</span>
+            </div>
+            <div class="card-title">
+              <span class="desktop-title">{{ module.title }}</span>
+              <span class="mobile-title">{{ module.shortName }}</span>
+            </div>
           </div>
-          <div class="card-title">
-            <span class="desktop-title">{{ module.title }}</span>
-            <span class="mobile-title">{{ module.shortName }}</span>
-          </div>
-        </div>
-        <div class="card-divider"></div>
-        <p class="card-desc">{{ module.desc }}</p>
-        <div class="card-cta">Open Module <svg viewBox="0 0 24 24">
-            <line x1="5" y1="12" x2="19" y2="12" />
-            <polyline points="12 5 19 12 12 19" />
-          </svg></div>
-      </a>
+          <div class="card-divider"></div>
+          <p class="card-desc">{{ module.desc }}</p>
+          <div class="card-cta">Open Module <svg viewBox="0 0 24 24">
+              <line x1="5" y1="12" x2="19" y2="12" />
+              <polyline points="12 5 19 12 12 19" />
+            </svg></div>
+        </a>
+      </ng-container>
     }
+    
+    <a *ngIf="currentUserRole === 'admin' || currentUserRole === 'super_admin'"
+       (click)="navigate.emit('admin')" class="card" [class.active]="activeModule === 'admin'"
+       style="--card-accent: #8b5cf6; --card-accent-rgb: 139, 92, 246;">
+      <div class="card-header-row">
+        <div class="icon-badge">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="3"></circle>
+            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+          </svg>
+          <span class="card-num">ADM</span>
+        </div>
+        <div class="card-title">
+          <span class="desktop-title">Admin Management</span>
+          <span class="mobile-title">Admin</span>
+        </div>
+      </div>
+      <div class="card-divider"></div>
+      <p class="card-desc">Manage users, roles, and access permissions for your organization.</p>
+      <div class="card-cta">Open Admin <svg viewBox="0 0 24 24">
+          <line x1="5" y1="12" x2="19" y2="12" />
+          <polyline points="12 5 19 12 12 19" />
+        </svg></div>
+    </a>
   </div>
 </section>

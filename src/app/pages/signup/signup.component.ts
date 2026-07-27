@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { IonicModule } from '@ionic/angular';
 import { RouterModule, Router } from '@angular/router';
 import { AuthService } from '../../shared/services/auth.service';
+import { ToastService } from '../../shared/services/toast.service';
 
 import { ConfigService } from '../../shared/config.service';
 
@@ -23,27 +24,28 @@ export class SignupComponent {
   constructor(
     private authService: AuthService, 
     private router: Router,
-    public configService: ConfigService
+    public configService: ConfigService,
+    private toastService: ToastService
   ) {}
 
   onSignup() {
     if (this.password !== this.confirmPassword) {
-      alert('Passwords do not match.');
+      this.toastService.error('Passwords do not match.');
       return;
     }
     
     if (this.email && this.password && this.tenantId) {
       this.authService.signup(this.tenantId, this.email, this.password).subscribe({
         next: (res) => {
-          alert('Signup successful! Please login.');
+          this.toastService.success('Signup successful! Please login.');
           this.router.navigate(['/login']);
         },
         error: (err) => {
-          alert('Signup failed: ' + (err.error?.message || 'Unknown error'));
+          this.toastService.error('Signup failed: ' + (err.error?.message || 'Unknown error'));
         }
       });
     } else {
-      alert('Please fill in all fields including Workspace Name.');
+      this.toastService.error('Please fill in all fields including Workspace Name.');
     }
   }
 }

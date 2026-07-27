@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { ConfigService } from '../../shared/config.service';
 import { AuthService } from '../../shared/services/auth.service';
+import { ToastService } from '../../shared/services/toast.service';
 import { IonContent } from '@ionic/angular/standalone';
 
 @Component({
@@ -21,21 +22,23 @@ export class LoginComponent {
   constructor(
     private router: Router,
     public configService: ConfigService,
-    private authService: AuthService
+    private authService: AuthService,
+    private toastService: ToastService
   ) {}
 
   onLogin() {
     if (this.email && this.password && this.tenantId) {
       this.authService.login(this.tenantId, this.email, this.password).subscribe({
         next: (res) => {
+          this.toastService.success('Login successful!');
           this.router.navigate(['/dashboard']);
         },
         error: (err) => {
-          alert('Login failed: ' + (err.error?.message || 'Unknown error'));
+          this.toastService.error('Login failed: ' + (err.error?.message || 'Unknown error'));
         }
       });
     } else {
-      alert('Please fill in all fields including Workspace Name.');
+      this.toastService.error('Please fill in all fields including Workspace Name.');
     }
   }
 }

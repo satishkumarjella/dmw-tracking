@@ -11,6 +11,7 @@ import { DashboardFooterComponent } from './components/dashboard-footer/dashboar
 import { DashboardHeaderComponent } from './components/dashboard-header/dashboard-header.component';
 import { ModulesSectionComponent } from './components/modules-section/modules-section.component';
 import { AuthService } from '../shared/services/auth.service';
+import { ToastService } from '../shared/services/toast.service';
 
 @Component({
   selector: 'app-dashboard',
@@ -30,7 +31,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
   activeChildComponent: any;
   private routerSub!: Subscription;
 
-  constructor(private router: Router, private authService: AuthService) {
+  constructor(private router: Router, private authService: AuthService, private toastService: ToastService) {
     addIcons({ settingsOutline, personCircleOutline, optionsOutline, helpCircleOutline, logOutOutline, chevronBackOutline, menuOutline, searchOutline, informationCircleOutline, barcodeOutline });
     this.checkRoute(this.router.url);
     this.routerSub = this.router.events.pipe(
@@ -65,7 +66,8 @@ export class DashboardComponent implements OnInit, OnDestroy {
       'abm-status': 'ABM Components',
       'quality-inspection': 'Quality Inspection',
       'shipping': 'Shipping',
-      'receiving': 'Receiving'
+      'receiving': 'Receiving',
+      'admin': 'Admin Dashboard'
     };
     return titles[this.activeModule] || 'Dashboard';
   }
@@ -76,7 +78,8 @@ export class DashboardComponent implements OnInit, OnDestroy {
       'abm-status': 'Real-time component inventory, assembly build module tracking, BOM compliance, and parts availability.',
       'quality-inspection': 'Inspection logs, NCR reports, PPAP records, first-article documentation, and audit trail history.',
       'shipping': 'Manage outbound shipments, coordinate carriers, generate BOLs, and track delivery status.',
-      'receiving': 'Process inbound receipts, verify purchase orders, log discrepancies, and confirm dock deliveries.'
+      'receiving': 'Process inbound receipts, verify purchase orders, log discrepancies, and confirm dock deliveries.',
+      'admin': 'Manage user accounts, assign roles, and configure module-level access permissions across the platform.'
     };
     return descriptions[this.activeModule] || 'Select a module to view its details.';
   }
@@ -115,12 +118,13 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
   logout() {
     this.authService.logout();
+    this.toastService.success('Signed out successfully');
     this.router.navigate(['/login']);
   }
 
   startCameraScan() {
     console.log('Starting camera scan...');
-    alert('Camera barcode scanner integration will go here.');
+    this.toastService.info('Camera barcode scanner integration will go here.');
   }
 
 }

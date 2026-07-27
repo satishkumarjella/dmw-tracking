@@ -249,3 +249,37 @@ h1, h2, h3, h4, h5, h6, .heading-font {
   from { opacity: 0; transform: translateY(20px); }
   to { opacity: 1; transform: translateY(0); }
 }
+
+/* ------------------------------------------------------------------
+   TOASTS
+   ------------------------------------------------------------------ */
+ion-toast.glass-toast {
+  --background: rgba(15, 23, 42, 0.85);
+  --color: #fff;
+  --border-radius: 12px;
+  --box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  
+  &::part(message) {
+    font-weight: 500;
+    font-size: 14px;
+    letter-spacing: 0.3px;
+  }
+}
+
+body.dark ion-toast.glass-toast {
+  --background: rgba(2, 6, 23, 0.9);
+  --border-color: rgba(255, 255, 255, 0.1);
+  --border-width: 1px;
+  --border-style: solid;
+}
+
+@media (prefers-color-scheme: dark) {
+  body:not(.light) ion-toast.glass-toast {
+    --background: rgba(2, 6, 23, 0.9);
+    --border-color: rgba(255, 255, 255, 0.1);
+    --border-width: 1px;
+    --border-style: solid;
+  }
+}

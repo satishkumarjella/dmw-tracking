@@ -1,5 +1,6 @@
 import { Routes } from '@angular/router';
 import { DashboardComponent } from './dashboard.component';
+import { RoleGuard } from '../shared/guards/role.guard';
 
 export const dashboardRoutes: Routes = [
     {
@@ -8,6 +9,8 @@ export const dashboardRoutes: Routes = [
         children: [
             {
                 path: 'abm-status',
+                canActivate: [RoleGuard],
+                data: { module: 'abm-status' },
                 loadComponent: () =>
                     import('../tracking/abm-components-status/abm-components-status.component').then(
                         (m) => m.AbmComponentsStatusComponent
@@ -15,6 +18,8 @@ export const dashboardRoutes: Routes = [
             },
             {
                 path: 'quality-inspection',
+                canActivate: [RoleGuard],
+                data: { module: 'quality-inspection' },
                 loadComponent: () =>
                     import('../tracking/quality-inspection-reports/quality-inspection-reports.component').then(
                         (m) => m.QualityInspectionReportsComponent
@@ -22,6 +27,8 @@ export const dashboardRoutes: Routes = [
             },
             {
                 path: 'receiving',
+                canActivate: [RoleGuard],
+                data: { module: 'receiving' },
                 loadComponent: () =>
                     import('../tracking/receiving/receiving.component').then(
                         (m) => m.ReceivingComponent
@@ -29,6 +36,8 @@ export const dashboardRoutes: Routes = [
             },
             {
                 path: 'shipping',
+                canActivate: [RoleGuard],
+                data: { module: 'shipping' },
                 loadComponent: () =>
                     import('../tracking/shipping/shipping.component').then(
                         (m) => m.ShippingComponent
@@ -36,9 +45,20 @@ export const dashboardRoutes: Routes = [
             },
             {
                 path: 'wo-status',
+                canActivate: [RoleGuard],
+                data: { module: 'wo-status' },
                 loadComponent: () =>
                     import('../tracking/wo-status/wo-status.component').then(
                         (m) => m.WoStatusComponent
+                    ),
+            },
+            {
+                path: 'admin',
+                canActivate: [RoleGuard],
+                data: { module: 'admin' },
+                loadComponent: () =>
+                    import('./admin/admin.component').then(
+                        (m) => m.AdminComponent
                     ),
             },
             {
