@@ -1,71 +1,169 @@
-.hero {
-    background: var(--bg-surface);
-    padding: 40px 40px;
+.hero-container {
     position: relative;
+    padding: 60px 40px 40px;
+    background: var(--bg-body);
     overflow: hidden;
-    text-align: center;
-    border-bottom: 1px solid var(--border-subtle);
-
-    &::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        height: 4px;
-        background: linear-gradient(90deg, var(--color-primary), var(--color-secondary));
-    }
-
-    &::after {
-        content: '';
-        position: absolute;
-        inset: 0;
-        background: radial-gradient(circle at top right, rgba(var(--color-primary-rgb), 0.05), transparent 40%),
-            radial-gradient(circle at top left, rgba(var(--color-secondary-rgb), 0.05), transparent 40%);
-        pointer-events: none;
-    }
+    display: flex;
+    justify-content: center;
 }
 
-.hero-inner {
+/* -------------------------------------------------------------
+   Animated Background Elements
+   ------------------------------------------------------------- */
+.mesh-bg {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    pointer-events: none;
+    z-index: 0;
+}
+
+.mesh-orb {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(80px);
+    opacity: 0.15;
+    animation: float 20s infinite ease-in-out;
+}
+
+.orb-1 {
+    width: 600px;
+    height: 600px;
+    background: var(--color-primary);
+    top: -200px;
+    left: -100px;
+}
+
+.orb-2 {
+    width: 500px;
+    height: 500px;
+    background: var(--color-secondary);
+    bottom: -300px;
+    right: -100px;
+    animation-delay: -10s;
+}
+
+@keyframes float {
+    0%, 100% { transform: translate(0, 0); }
+    33% { transform: translate(30px, -50px); }
+    66% { transform: translate(-20px, 20px); }
+}
+
+/* -------------------------------------------------------------
+   Hero Content
+   ------------------------------------------------------------- */
+.hero-content {
     position: relative;
     z-index: 1;
+    max-width: 1000px;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 32px;
 }
 
-.hero-eyebrow {
-    font-family: var(--font-family-heading);
-    font-size: 2rem;
+.hero-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    animation: fadeUp .6s ease-out both;
+}
+
+.greeting-title {
+    font-family: 'Oswald', sans-serif;
+    font-size: 2.5rem;
     font-weight: 700;
     letter-spacing: 0.02em;
     color: var(--text-main);
-    margin-bottom: 8px;
-    animation: fadeUp .5s .1s both;
-    text-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    margin: 0 0 8px;
+    line-height: 1.1;
 }
 
-.hero-tagline {
-    font-size: 1rem;
+.greeting-subtitle {
+    font-size: 1.1rem;
     color: var(--text-muted);
-    max-width: 600px;
-    margin: 0 auto;
-    animation: fadeUp .5s .2s both;
+    margin: 0;
 }
 
-.brand-stripe {
+.date-badge {
     display: flex;
-    justify-content: center;
+    align-items: center;
     gap: 8px;
-    margin-top: 24px;
-    animation: fadeUp .5s .3s both;
+    padding: 8px 16px;
+    background: var(--bg-surface-glass);
+    backdrop-filter: blur(10px);
+    border: 1px solid var(--border-subtle);
+    border-radius: 50px;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.9rem;
+    color: var(--text-main);
+    box-shadow: var(--shadow-sm);
+    animation: fadeUp .6s .1s ease-out both;
+}
 
-    span {
-        height: 4px;
-        border-radius: 2px;
-        transition: width 0.3s ease;
-    }
+.date-badge svg {
+    color: var(--color-primary);
+}
 
-    .bs-o { width: 32px; background: var(--color-primary); }
-    .bs-b { width: 16px; background: var(--color-secondary); }
-    .bs-s { width: 8px; background: var(--color-primary); opacity: 0.5; }
+/* -------------------------------------------------------------
+   KPI Grid
+   ------------------------------------------------------------- */
+.kpi-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    animation: fadeUp .6s .2s ease-out both;
+}
+
+.kpi-card {
+    background: var(--bg-surface-glass);
+    backdrop-filter: blur(10px);
+    border: 1px solid var(--border-subtle);
+    border-radius: 12px;
+    padding: 24px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    box-shadow: var(--shadow-sm);
+    transition: transform 0.22s, box-shadow 0.22s, border-color 0.22s;
+}
+
+.kpi-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-md);
+    border-color: rgba(var(--color-primary-rgb), 0.3);
+}
+
+.kpi-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.kpi-info {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.kpi-label {
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.kpi-value {
+    font-family: 'Oswald', sans-serif;
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: var(--text-main);
+    line-height: 1;
 }
 
 @keyframes fadeUp {
@@ -79,18 +177,61 @@
     }
 }
 
+@media (max-width: 860px) {
+    .kpi-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    .hero-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 16px;
+    }
+}
+
 @media (max-width: 600px) {
-    .hero {
-        padding: 32px 20px;
+    .hero-container {
+        padding: 24px 16px 16px;
     }
-    .hero-eyebrow {
-        font-size: 1.75rem;
-        margin-bottom: 8px;
+    .hero-content {
+        gap: 20px;
     }
-    .hero-tagline {
-        font-size: 0.95rem;
+    .greeting-title {
+        font-size: 1.5rem;
     }
-    .brand-stripe {
-        margin-top: 16px;
+    .date-badge {
+        font-size: 0.75rem;
+        padding: 4px 10px;
+    }
+    .kpi-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 8px;
+    }
+    .kpi-card {
+        padding: 12px 8px;
+        flex-direction: column;
+        justify-content: center;
+        text-align: center;
+        gap: 8px;
+    }
+    .kpi-icon {
+        width: 32px;
+        height: 32px;
+        border-radius: 8px;
+    }
+    .kpi-icon svg {
+        width: 16px;
+        height: 16px;
+    }
+    .kpi-info {
+        align-items: center;
+        gap: 2px;
+    }
+    .kpi-label {
+        font-size: 0.65rem;
+        line-height: 1.1;
+    }
+    .kpi-value {
+        font-size: 1.15rem;
     }
 }
