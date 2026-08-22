@@ -1,350 +1,436 @@
 <div class="quality-page">
   <app-module-loader *ngIf="isLoading" moduleName="Quality Inspection"></app-module-loader>
+
   <ng-container *ngIf="!isLoading">
     <main>
-    <div class="state-banner error" *ngIf="showError">
-      <div class="state-icon">
-        <svg viewBox="0 0 24 24">
-          <circle cx="12" cy="12" r="10"></circle>
-          <line x1="12" y1="8" x2="12" y2="12"></line>
-          <line x1="12" y1="16" x2="12.01" y2="16"></line>
-        </svg>
-      </div>
-      <div>
-        <div class="state-title">PO Not Found</div>
-        <div class="state-text">No work order found for the entered PO number.</div>
-      </div>
-    </div>
-
-    <div class="empty-search-state" *ngIf="!selectedRecord && !showError">
-      <div class="empty-icon">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
-          <circle cx="11" cy="11" r="8"></circle>
-          <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-        </svg>
-      </div>
-      <h3>No Production Order Selected</h3>
-      <p>Use the global search bar in the header to find a PO and view quality inspection details.</p>
-    </div>
-
-    <section id="resultPanel" *ngIf="selectedRecord">
-      <div class="wo-strip enhanced">
-        <div class="wo-main">
-          <div>
-            <div class="wo-eyebrow">Production Order</div>
-            <div class="wo-po">{{ selectedRecord.po }}</div>
-            <div class="wo-meta">
-              <span>Quality Module</span>
-              <span>•</span>
-              <span>{{ selectedRecord.mark }}</span>
-              <span>•</span>
-              <span>{{ selectedRecord.markDesc }}</span>
-            </div>
-          </div>
-
-          <div class="wo-actions">
-            <div class="wo-badge">
-              <span class="bd"></span>
-              Active
-            </div>
-            <button class="head-action" type="button" (click)="openFillModal()">+ Fill GIR</button>
-          </div>
+      <div class="state-banner error" *ngIf="showError">
+        <div class="state-icon">
+          <svg viewBox="0 0 24 24">
+            <circle cx="12" cy="12" r="10"></circle>
+            <line x1="12" y1="8" x2="12" y2="12"></line>
+            <line x1="12" y1="16" x2="12.01" y2="16"></line>
+          </svg>
+        </div>
+        <div>
+          <div class="state-title">Production Order Not Found</div>
+          <div class="state-text">No records found for "{{ poInput }}". Please try another Production Order # in the top search bar.</div>
         </div>
       </div>
 
-      <div class="panel-body">
-        <div class="summary-grid">
-          <div class="stat-card primary-stat">
-            <span class="stat-label">Inspection Mark</span>
-            <strong>{{ selectedRecord.mark }}</strong>
-            <small>{{ selectedRecord.markDesc }}</small>
-          </div>
-
-          <div class="stat-card">
-            <span class="stat-label">Issue Log</span>
-            <strong>{{ issues.length }}</strong>
-            <small>Tracked non-conformances</small>
-          </div>
-
-          <div class="stat-card">
-            <span class="stat-label">Reports</span>
-            <strong>2</strong>
-            <small>GIR + Paint documents</small>
-          </div>
-
-          <div class="stat-card">
-            <span class="stat-label">Specs</span>
-            <strong>{{ criticalSpecsImage ? 'Ready' : 'Pending' }}</strong>
-            <small>Critical dimensions available</small>
-          </div>
+      <div class="empty-search-state" *ngIf="!selectedRecord && !showError">
+        <div class="empty-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+            <circle cx="11" cy="11" r="8"></circle>
+            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+          </svg>
         </div>
+        <h3>No Production Order Selected</h3>
+        <p>Please enter a Production Order number in the top search bar and press enter to view Quality Inspections.</p>
+      </div>
 
-        <div class="view-tabs enhanced" role="tablist" aria-label="Quality tabs">
-          <button role="tab" [attr.aria-selected]="activeView === 'gir'" [class.active]="activeView === 'gir'"
-            (click)="setActiveView('gir')">
-            <span class="tab-title">General Inspection</span>
-            <span class="tab-sub">PDF report</span>
-          </button>
-          <button role="tab" [attr.aria-selected]="activeView === 'issue'" [class.active]="activeView === 'issue'"
-            (click)="setActiveView('issue')">
-            <span class="tab-title">Issue Log</span>
-            <span class="tab-sub">{{ issues.length }} records</span>
-          </button>
-          <button role="tab" [attr.aria-selected]="activeView === 'paint'" [class.active]="activeView === 'paint'"
-            (click)="setActiveView('paint')">
-            <span class="tab-title">Paint Specs</span>
-            <span class="tab-sub">Coating standards</span>
-          </button>
-          <button role="tab" [attr.aria-selected]="activeView === 'specs'" [class.active]="activeView === 'specs'"
-            (click)="setActiveView('specs')">
-            <span class="tab-title">Critical Specs</span>
-            <span class="tab-sub">Visual sheet</span>
-          </button>
-        </div>
-
-        <div class="view-shell" *ngIf="activeView === 'gir'">
-          <div class="hist-header">
-            <div>
-              <h3>General Inspection Report</h3>
-              <p>Review the inspection documentation and submit new forms.</p>
+      <section id="resultPanel" *ngIf="selectedRecord">
+        <div class="po-strip enhanced">
+          <div class="po-top">
+            <div class="po-strip-left">
+              <div class="po-eyebrow">Production Order</div>
+              <div class="po-title">{{ selectedRecord.productionOrderNumber }}</div>
+              <div class="po-meta">
+                <span>Quality Module Active</span>
+                <span>•</span>
+                <span>{{ selectedRecord.markNumber || selectedRecord.material || '—' }}</span>
+                <span>•</span>
+                <span>{{ selectedRecord.description || selectedRecord.shortText || '—' }}</span>
+              </div>
             </div>
-            <button class="btn-new" type="button" (click)="openFillModal()">+ Fill GIR</button>
-          </div>
 
-          <div class="content-panel pdf-panel">
-            <div class="panel-topline">Inspection Document Viewer</div>
-            <div class="pdf-container">
-              <iframe [src]="girPdfUrl" width="100%" height="600" style="border: none;"></iframe>
+            <div class="po-badge">
+              <span class="bdot"></span>
+              <span>Quality Active</span>
             </div>
           </div>
         </div>
 
-        <div class="view-shell" *ngIf="activeView === 'issue'">
-          <div class="hist-header">
-            <div>
-              <h3>Issue Log</h3>
-              <p>Track open NCRs, non-conformances, and audit findings.</p>
+        <div class="panel-body">
+          <div class="summary-grid">
+            <div class="stat-card primary-stat">
+              <span class="stat-label">Project Def</span>
+              <strong>{{ selectedRecord.projectDef || 'N/A' }}</strong>
+              <small>WBS: {{ selectedRecord.wbsElement || 'N/A' }}</small>
             </div>
-            <button class="btn-new" type="button" (click)="openIssueModal()">+ Log Issue</button>
+
+            <div class="stat-card">
+              <span class="stat-label">Quantity</span>
+              <strong>{{ selectedRecord.quantity || selectedRecord.orderQuantity || '0' }}</strong>
+              <small>Required units</small>
+            </div>
+
+            <div class="stat-card">
+              <span class="stat-label">Supplier</span>
+              <strong>{{ selectedRecord.fabricatorName || selectedRecord.supplierPlant || 'N/A' }}</strong>
+              <small>Fabricator</small>
+            </div>
+
+            <div class="stat-card">
+              <span class="stat-label">Delivery Date</span>
+              <strong>{{ selectedRecord.deliveryDate || selectedRecord.requiredBy || 'N/A' }}</strong>
+              <small>Required by date</small>
+            </div>
           </div>
 
-          <div class="content-panel">
-            <div class="panel-topline">Quality Exceptions Register</div>
-            <div class="tbl-wrap">
-              <table>
-                <thead>
-                  <tr>
-                    <th>Date</th>
-                    <th>Project</th>
-                    <th>PO</th>
-                    <th>Description</th>
-                    <th>Status</th>
-                    <th>Recorded By</th>
-                  </tr>
-                </thead>
-                <tbody *ngIf="issues.length; else emptyIssues">
-                  <tr *ngFor="let issue of issues">
-                    <td class="date-cell">{{ issue.date }}</td>
-                    <td class="po-cell">{{ issue.project }}</td>
-                    <td>{{ issue.po }}</td>
-                    <td>{{ issue.description }}</td>
-                    <td>
-                      <span class="status-badge" [ngClass]="statusClass(issue.status)">{{ issue.status }}</span>
-                    </td>
-                    <td>{{ issue.recordedBy }}</td>
-                  </tr>
-                </tbody>
-                <ng-template #emptyIssues>
-                  <tbody>
+          <div class="view-tabs enhanced">
+            <button [class.active]="activeView === 'gir'" (click)="setActiveView('gir')">
+              <div class="tab-content">
+                <svg class="tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                </svg>
+                <div class="tab-text">
+                  <span class="tab-title">General Inspection Log</span>
+                  <span class="tab-sub">View, download, upload or fill form</span>
+                </div>
+              </div>
+            </button>
+            <button [class.active]="activeView === 'issue'" (click)="setActiveView('issue')">
+              <div class="tab-content">
+                <svg class="tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+                </svg>
+                <div class="tab-text">
+                  <span class="tab-title">Report An Issue</span>
+                  <span class="tab-sub">Log non-conformances</span>
+                </div>
+              </div>
+            </button>
+            <button [class.active]="activeView === 'paint'" (click)="setActiveView('paint')">
+              <div class="tab-content">
+                <svg class="tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01"></path>
+                </svg>
+                <div class="tab-text">
+                  <span class="tab-title">WO A — Paint Specs</span>
+                  <span class="tab-sub">Stellantis master paint specs</span>
+                </div>
+              </div>
+            </button>
+            <button [class.active]="activeView === 'specs'" (click)="setActiveView('specs')">
+              <div class="tab-content">
+                <svg class="tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+                </svg>
+                <div class="tab-text">
+                  <span class="tab-title">See Critical Specs</span>
+                  <span class="tab-sub">Engineering assembly drawing</span>
+                </div>
+              </div>
+            </button>
+          </div>
+
+          <!-- Dynamic Content Area -->
+          <div class="view-shell">
+            
+            <!-- View: General Inspection Log -->
+            <div class="content-panel" *ngIf="activeView === 'gir'">
+              <div class="hist-header">
+                <div>
+                  <div class="panel-topline">GENERAL INSPECTION LOG</div>
+                  <h3>Inspections Requested</h3>
+                  <p>0 submitted of {{ selectedRecord.quantity || selectedRecord.orderQuantity || 0 }} required</p>
+                </div>
+                <div class="d-flex gap-2" style="display: flex; gap: 8px;">
+                  <button class="btn btn-clear" *ngIf="selectedTemplate" (click)="downloadFilledPdf()">Download PDF</button>
+                  <button class="btn btn-orange btn-new" (click)="openFillModal()">+ Fill Inspection Form</button>
+                </div>
+              </div>
+
+              <!-- Filled forms list will go here in the future -->
+              <div class="empty-state" style="margin-top: 40px;">
+                <p>No inspection logs have been submitted yet. Click "+ Fill Inspection Form" to create one.</p>
+              </div>
+            </div>
+
+            <!-- View: Report An Issue -->
+            <div class="content-panel" *ngIf="activeView === 'issue'">
+              <div class="hist-header">
+                <div>
+                  <div class="panel-topline">NON-CONFORMANCE / ISSUE LOG</div>
+                  <h3>Reported Issues</h3>
+                  <p>All issues reported against Production Order <strong>{{ selectedRecord.productionOrderNumber }}</strong></p>
+                </div>
+                <button class="btn btn-orange btn-new" (click)="openIssueModal()">+ CREATE ISSUE</button>
+              </div>
+
+              <div class="tbl-wrap">
+                <table class="issue-table">
+                  <thead>
                     <tr>
-                      <td colspan="6">
-                        <div class="empty-state">No issues logged yet. Click <strong>+ Log Issue</strong> to record an
-                          issue.</div>
+                      <th>#</th>
+                      <th>DATE</th>
+                      <th>PROJECT #</th>
+                      <th>PROD. ORDER #</th>
+                      <th>ISSUE DESCRIPTION</th>
+                      <th>CONTAINMENT</th>
+                      <th>PREVENTATIVE ACTION</th>
+                      <th>IMPACT</th>
+                      <th>RESOLUTION</th>
+                      <th>SOURCE (NC)</th>
+                      <th>RECORDED BY</th>
+                      <th *ngIf="isAdmin" style="text-align: right;">ACTIONS</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr *ngFor="let iss of issues; let i = index">
+                      <td>{{ issues.length - i }}</td>
+                      <td class="date-cell">{{ iss.date | date:'shortDate' }}</td>
+                      <td>{{ iss.projectNumber || 'N/A' }}</td>
+                      <td class="po-cell">{{ iss.productionOrderNumber }}</td>
+                      <td>{{ iss.description }}</td>
+                      <td>{{ iss.containment }}</td>
+                      <td>{{ iss.preventativeAction }}</td>
+                      <td>{{ iss.impact }}</td>
+                      <td>{{ iss.resolution }}</td>
+                      <td>{{ iss.sourceOfNonConformance }}</td>
+                      <td>{{ iss.recordedBy }}</td>
+                      <td *ngIf="isAdmin" class="action-cell" style="text-align: right; white-space: nowrap;">
+                        <button class="btn-icon" (click)="editIssue(iss)" title="Edit Issue">
+                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" width="16" height="16">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path>
+                          </svg>
+                        </button>
+                        <button class="btn-icon text-danger" (click)="deleteIssue(iss.id)" title="Delete Issue">
+                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" width="16" height="16">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                          </svg>
+                        </button>
+                      </td>
+                    </tr>
+                    <tr *ngIf="issues.length === 0">
+                      <td [attr.colspan]="isAdmin ? 12 : 11" class="empty-state">
+                        <div class="es-icon">!</div>
+                        <p>No issues reported yet for this production order.</p>
                       </td>
                     </tr>
                   </tbody>
-                </ng-template>
-              </table>
+                </table>
+              </div>
             </div>
+
+            <!-- View: Paint Specs -->
+            <div class="content-panel" *ngIf="activeView === 'paint'">
+              <div class="hist-header">
+                <div>
+                  <div class="panel-topline">WO A - STELLANTIS MASTER PAINT SPECIFICATIONS</div>
+                  <h3>Paint and Lube Specs</h3>
+                  <p>Official specifications for Stellantis paint</p>
+                </div>
+              </div>
+              <div class="pdf-container">
+                <iframe [src]="paintPdfUrl" width="100%" height="800px" frameborder="0"></iframe>
+              </div>
+            </div>
+
+            <!-- View: Critical Specs -->
+            <div class="content-panel" *ngIf="activeView === 'specs'">
+              <div class="hist-header">
+                <div>
+                  <div class="panel-topline">CRITICAL SPECIFICATIONS - ENGINEERING ASSEMBLY DRAWING</div>
+                  <h3>Critical Section Callouts</h3>
+                  <p>{{ selectedRecord.description || selectedRecord.shortText }}</p>
+                </div>
+              </div>
+              <div class="img-container center">
+                <img [src]="criticalSpecsImage" alt="Critical Specifications Drawing">
+              </div>
+            </div>
+
           </div>
         </div>
+      </section>
+    </main>
+  </ng-container>
+</div>
 
-        <div class="view-shell" *ngIf="activeView === 'paint'">
-          <div class="hist-header">
-            <div>
-              <h3>Paint Specifications</h3>
-              <p>Review coating requirements and paint procedures.</p>
-            </div>
-          </div>
+<!-- Modal: Fill Inspection Form -->
+<div class="modal-overlay" *ngIf="showFillModal" (click)="closeFillModalByOverlay($event)">
+  <div class="modal-box" (click)="$event.stopPropagation()">
+    <button class="modal-close" (click)="closeFillModal()">&times;</button>
+    <div class="modal-title">Fill Inspection Form</div>
+    <div class="modal-sub">Create a new inspection record for this Production Order.</div>
 
-          <div class="content-panel pdf-panel">
-            <div class="panel-topline">Coating Document Viewer</div>
-            <div class="pdf-container">
-              <iframe [src]="paintPdfUrl" width="100%" height="600" style="border: none;"></iframe>
-            </div>
-          </div>
-        </div>
-
-        <div class="view-shell" *ngIf="activeView === 'specs'">
-          <div class="hist-header">
-            <div>
-              <h3>Critical Specifications</h3>
-              <p>View critical dimensions and tolerances.</p>
-            </div>
-          </div>
-
-          <div class="content-panel">
-            <div class="panel-topline">Critical Specification Sheet</div>
-            <div class="img-container center">
-              <img [src]="criticalSpecsImage" alt="Critical Specs" />
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-  </main>
-
-  <div class="modal-overlay" *ngIf="showFillModal" (click)="closeFillModalByOverlay($event)">
-    <div class="modal-box">
-      <button class="modal-close" type="button" (click)="closeFillModal()">×</button>
-      <div class="modal-title">Fill General Inspection Report</div>
-      <div class="modal-sub">Complete the quality inspection form details below.</div>
-
+    <form (ngSubmit)="submitFillForm()">
       <div class="form-grid">
         <div class="form-field">
-          <label>Job No</label>
-          <input type="text" [(ngModel)]="fillForm.jobNo" readonly />
+          <label>Job No. <span class="req">*</span></label>
+          <input type="text" name="jobNo" [(ngModel)]="fillForm.jobNo" required>
         </div>
         <div class="form-field">
-          <label>Work Order / Assembly</label>
-          <input type="text" [(ngModel)]="fillForm.wo" readonly />
+          <label>WO # <span class="req">*</span></label>
+          <input type="text" name="wo" [(ngModel)]="fillForm.wo" readonly>
+        </div>
+        <div class="form-field">
+          <label>Mark <span class="req">*</span></label>
+          <input type="text" name="mark" [(ngModel)]="fillForm.mark" required>
         </div>
       </div>
-
-      <div class="form-grid mt-14">
-        <div class="form-field">
-          <label>Mark</label>
-          <input type="text" [(ngModel)]="fillForm.mark" readonly />
-        </div>
-        <div class="form-field">
-          <label>Status <span class="req">*</span></label>
-          <select [(ngModel)]="fillForm.status">
-            <option value="OK">OK</option>
-            <option value="Reject">Reject</option>
-            <option value="Rework">Rework</option>
+        
+      <div *ngIf="selectedTemplate" class="mt-14" style="margin-top: 24px;">
+        <div class="form-field mb-3" style="margin-bottom: 24px;">
+          <label class="form-label text-muted text-uppercase fw-bold" style="font-size: 0.75rem;">Selected Template</label>
+          <select class="form-control" [ngModel]="selectedTemplate" (ngModelChange)="selectTemplate($event)" name="templateSelect">
+            <option *ngFor="let t of templates" [ngValue]="t">{{ t.name }}</option>
           </select>
         </div>
-      </div>
+        
+        <div class="form-grid single-col">
+          <div class="form-section-wrapper" *ngFor="let section of selectedTemplate.schema">
+            <h4 class="section-header">{{ section.name }}</h4>
+            
+            <div class="form-grid" *ngIf="section.layout !== 'checklist'">
+              <div class="form-field" *ngFor="let field of section.fields">
+                <label>{{ field.label }} <span class="req" *ngIf="field.required">*</span></label>
+                
+                <ng-container [ngSwitch]="field.type">
+                  <input *ngSwitchCase="'text'" type="text" [name]="field.id" [(ngModel)]="dynamicFormData[field.id]" [required]="!!field.required">
+                  
+                  <textarea *ngSwitchCase="'textarea'" [name]="field.id" [(ngModel)]="dynamicFormData[field.id]" rows="3" [required]="!!field.required"></textarea>
+                  
+                  <div *ngSwitchCase="'checkbox'" class="d-flex align-items-center gap-2">
+                    <input type="checkbox" [name]="field.id" [(ngModel)]="dynamicFormData[field.id]" [required]="!!field.required">
+                    <span>{{ field.label }}</span>
+                  </div>
 
-      <div class="form-grid mt-14">
-        <div class="form-field">
-          <label>Quantity</label>
-          <input type="number" [(ngModel)]="fillForm.quantity" />
-        </div>
-        <div class="form-field">
-          <label>Of</label>
-          <input type="number" [(ngModel)]="fillForm.of" />
+                  <select *ngSwitchCase="'select'" [name]="field.id" [(ngModel)]="dynamicFormData[field.id]" [required]="!!field.required">
+                    <option value="">Select option</option>
+                    <option *ngFor="let opt of field.options" [value]="opt">{{ opt }}</option>
+                  </select>
+
+                  <div *ngSwitchCase="'radio'">
+                    <label class="d-flex align-items-center gap-2 mb-1" *ngFor="let opt of field.options; let idx = index">
+                      <input type="radio" [name]="field.id" [value]="opt" [(ngModel)]="dynamicFormData[field.id]" [required]="!!field.required">
+                      {{ opt }}
+                    </label>
+                  </div>
+                </ng-container>
+              </div>
+            </div>
+            
+            <table class="checklist-table" *ngIf="section.layout === 'checklist' && section.fields.length > 0">
+              <thead>
+                <tr>
+                  <th class="radio-header" *ngFor="let opt of section.fields[0]?.options">{{ opt }}</th>
+                  <th class="task-header">Task Description</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let field of section.fields">
+                  <td class="radio-cell" *ngFor="let opt of field.options">
+                    <input type="radio" [name]="field.id" [value]="opt" [(ngModel)]="dynamicFormData[field.id]" [required]="!!field.required">
+                  </td>
+                  <td class="task-cell">{{ field.label }}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
-
-      <div class="form-grid mt-14 single-col">
-        <div class="form-field">
-          <label>Product Type / Description</label>
-          <input type="text" [(ngModel)]="fillForm.productType" readonly />
-        </div>
-      </div>
-
-      <div class="form-grid mt-14 single-col">
-        <div class="form-field">
-          <label>Special Instructions</label>
-          <textarea rows="3" [(ngModel)]="fillForm.instructions"></textarea>
-        </div>
-      </div>
-
-      <div class="form-grid mt-14">
-        <div class="form-field">
-          <label>Inspector Name <span class="req">*</span></label>
-          <input type="text" [(ngModel)]="fillForm.inspectorName" />
-        </div>
-        <div class="form-field">
-          <label>Date <span class="req">*</span></label>
-          <input type="date" [(ngModel)]="fillForm.date" />
-        </div>
+      
+      <div *ngIf="!selectedTemplate" class="empty-state">
+        <p>No form templates available. Please create one in the Admin Form Builder.</p>
       </div>
 
       <div class="form-actions">
-        <button class="btn-cancel" type="button" (click)="closeFillModal()">Cancel</button>
-        <button class="btn-submit" type="button" (click)="submitFill()">Submit</button>
+        <button type="button" class="btn btn-clear" (click)="closeFillModal()">Cancel</button>
+        <button type="submit" class="btn btn-orange">Submit Form</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Modal: Report An Issue -->
+<div class="modal-overlay" *ngIf="showIssueModal" (click)="closeIssueModalByOverlay($event)">
+  <div class="modal-box issue-modal" (click)="$event.stopPropagation()">
+    <div class="modal-header-strip"></div>
+    <button class="modal-close" (click)="closeIssueModal()">&times;</button>
+    
+    <div class="modal-header">
+      <div class="mh-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+        </svg>
+      </div>
+      <div>
+        <div class="modal-title">{{ isEditMode ? 'Update Issue' : 'Report An Issue' }}</div>
+        <div class="modal-sub">Log a non-conformance against this production order.</div>
       </div>
     </div>
-  </div>
 
-  <div class="modal-overlay" *ngIf="showIssueModal" (click)="closeIssueModalByOverlay($event)">
-    <div class="modal-box">
-      <button class="modal-close" type="button" (click)="closeIssueModal()">×</button>
-      <div class="modal-title">Log New Issue</div>
-      <div class="modal-sub">Record a non-conformance or quality issue.</div>
-
-      <div class="form-grid">
-        <div class="form-field">
-          <label>Date <span class="req">*</span></label>
-          <input type="date" [(ngModel)]="issueForm.date" />
+    <form (ngSubmit)="submitIssue()">
+      
+      <div class="context-box">
+        <div class="cb-item">
+          <span class="cb-label">Prod. Order #</span>
+          <span class="cb-val">{{ issueForm.productionOrderNumber }}</span>
         </div>
-        <div class="form-field">
-          <label>Project</label>
-          <input type="text" [(ngModel)]="issueForm.project" readonly />
+        <div class="cb-item">
+          <span class="cb-label">Project #</span>
+          <span class="cb-val">{{ issueForm.projectNumber || 'N/A' }}</span>
         </div>
-      </div>
-
-      <div class="form-grid mt-14">
-        <div class="form-field">
-          <label>PO Number</label>
-          <input type="text" [(ngModel)]="issueForm.po" readonly />
-        </div>
-        <div class="form-field">
-          <label>Source</label>
-          <input type="text" [(ngModel)]="issueForm.source" placeholder="e.g. Audit, Inspection" />
+        <div class="cb-item input-item">
+          <span class="cb-label">Date <span class="req">*</span></span>
+          <input type="date" name="issDate" [(ngModel)]="issueForm.date" required>
         </div>
       </div>
 
-      <div class="form-grid mt-14 single-col">
+      <div class="form-grid single-col mt-14">
         <div class="form-field">
           <label>Issue Description <span class="req">*</span></label>
-          <textarea rows="3" [(ngModel)]="issueForm.description"></textarea>
+          <textarea name="issDesc" [(ngModel)]="issueForm.description" rows="3" placeholder="Describe the non-conformance in detail..." required></textarea>
         </div>
       </div>
 
       <div class="form-grid mt-14">
         <div class="form-field">
-          <label>Containment Action</label>
-          <textarea rows="2" [(ngModel)]="issueForm.containment"></textarea>
+          <label>Containment</label>
+          <textarea name="issCont" [(ngModel)]="issueForm.containment" rows="2" placeholder="Immediate containment actions"></textarea>
         </div>
         <div class="form-field">
           <label>Preventative Action</label>
-          <textarea rows="2" [(ngModel)]="issueForm.preventative"></textarea>
+          <textarea name="issPrev" [(ngModel)]="issueForm.preventativeAction" rows="2" placeholder="Long term preventative actions"></textarea>
         </div>
       </div>
 
-      <div class="form-grid mt-14">
+      <div class="form-grid three mt-14">
         <div class="form-field">
           <label>Impact</label>
-          <input type="text" [(ngModel)]="issueForm.impact" placeholder="e.g. High, Medium, Low" />
+          <input type="text" name="issImp" [(ngModel)]="issueForm.impact">
         </div>
         <div class="form-field">
+          <label>Resolution</label>
+          <input type="text" name="issRes" [(ngModel)]="issueForm.resolution">
+        </div>
+        <div class="form-field">
+          <label>Source (NC)</label>
+          <input type="text" name="issSrc" [(ngModel)]="issueForm.sourceOfNonConformance">
+        </div>
+      </div>
+
+      <div class="form-grid single-col mt-14">
+        <div class="form-field" style="max-width: 200px;">
           <label>Recorded By <span class="req">*</span></label>
-          <input type="text" [(ngModel)]="issueForm.recordedBy" placeholder="Full name" />
+          <input type="text" name="issRecBy" [(ngModel)]="issueForm.recordedBy" required>
         </div>
       </div>
 
       <div class="form-actions">
-        <button class="btn-cancel" type="button" (click)="closeIssueModal()">Cancel</button>
-        <button class="btn-submit" type="button" (click)="submitIssue()">Log Issue</button>
+        <button type="button" class="btn btn-clear" (click)="closeIssueModal()">Cancel</button>
+        <button type="submit" class="btn btn-orange">{{ isEditMode ? 'Update Issue' : 'Log Issue' }}</button>
       </div>
-    </div>
+    </form>
   </div>
+</div>
 
-  <div class="toast" *ngIf="toastMessage">
-    {{ toastMessage }}
+<!-- Toast -->
+<div class="toast-container" *ngIf="toastMessage">
+  <div class="toast success">
+    <i class="icon-ok-circled"></i> {{ toastMessage }}
   </div>
-  </ng-container>
 </div>

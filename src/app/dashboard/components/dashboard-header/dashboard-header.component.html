@@ -58,18 +58,63 @@
 
   <div class="module-top-bar compact-bar" *ngIf="!isDashboardRoute">
     <div class="glass-card compact-search">
-      <div class="search-controls">
+      <div class="search-controls" style="position: relative;">
         <span class="status-dot"></span>
-        <ion-searchbar 
-          class="cyber-searchbar-mini" 
-          placeholder="PO# or Scan" 
-          [value]="globalPoSearch"
-          (ionInput)="onSearchChange($any($event).detail.value)" 
-          (keydown.enter)="searchTriggered.emit()">
-        </ion-searchbar>
+        <div class="search-input-wrapper">
+          <ion-searchbar 
+            class="cyber-searchbar-mini" 
+            placeholder="PO# or Scan" 
+            [value]="globalPoSearch"
+            (ionInput)="onSearchChange($any($event).detail.value)" 
+            (keydown.enter)="searchTriggered.emit()"
+            (ionBlur)="hideDropdownDelayed()">
+          </ion-searchbar>
+          <div class="shortcut-hint" *ngIf="!globalPoSearch">{{ shortcutHint }}</div>
+        </div>
+        
         <button class="mini-scan-btn" (click)="cameraScanTriggered.emit()">
           <ion-icon name="barcode-outline"></ion-icon>
         </button>
+
+        <!-- Global Typeahead Dropdown -->
+        <div class="global-typeahead-dropdown" *ngIf="showDropdown">
+          <!-- Loading State -->
+          <div class="dropdown-state-item loading-state" *ngIf="isLoading">
+            <ion-spinner name="crescent" color="primary"></ion-spinner>
+            <span>Searching...</span>
+          </div>
+
+          <!-- Empty State -->
+          <ng-container *ngIf="!isLoading && (searchResults$ | async) as results">
+            <div class="dropdown-state-item empty-state" *ngIf="results.length === 0 && globalPoSearch">
+              <ion-icon name="search-outline"></ion-icon>
+              <span>No results found for "{{ globalPoSearch }}"</span>
+            </div>
+            
+            <!-- Results -->
+            <div 
+              class="dropdown-item" 
+              *ngFor="let result of results"
+              (click)="selectRecord(result.productionOrderNumber)">
+              
+              <div class="po-header">
+                <ion-icon name="cube-outline" class="item-icon"></ion-icon>
+                <span class="po-number" [innerHTML]="highlightMatch(result.productionOrderNumber)"></span>
+                <span class="po-badge customer-badge" *ngIf="result.customerName">{{ result.customerName }}</span>
+              </div>
+
+              <div class="po-details">
+                <span class="po-desc" *ngIf="result.description || result.shortText" [innerHTML]="highlightMatch(result.description || result.shortText)"></span>
+                <span class="po-badge date-badge" *ngIf="result.deliveryDate">
+                  <ion-icon name="calendar-outline"></ion-icon> {{ result.deliveryDate | date:'shortDate' }}
+                </span>
+                <span class="po-badge material-badge" *ngIf="result.material">
+                  {{ result.material }}
+                </span>
+              </div>
+            </div>
+          </ng-container>
+        </div>
       </div>
     </div>
 

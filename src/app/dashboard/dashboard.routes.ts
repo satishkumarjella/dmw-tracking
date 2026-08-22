@@ -62,6 +62,15 @@ export const dashboardRoutes: Routes = [
                     ),
             },
             {
+                path: 'form-builder',
+                canActivate: [RoleGuard],
+                data: { module: 'admin' },
+                loadComponent: () =>
+                    import('../pages/form-builder/form-builder.component').then(
+                        (m) => m.FormBuilderComponent
+                    ),
+            },
+            {
                 path: '**',
                 redirectTo: '',
                 pathMatch: 'full',
