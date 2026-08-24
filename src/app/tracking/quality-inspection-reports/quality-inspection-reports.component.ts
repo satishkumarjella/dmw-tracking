@@ -597,4 +597,67 @@ export class QualityInspectionReportsComponent implements OnInit, OnDestroy {
     
     return stats;
   }
+
+  // --- Stepper Logic ---
+  currentStepIndex = 0;
+
+  getSectionStats(sectionIdx: number): { completion: number; success: number } {
+    if (!this.selectedTemplate || !this.selectedTemplate.schema) {
+      return { completion: 0, success: 0 };
+    }
+    const section = this.selectedTemplate.schema[sectionIdx];
+    if (!section || !section.fields) return { completion: 0, success: 0 };
+    
+    let total = 0;
+    let filled = 0;
+    let successCount = 0;
+
+    section.fields.forEach((f: any) => {
+      total++;
+      const val = this.dynamicFormData[f.id];
+      if (val !== undefined && val !== null && val !== '') {
+        filled++;
+        if (f.analyzeField && val === f.expectedValue) {
+          successCount++;
+        } else if (f.analyzeField && val !== f.expectedValue) {
+          // failure
+        } else {
+          successCount++;
+        }
+      }
+    });
+
+    if (this.dynamicFormData[`section_${sectionIdx}_signName`]) {
+      filled++;
+      successCount++;
+    }
+    total++;
+
+    return {
+      completion: total === 0 ? 0 : Math.round((filled / total) * 100),
+      success: filled === 0 ? 0 : Math.round((successCount / filled) * 100)
+    };
+  }
+
+  goToStep(index: number) {
+    if (index >= 0 && index < this.selectedTemplate!.schema!.length) {
+      this.currentStepIndex = index;
+    }
+  }
+
+  prevStep() {
+    if (this.currentStepIndex > 0) {
+      this.currentStepIndex--;
+    }
+  }
+
+  nextStep() {
+    if (this.currentStepIndex < this.selectedTemplate!.schema!.length - 1) {
+      this.currentStepIndex++;
+    }
+  }
+
+  saveProgress() {
+    this.showToast('Progress saved locally.');
+  }
 }

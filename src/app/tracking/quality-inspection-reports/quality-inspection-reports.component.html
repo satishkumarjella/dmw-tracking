@@ -343,9 +343,34 @@
           </select>
         </div>
         
+        <div class="stepper-wrapper">
+          <div class="horizontal-stepper">
+            <div class="stepper-node" 
+                 *ngFor="let section of selectedTemplate.schema; let i = index"
+                 [class.active]="currentStepIndex === i"
+                 [class.completed]="currentStepIndex > i"
+                 (click)="goToStep(i)">
+              <div class="node-circle">
+                <span *ngIf="currentStepIndex <= i">{{ i + 1 }}</span>
+                <svg *ngIf="currentStepIndex > i" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                </svg>
+              </div>
+              <div class="node-content">
+                <div class="node-label">{{ section.name }}</div>
+                <div class="node-stats">
+                  <div class="stat-comp">{{ getSectionStats(i).completion }}% Comp</div>
+                  <div class="stat-succ" [ngStyle]="{'color': getSectionStats(i).success < 100 ? 'var(--color-danger)' : ''}">{{ getSectionStats(i).success }}% Succ</div>
+                </div>
+              </div>
+              <div class="stepper-line" *ngIf="i < selectedTemplate.schema.length - 1"></div>
+            </div>
+          </div>
+        </div>
+        
         <div class="form-grid single-col">
-          <div class="form-section-wrapper" *ngFor="let section of selectedTemplate.schema">
-            <h4 class="section-header">{{ section.name }}</h4>
+          <div class="form-section-wrapper" *ngIf="selectedTemplate.schema[currentStepIndex] as section">
+            <h4 class="section-header">Section {{ currentStepIndex + 1 }}: {{ section.name }}</h4>
             
             <div class="form-grid" *ngIf="section.layout !== 'checklist'">
               <div class="form-field" *ngFor="let field of section.fields">
@@ -378,22 +403,24 @@
               </div>
             </div>
             
-            <table class="checklist-table" *ngIf="section.layout === 'checklist' && section.fields.length > 0">
-              <thead>
-                <tr>
-                  <th class="radio-header" *ngFor="let opt of section.fields[0]?.options">{{ opt }}</th>
-                  <th class="task-header">Task Description</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr *ngFor="let field of section.fields">
-                  <td class="radio-cell" *ngFor="let opt of field.options">
-                    <input type="radio" [name]="field.id" [value]="opt" [(ngModel)]="dynamicFormData[field.id]" [required]="!!field.required">
-                  </td>
-                  <td class="task-cell">{{ field.label }}</td>
-                </tr>
-              </tbody>
-            </table>
+            <div class="table-responsive" *ngIf="section.layout === 'checklist' && section.fields.length > 0">
+              <table class="checklist-table">
+                <thead>
+                  <tr>
+                    <th class="radio-header" *ngFor="let opt of section.fields[0]?.options">{{ opt }}</th>
+                    <th class="task-header">Task Description</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let field of section.fields">
+                    <td class="radio-cell" *ngFor="let opt of field.options">
+                      <input type="radio" [name]="field.id" [value]="opt" [(ngModel)]="dynamicFormData[field.id]" [required]="!!field.required">
+                    </td>
+                    <td class="task-cell">{{ field.label }}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
           </div>
         </div>
       </div>
@@ -402,9 +429,16 @@
         <p>No form templates available. Please create one in the Admin Form Builder.</p>
       </div>
 
-      <div class="form-actions">
-        <button type="button" class="btn btn-clear" (click)="closeFillModal()">Cancel</button>
-        <button type="submit" class="btn btn-orange">{{ isInspectionEditMode ? 'Update Form' : 'Submit Form' }}</button>
+      <div class="form-actions enhanced-actions">
+        <div class="action-group-left">
+          <button type="button" class="btn btn-clear" (click)="closeFillModal()">Cancel</button>
+        </div>
+        <div class="action-group-right">
+          <button *ngIf="selectedTemplate" type="button" class="btn btn-clear" (click)="prevStep()" [disabled]="currentStepIndex === 0">Back</button>
+          <button *ngIf="selectedTemplate && currentStepIndex < selectedTemplate.schema.length - 1" type="button" class="btn btn-secondary" (click)="nextStep()">Next</button>
+          <button *ngIf="selectedTemplate" type="button" class="btn btn-secondary" (click)="saveProgress()">Save Progress</button>
+          <button type="submit" class="btn btn-orange" *ngIf="!selectedTemplate || currentStepIndex === selectedTemplate.schema.length - 1">{{ isInspectionEditMode ? 'Update Form' : 'Submit Form' }}</button>
+        </div>
       </div>
     </form>
   </div>
