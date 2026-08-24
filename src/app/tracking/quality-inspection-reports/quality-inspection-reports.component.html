@@ -137,13 +137,76 @@
                   <p>0 submitted of {{ selectedRecord.quantity || selectedRecord.orderQuantity || 0 }} required</p>
                 </div>
                 <div class="d-flex gap-2" style="display: flex; gap: 8px;">
-                  <button class="btn btn-clear" *ngIf="selectedTemplate" (click)="downloadFilledPdf()">Download PDF</button>
                   <button class="btn btn-orange btn-new" (click)="openFillModal()">+ Fill Inspection Form</button>
                 </div>
               </div>
 
               <!-- Filled forms list will go here in the future -->
-              <div class="empty-state" style="margin-top: 40px;">
+              <div class="tbl-wrap" style="margin-top: 24px;" *ngIf="inspections.length > 0">
+                <table class="issue-table">
+                  <thead>
+                    <tr>
+                      <th>#</th>
+                      <th>DATE</th>
+                      <th>PROD. ORDER #</th>
+                      <th>INSPECTOR</th>
+                      <th>RESULTS</th>
+                      <th *ngIf="isAdmin" style="text-align: right;">ACTIONS</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr *ngFor="let insp of inspections; let i = index">
+                      <td>{{ inspections.length - i }}</td>
+                      <td class="date-cell">{{ insp.inspectionDate | date:'shortDate' }}</td>
+                      <td class="po-cell">{{ insp.purchaseOrderId === selectedRecord.id ? selectedRecord.productionOrderNumber : insp.purchaseOrderId }}</td>
+                      <td>{{ insp.inspectorName }}</td>
+                      <td class="results-cell">
+                        <ng-container *ngIf="getInspectionStats(insp) as stats">
+                          <div class="result-bar-wrapper">
+                            <div class="rb-text">
+                              <span class="rb-success">{{ stats.successPct }}% OK</span>
+                              <span class="rb-fail" *ngIf="stats.failPct > 0">{{ stats.failPct }}% Fail</span>
+                            </div>
+                            <div class="result-bar">
+                              <div class="rb-fill-success" [style.width.%]="stats.successPct"></div>
+                              <div class="rb-fill-fail" [style.width.%]="stats.failPct"></div>
+                            </div>
+                            
+                            <div class="info-popup" *ngIf="stats.failPct > 0">
+                              <div class="ip-icon" (click)="openAnalysisModal(stats)" title="View Analysis">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                  <circle cx="12" cy="12" r="10"></circle>
+                                  <line x1="12" y1="16" x2="12" y2="12"></line>
+                                  <line x1="12" y1="8" x2="12.01" y2="8"></line>
+                                </svg>
+                              </div>
+                            </div>
+                          </div>
+                        </ng-container>
+                      </td>
+                      <td *ngIf="isAdmin" class="action-cell" style="text-align: right; white-space: nowrap;">
+                        <button class="btn-icon" (click)="downloadFilledPdf(insp)" title="Download PDF">
+                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" width="16" height="16">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
+                          </svg>
+                        </button>
+                        <button class="btn-icon" (click)="editInspection(insp)" title="Edit Inspection">
+                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" width="16" height="16">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path>
+                          </svg>
+                        </button>
+                        <button class="btn-icon text-danger" (click)="deleteInspection(insp.id)" title="Delete Inspection">
+                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" width="16" height="16">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                          </svg>
+                        </button>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+
+              <div class="empty-state" style="margin-top: 40px;" *ngIf="inspections.length === 0">
                 <p>No inspection logs have been submitted yet. Click "+ Fill Inspection Form" to create one.</p>
               </div>
             </div>
@@ -253,8 +316,8 @@
 <div class="modal-overlay" *ngIf="showFillModal" (click)="closeFillModalByOverlay($event)">
   <div class="modal-box" (click)="$event.stopPropagation()">
     <button class="modal-close" (click)="closeFillModal()">&times;</button>
-    <div class="modal-title">Fill Inspection Form</div>
-    <div class="modal-sub">Create a new inspection record for this Production Order.</div>
+    <div class="modal-title">{{ isInspectionEditMode ? 'Update Inspection Form' : 'Fill Inspection Form' }}</div>
+    <div class="modal-sub">{{ isInspectionEditMode ? 'Modify an existing inspection record.' : 'Create a new inspection record for this Production Order.' }}</div>
 
     <form (ngSubmit)="submitFillForm()">
       <div class="form-grid">
@@ -293,9 +356,11 @@
                   
                   <textarea *ngSwitchCase="'textarea'" [name]="field.id" [(ngModel)]="dynamicFormData[field.id]" rows="3" [required]="!!field.required"></textarea>
                   
-                  <div *ngSwitchCase="'checkbox'" class="d-flex align-items-center gap-2">
-                    <input type="checkbox" [name]="field.id" [(ngModel)]="dynamicFormData[field.id]" [required]="!!field.required">
-                    <span>{{ field.label }}</span>
+                  <div *ngSwitchCase="'checkbox'" class="radio-group">
+                    <label>
+                      <input type="checkbox" [name]="field.id" [(ngModel)]="dynamicFormData[field.id]" [required]="!!field.required">
+                      {{ field.label }}
+                    </label>
                   </div>
 
                   <select *ngSwitchCase="'select'" [name]="field.id" [(ngModel)]="dynamicFormData[field.id]" [required]="!!field.required">
@@ -303,8 +368,8 @@
                     <option *ngFor="let opt of field.options" [value]="opt">{{ opt }}</option>
                   </select>
 
-                  <div *ngSwitchCase="'radio'">
-                    <label class="d-flex align-items-center gap-2 mb-1" *ngFor="let opt of field.options; let idx = index">
+                  <div *ngSwitchCase="'radio'" class="radio-group">
+                    <label *ngFor="let opt of field.options; let idx = index">
                       <input type="radio" [name]="field.id" [value]="opt" [(ngModel)]="dynamicFormData[field.id]" [required]="!!field.required">
                       {{ opt }}
                     </label>
@@ -339,7 +404,7 @@
 
       <div class="form-actions">
         <button type="button" class="btn btn-clear" (click)="closeFillModal()">Cancel</button>
-        <button type="submit" class="btn btn-orange">Submit Form</button>
+        <button type="submit" class="btn btn-orange">{{ isInspectionEditMode ? 'Update Form' : 'Submit Form' }}</button>
       </div>
     </form>
   </div>
@@ -425,6 +490,55 @@
         <button type="submit" class="btn btn-orange">{{ isEditMode ? 'Update Issue' : 'Log Issue' }}</button>
       </div>
     </form>
+  </div>
+</div>
+
+<!-- Modal: Analysis -->
+<div class="modal-overlay" *ngIf="showAnalysisModal" (click)="closeAnalysisModalByOverlay($event)">
+  <div class="modal-box analysis-modal" (click)="$event.stopPropagation()">
+    <div class="modal-header-strip"></div>
+    <button class="modal-close" (click)="closeAnalysisModal()">&times;</button>
+    
+    <div class="modal-header">
+      <div class="mh-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+          <circle cx="12" cy="12" r="10"></circle>
+          <line x1="12" y1="16" x2="12" y2="12"></line>
+          <line x1="12" y1="8" x2="12.01" y2="8"></line>
+        </svg>
+      </div>
+      <div>
+        <div class="modal-title">Inspection Analysis</div>
+        <div class="modal-sub">Breakdown of the results for this form submission.</div>
+      </div>
+    </div>
+
+    <div class="analysis-stats-grid">
+      <div class="as-card">
+        <div class="as-label">Checks Evaluated</div>
+        <div class="as-val">{{ selectedAnalysisStats?.evaluable }}</div>
+      </div>
+      <div class="as-card success">
+        <div class="as-label">Successful</div>
+        <div class="as-val">{{ selectedAnalysisStats?.success }}</div>
+      </div>
+      <div class="as-card fail">
+        <div class="as-label">Rejected</div>
+        <div class="as-val">{{ selectedAnalysisStats?.rejected }}</div>
+      </div>
+    </div>
+
+    <div class="analysis-details mt-14" *ngIf="selectedAnalysisStats?.rejected > 0">
+      <h4 class="ad-title">Rejected Items:</h4>
+      <ul class="ad-list">
+        <li *ngFor="let field of selectedAnalysisStats?.rejectedFields">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" width="16" height="16">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+          </svg>
+          {{ field }}
+        </li>
+      </ul>
+    </div>
   </div>
 </div>
 

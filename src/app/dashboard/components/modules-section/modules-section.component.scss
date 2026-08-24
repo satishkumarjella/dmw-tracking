@@ -130,7 +130,7 @@
 }
 
 .card-title {
-    font-family: 'Oswald', sans-serif;
+    font-family: var(--font-family-heading);
     font-size: 1.15rem;
     font-weight: 600;
     letter-spacing: 0.03em;
@@ -310,13 +310,14 @@
 @media(max-width: 768px) {
 
     .modules-section.compact {
-        padding: 8px;
+        padding: 6px 12px;
         background: var(--bg-surface-glass);
-        backdrop-filter: blur(20px);
-        -webkit-backdrop-filter: blur(20px);
+        backdrop-filter: blur(24px) saturate(180%);
+        -webkit-backdrop-filter: blur(24px) saturate(180%);
         border: 1px solid var(--border-subtle);
-        border-radius: var(--radius-xl);
-        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+        border-top: 1px solid rgba(255, 255, 255, 0.15);
+        border-radius: 40px;
+        box-shadow: 0 16px 40px rgba(0, 0, 0, 0.2), inset 0 1px 1px rgba(255, 255, 255, 0.1), inset 0 -1px 1px rgba(0, 0, 0, 0.05);
         display: block;
     }
 
@@ -338,7 +339,7 @@
     .modules-section.compact .card {
         flex: 1;
         min-width: 0;
-        padding: 4px;
+        padding: 6px 4px;
         border: none;
         box-shadow: none;
         background: transparent;
@@ -347,7 +348,22 @@
         align-items: center;
         gap: 4px;
         border-radius: var(--radius-lg);
-        transition: transform 0.2s;
+        transition: all 0.2s ease;
+        cursor: pointer;
+    }
+
+    .modules-section.compact .card:active {
+        transform: scale(0.95);
+    }
+
+    .modules-section.compact .card-header-row {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 4px;
+        width: 100%;
+        margin: 0;
     }
 
     .modules-section.compact .card::before {
@@ -364,33 +380,39 @@
         display: flex;
         align-items: center;
         justify-content: center;
+        transition: all 0.2s ease;
     }
 
     .modules-section.compact .icon-badge svg {
-        width: 20px;
-        height: 20px;
+        width: 22px;
+        height: 22px;
         stroke: var(--text-muted);
+        transition: stroke 0.2s ease, transform 0.2s ease;
     }
 
     .modules-section.compact .card-title {
-        font-size: 0.6rem;
+        display: block;
+        font-size: 0.65rem;
         line-height: 1.1;
         font-weight: 500;
         text-align: center;
         color: var(--text-muted);
         font-family: var(--font-family-base);
         width: 100%;
-    }
-
-    .modules-section.compact .card-title .desktop-title {
-        display: none;
-    }
-
-    .modules-section.compact .card-title .mobile-title {
-        display: block;
+        margin: 0;
+        padding: 0;
+        transition: color 0.2s ease;
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
+    }
+
+    .modules-section.compact .card-title .desktop-title {
+        display: block;
+    }
+
+    .modules-section.compact .card-title .mobile-title {
+        display: none;
     }
 
     .modules-section.compact .card-desc,
@@ -404,17 +426,40 @@
     }
 
     .modules-section.compact .card.active .icon-badge {
-        background: var(--card-accent, var(--color-primary));
-        color: white;
+        position: relative;
+        background: rgba(var(--card-accent-rgb, var(--color-primary-rgb)), 0.08);
+        box-shadow: inset 0 2px 4px rgba(255, 255, 255, 0.1);
+    }
+
+    .modules-section.compact .card.active .icon-badge::after {
+        content: '';
+        position: absolute;
+        inset: -3px;
+        border-radius: 50%;
+        padding: 2px;
+        background: linear-gradient(135deg, var(--card-accent, var(--color-primary)), #8b5cf6, var(--card-accent, var(--color-primary)));
+        background-size: 200% 200%;
+        animation: gradientShift 3s ease infinite;
+        -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+        -webkit-mask-composite: xor;
+        mask-composite: exclude;
+        pointer-events: none;
+    }
+
+    @keyframes gradientShift {
+        0% { background-position: 0% 50%; }
+        50% { background-position: 100% 50%; }
+        100% { background-position: 0% 50%; }
     }
 
     .modules-section.compact .card.active .icon-badge svg {
-        stroke: white;
+        stroke: var(--card-accent, var(--color-primary));
+        filter: drop-shadow(0 2px 4px rgba(var(--card-accent-rgb, var(--color-primary-rgb)), 0.4));
     }
-
+    
     .modules-section.compact .card.active .card-title {
         color: var(--card-accent, var(--color-primary));
-        font-weight: 600;
+        font-weight: 700;
     }
 }
 @media (max-width: 600px) {

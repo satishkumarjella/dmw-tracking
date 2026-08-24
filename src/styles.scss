@@ -1,6 +1,4 @@
 @use './theme/modern-ui.scss';
-@import url('https://fonts.googleapis.com/css2?family=Oswald:wght@300;400;500;600;700&family=Source+Sans+3:wght@400;500;600&family=Share+Tech+Mono&display=swap');
-
 /* Global Theming & Variables */
 :root {
   --bg: #eef0f4;
@@ -38,5 +36,5 @@
 body {
   background: var(--bg);
   color: var(--dark);
-  font-family: var(--ion-font-family, 'Inter', sans-serif);
+  font-family: var(--font-family-base);
 }

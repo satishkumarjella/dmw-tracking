@@ -46,6 +46,17 @@ interface IssueItem {
   recordedBy: string;
 }
 
+interface InspectionItem {
+  id?: string;
+  purchaseOrderId: string;
+  inspectorName: string;
+  inspectionDate: string;
+  formPdfUrl?: string;
+  formData?: any;
+  formTemplateId?: string;
+  createdAt?: string;
+}
+
 import { FormBuilderService, FormTemplate } from '../../pages/form-builder/form-builder.service';
 
 @Component({
@@ -68,14 +79,20 @@ export class QualityInspectionReportsComponent implements OnInit, OnDestroy {
 
   selectedRecord: ProductionRecord | null = null;
   issues: IssueItem[] = [];
+  inspections: InspectionItem[] = [];
 
   showFillModal = false;
   showIssueModal = false;
+  showAnalysisModal = false;
+  selectedAnalysisStats: any = null;
   toastMessage = '';
   
   isAdmin = true; // Mock admin check for now
   isEditMode = false;
   editingIssueId: string | null = null;
+  
+  isInspectionEditMode = false;
+  editingInspectionId: string | null = null;
 
   girPdfUrl!: SafeResourceUrl;
   paintPdfUrl!: SafeResourceUrl;
@@ -141,15 +158,19 @@ export class QualityInspectionReportsComponent implements OnInit, OnDestroy {
 
   selectTemplate(template: FormTemplate) {
     this.selectedTemplate = template;
-    this.dynamicFormData = {};
-    if (template.schema) {
-      template.schema.forEach((section: any) => {
-        if (section.fields) {
-          section.fields.forEach((field: any) => {
-            this.dynamicFormData[field.id] = field.type === 'checkbox' ? false : '';
-          });
-        }
-      });
+    
+    // Only reset form data if we are NOT in edit mode
+    if (!this.isInspectionEditMode) {
+      this.dynamicFormData = {};
+      if (template.schema) {
+        template.schema.forEach((section: any) => {
+          if (section.fields) {
+            section.fields.forEach((field: any) => {
+              this.dynamicFormData[field.id] = field.type === 'checkbox' ? false : '';
+            });
+          }
+        });
+      }
     }
   }
 
@@ -203,6 +224,14 @@ export class QualityInspectionReportsComponent implements OnInit, OnDestroy {
           next: (res) => this.issues = res || [],
           error: (err) => console.error('Error fetching issues:', err)
         });
+        
+      this.http.get<InspectionItem[]>(`${environment.apiUrl}/inspections?purchaseOrderId=${record.id}`)
+        .subscribe({
+          next: (res) => {
+            this.inspections = res || [];
+          },
+          error: (err) => console.error('Error fetching inspections:', err)
+        });
     }
   }
 
@@ -218,6 +247,12 @@ export class QualityInspectionReportsComponent implements OnInit, OnDestroy {
   }
 
   openFillModal(): void {
+    this.isInspectionEditMode = false;
+    this.editingInspectionId = null;
+    this.dynamicFormData = {};
+    if (this.templates.length > 0) {
+      this.selectTemplate(this.templates[0]);
+    }
     this.showFillModal = true;
   }
 
@@ -232,28 +267,95 @@ export class QualityInspectionReportsComponent implements OnInit, OnDestroy {
   }
 
   submitFillForm(): void {
-    if (!this.selectedTemplate) {
-      alert('Please select a template');
+    if (!this.selectedTemplate || !this.selectedRecord?.id) {
+      alert('Please select a template and ensure a Production Order is active.');
       return;
     }
     
-    // Simulate submission to backend
-    console.log('Submitting Dynamic Form:', {
-      templateId: this.selectedTemplate.id,
-      data: this.dynamicFormData
-    });
-    alert('Inspection Log submitted successfully using template: ' + this.selectedTemplate.name);
-    this.closeFillModal();
+    const payload = {
+      purchaseOrderId: this.selectedRecord.id,
+      inspectorName: 'Admin User', // Mock user
+      formData: this.dynamicFormData,
+      formTemplateId: this.selectedTemplate.id
+    };
+
+    if (this.isInspectionEditMode && this.editingInspectionId) {
+      this.http.put<InspectionItem>(`${environment.apiUrl}/inspections/${this.editingInspectionId}`, payload).subscribe({
+        next: (updatedInspection) => {
+          const index = this.inspections.findIndex(i => i.id === this.editingInspectionId);
+          if (index !== -1) {
+            this.inspections[index] = updatedInspection;
+          }
+          this.closeFillModal();
+          this.showToast('Inspection Log updated successfully');
+        },
+        error: (err) => {
+          console.error(err);
+          alert('Failed to update inspection.');
+        }
+      });
+    } else {
+      this.http.post<InspectionItem>(`${environment.apiUrl}/inspections`, payload).subscribe({
+        next: (newInspection) => {
+          this.inspections = [newInspection, ...this.inspections];
+          this.closeFillModal();
+          this.showToast('Inspection Log submitted successfully');
+        },
+        error: (err) => {
+          console.error(err);
+          alert('Failed to submit inspection.');
+        }
+      });
+    }
   }
 
-  downloadFilledPdf(): void {
-    if (!this.selectedTemplate || !this.selectedTemplate.id) {
-      alert('Please fill out and submit the form first to generate a PDF.');
+  editInspection(inspection: InspectionItem): void {
+    this.isInspectionEditMode = true;
+    this.editingInspectionId = inspection.id || null;
+    this.dynamicFormData = inspection.formData ? { ...inspection.formData } : {};
+    
+    // Select the correct template based on formTemplateId
+    if (inspection.formTemplateId) {
+      const template = this.templates.find(t => t.id === inspection.formTemplateId);
+      if (template) {
+        this.selectedTemplate = template;
+      }
+    }
+    
+    this.showFillModal = true;
+  }
+
+  deleteInspection(id: string | undefined): void {
+    if (!id) return;
+    if (confirm('Are you sure you want to delete this inspection?')) {
+      this.http.delete(`${environment.apiUrl}/inspections/${id}`).subscribe({
+        next: () => {
+          this.inspections = this.inspections.filter(i => i.id !== id);
+          this.showToast('Inspection deleted successfully');
+        },
+        error: (err) => {
+          console.error(err);
+          alert('Failed to delete inspection.');
+        }
+      });
+    }
+  }
+
+  downloadFilledPdf(inspection: InspectionItem): void {
+    if (!inspection.formTemplateId) {
+      alert('This inspection does not have a linked template.');
       return;
     }
+    
+    const template = this.templates.find(t => t.id === inspection.formTemplateId);
+    if (!template) {
+      alert('Template not found for this inspection.');
+      return;
+    }
+
     let flatSchema: any[] = [];
-    if (this.selectedTemplate.schema) {
-       this.selectedTemplate.schema.forEach((section: any) => {
+    if (template.schema) {
+       template.schema.forEach((section: any) => {
          if (section.fields) {
            flatSchema = flatSchema.concat(section.fields);
          }
@@ -262,10 +364,10 @@ export class QualityInspectionReportsComponent implements OnInit, OnDestroy {
 
     const payload = {
       schema: flatSchema,
-      data: this.dynamicFormData
+      data: inspection.formData
     };
     
-    this.http.post(`${environment.apiUrl}/form-templates/${this.selectedTemplate.id}/generate-pdf`, payload, { responseType: 'blob' })
+    this.http.post(`${environment.apiUrl}/form-templates/${template.id}/generate-pdf`, payload, { responseType: 'blob' })
       .subscribe({
         next: (blob) => {
           const url = window.URL.createObjectURL(blob);
@@ -296,6 +398,22 @@ export class QualityInspectionReportsComponent implements OnInit, OnDestroy {
   closeIssueModalByOverlay(event: MouseEvent): void {
     if ((event.target as HTMLElement).classList.contains('modal-overlay')) {
       this.closeIssueModal();
+    }
+  }
+
+  openAnalysisModal(stats: any): void {
+    this.selectedAnalysisStats = stats;
+    this.showAnalysisModal = true;
+  }
+
+  closeAnalysisModal(): void {
+    this.showAnalysisModal = false;
+    this.selectedAnalysisStats = null;
+  }
+
+  closeAnalysisModalByOverlay(event: MouseEvent): void {
+    if ((event.target as HTMLElement).classList.contains('modal-overlay')) {
+      this.closeAnalysisModal();
     }
   }
 
@@ -437,5 +555,46 @@ export class QualityInspectionReportsComponent implements OnInit, OnDestroy {
 
   private today(): string {
     return new Date().toISOString().split('T')[0];
+  }
+
+  getFieldLabel(fieldId: string): string {
+    for (const t of this.templates) {
+      if (t.schema) {
+        for (const section of t.schema) {
+          if (section.fields) {
+             const field = section.fields.find((f: any) => f.id === fieldId);
+             if (field) return field.label;
+          }
+        }
+      }
+    }
+    return '';
+  }
+
+  getInspectionStats(insp: InspectionItem): { evaluable: number, rejected: number, success: number, successPct: number, failPct: number, rejectedFields: string[] } {
+    const stats = { evaluable: 0, rejected: 0, success: 0, successPct: 0, failPct: 0, rejectedFields: [] as string[] };
+    if (!insp.formData) return stats;
+
+    Object.keys(insp.formData).forEach(key => {
+      const val = insp.formData[key];
+      if (typeof val === 'string') {
+        const upper = val.toUpperCase();
+        if (upper === 'REJECT') {
+           stats.rejected++;
+           stats.evaluable++;
+           stats.rejectedFields.push(this.getFieldLabel(key) || key);
+        } else if (['OK', 'N/A', 'N/A*', 'CORRECTED/CHECKED'].includes(upper)) {
+           stats.evaluable++;
+        }
+      }
+    });
+
+    stats.success = stats.evaluable - stats.rejected;
+    if (stats.evaluable > 0) {
+      stats.failPct = Math.round((stats.rejected / stats.evaluable) * 100);
+      stats.successPct = 100 - stats.failPct;
+    }
+    
+    return stats;
   }
 }

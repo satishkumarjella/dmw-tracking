@@ -2,11 +2,9 @@
    Modern UI Overrides for dmw-tracking
    ========================================================================== */
 
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
-
 :root {
   /* Typography - Clean and Modern */
-  --ion-font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  --ion-font-family: var(--font-family-base);
   
   /* Spacing - Increased for a breathable UI */
   --ion-padding: 24px;
