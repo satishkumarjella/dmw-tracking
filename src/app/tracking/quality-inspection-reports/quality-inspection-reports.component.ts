@@ -78,20 +78,26 @@ export class QualityInspectionReportsComponent implements OnInit, OnDestroy {
   dynamicFormData: any = {};
 
   activeView: 'gir' | 'issue' | 'paint' | 'specs' = 'gir';
+  activeGirTab: 'fabricator' | 'dmw-inspector' = 'fabricator';
 
   selectedRecord: ProductionRecord | null = null;
   issues: IssueItem[] = [];
   inspections: InspectionItem[] = [];
+  dmwSiteVisits: { inspector: string; date: string; comments: string; signature: string }[] = [];
 
   showFillModal = false;
   showIssueModal = false;
   showAnalysisModal = false;
+  showDmwModal = false;
   selectedAnalysisStats: any = null;
   toastMessage = '';
   
   isAdmin = true; // Mock admin check for now
   isEditMode = false;
   editingIssueId: string | null = null;
+  
+  isDmwEditMode = false;
+  editingDmwIndex: number | null = null;
   
   isInspectionEditMode = false;
   editingInspectionId: string | null = null;
@@ -127,6 +133,13 @@ export class QualityInspectionReportsComponent implements OnInit, OnDestroy {
     resolution: '',
     sourceOfNonConformance: '',
     recordedBy: ''
+  };
+
+  dmwForm = {
+    inspector: '',
+    date: '',
+    comments: '',
+    signature: ''
   };
 
   constructor(
@@ -258,6 +271,64 @@ export class QualityInspectionReportsComponent implements OnInit, OnDestroy {
 
   setActiveView(view: 'gir' | 'issue' | 'paint' | 'specs'): void {
     this.activeView = view;
+  }
+
+  setGirTab(tab: 'fabricator' | 'dmw-inspector'): void {
+    this.activeGirTab = tab;
+  }
+
+  addDmwVisit(): void {
+    this.isDmwEditMode = false;
+    this.editingDmwIndex = null;
+    this.dmwForm = {
+      inspector: 'DMW Inspector',
+      date: this.today(),
+      comments: '',
+      signature: ''
+    };
+    this.showDmwModal = true;
+  }
+
+  editDmwVisit(index: number): void {
+    this.isDmwEditMode = true;
+    this.editingDmwIndex = index;
+    const visit = this.dmwSiteVisits[index];
+    this.dmwForm = { ...visit };
+    this.showDmwModal = true;
+  }
+
+  deleteDmwVisit(index: number): void {
+    if (confirm('Are you sure you want to delete this log?')) {
+      this.dmwSiteVisits.splice(index, 1);
+      this.showToast('Log deleted successfully');
+    }
+  }
+
+  submitDmwVisit(): void {
+    if (!this.dmwForm.date) {
+      alert('Please select a date.');
+      return;
+    }
+
+    if (this.isDmwEditMode && this.editingDmwIndex !== null) {
+      this.dmwSiteVisits[this.editingDmwIndex] = { ...this.dmwForm };
+      this.showToast('Log updated successfully');
+    } else {
+      this.dmwSiteVisits.push({ ...this.dmwForm });
+      this.showToast('Log added successfully');
+    }
+    
+    this.closeDmwModal();
+  }
+
+  closeDmwModal(): void {
+    this.showDmwModal = false;
+  }
+
+  closeDmwModalByOverlay(event: MouseEvent): void {
+    if ((event.target as HTMLElement).classList.contains('modal-overlay')) {
+      this.closeDmwModal();
+    }
   }
 
   get totalSubmittedQuantity(): number {
@@ -396,7 +467,14 @@ export class QualityInspectionReportsComponent implements OnInit, OnDestroy {
 
     const payload = {
       schema: flatSchema,
-      data: inspection.formData
+      data: inspection.formData,
+      headerData: {
+        jobNo: this.fillForm.jobNo || this.selectedRecord?.projectDef || '',
+        wo: this.selectedRecord?.productionOrderNumber || '',
+        mark: this.fillForm.mark || this.selectedRecord?.markNumber || this.selectedRecord?.material || '',
+        quantity: this.selectedRecord?.quantity || this.selectedRecord?.orderQuantity || '',
+        productType: this.fillForm.productType || this.selectedRecord?.description || this.selectedRecord?.shortText || ''
+      }
     };
     
     this.http.post(`${environment.apiUrl}/form-templates/${template.id}/generate-pdf`, payload, { responseType: 'blob' })
@@ -642,6 +720,15 @@ export class QualityInspectionReportsComponent implements OnInit, OnDestroy {
       return stepIndex === 5;
     }
     return true;
+  }
+
+  isLastEditableStep(): boolean {
+    if (!this.selectedTemplate) return false;
+    const totalSteps = this.selectedTemplate.schema.length;
+    if (this.currentUserRole === 'user') {
+      return this.currentStepIndex === 4; // Step 5 is the last editable step for End User
+    }
+    return this.currentStepIndex === totalSteps - 1;
   }
 
   getSectionStats(sectionIdx: number): { completion: number; success: number } {

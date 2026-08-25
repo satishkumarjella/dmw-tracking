@@ -52,7 +52,7 @@
 
         <div class="panel-body">
           <div class="summary-grid">
-            <div class="stat-card primary-stat">
+            <div class="stat-card">
               <span class="stat-label">Project Def</span>
               <strong>{{ selectedRecord.projectDef || 'N/A' }}</strong>
               <small>WBS: {{ selectedRecord.wbsElement || 'N/A' }}</small>
@@ -137,13 +137,19 @@
                   <p>{{ totalSubmittedQuantity }} submitted of {{ selectedRecord.quantity || selectedRecord.orderQuantity || 0 }} required</p>
                 </div>
                 <div class="d-flex gap-2" style="display: flex; gap: 8px;">
-                  <button class="btn btn-orange btn-new" (click)="openFillModal()">+ Fill Inspection Form</button>
+                  <button class="btn btn-orange btn-new" *ngIf="!isDmwUser" (click)="openFillModal()">+ Fill Inspection Form</button>
                 </div>
               </div>
 
-              <!-- Filled forms list will go here in the future -->
-              <div class="tbl-wrap" style="margin-top: 24px;" *ngIf="inspections.length > 0">
-                <table class="issue-table">
+              <div class="sub-tabs-container" style="margin-top: 16px; border-bottom: 1px solid var(--border-subtle); display: flex; gap: 16px;">
+                <button class="sub-tab-btn" [class.active]="activeGirTab === 'fabricator'" (click)="setGirTab('fabricator')">Fabricator</button>
+                <button class="sub-tab-btn" [class.active]="activeGirTab === 'dmw-inspector'" (click)="setGirTab('dmw-inspector')">DMW Inspector</button>
+              </div>
+
+              <!-- View: Fabricator Tab -->
+              <ng-container *ngIf="activeGirTab === 'fabricator'">
+                <div class="tbl-wrap" style="margin-top: 24px;" *ngIf="inspections.length > 0">
+                  <table class="issue-table">
                   <thead>
                     <tr>
                       <th>#</th>
@@ -209,6 +215,56 @@
               <div class="empty-state" style="margin-top: 40px;" *ngIf="inspections.length === 0">
                 <p>No inspection logs have been submitted yet. Click "+ Fill Inspection Form" to create one.</p>
               </div>
+              </ng-container>
+
+              <!-- View: DMW Inspector Tab -->
+              <ng-container *ngIf="activeGirTab === 'dmw-inspector'">
+                <div class="hist-header" style="margin-top: 24px; padding-top: 0;">
+                  <div>
+                    <h3 style="font-size: 1.1rem;">Site Visit Tracking</h3>
+                  </div>
+                  <button class="btn btn-secondary" (click)="addDmwVisit()">+ Add Log</button>
+                </div>
+                
+                <div class="tbl-wrap editable-table" style="margin-top: 16px;">
+                  <table class="issue-table">
+                    <thead style="background-color: #f39c12; color: #fff;">
+                      <tr>
+                        <th>DMW Inspector</th>
+                        <th>Date (Auto Generated)</th>
+                        <th>Create New Comments:</th>
+                        <th>DMW Inspector signature</th>
+                        <th style="text-align: right;">ACTIONS</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr *ngFor="let visit of dmwSiteVisits; let i = index">
+                        <td>{{ visit.inspector }}</td>
+                        <td class="date-cell">{{ visit.date | date:'shortDate' }}</td>
+                        <td>{{ visit.comments }}</td>
+                        <td>{{ visit.signature }}</td>
+                        <td class="action-cell" style="text-align: right; white-space: nowrap;">
+                          <button class="btn-icon" (click)="editDmwVisit(i)" title="Edit Log">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" width="16" height="16">
+                              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path>
+                            </svg>
+                          </button>
+                          <button class="btn-icon text-danger" (click)="deleteDmwVisit(i)" title="Delete Log">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" width="16" height="16">
+                              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                            </svg>
+                          </button>
+                        </td>
+                      </tr>
+                      <tr *ngIf="dmwSiteVisits.length === 0">
+                        <td colspan="5" class="empty-state" style="padding: 24px; text-align: center;">
+                          No site visits tracked yet. Click "+ Add Log" to create one.
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </ng-container>
             </div>
 
             <!-- View: Report An Issue -->
@@ -497,8 +553,11 @@
         <div class="action-group-right">
           <button *ngIf="selectedTemplate" type="button" class="btn btn-clear" (click)="prevStep()" [disabled]="currentStepIndex === 0">Back</button>
           <button *ngIf="selectedTemplate && currentStepIndex < selectedTemplate.schema.length - 1" type="button" class="btn btn-secondary" (click)="nextStep()">Next</button>
-          <button *ngIf="selectedTemplate && (!isDmwUser || currentStepIndex === selectedTemplate.schema.length - 1)" type="button" class="btn btn-secondary" (click)="saveProgress()">Save Progress</button>
-          <button type="submit" class="btn btn-orange" *ngIf="(!selectedTemplate || currentStepIndex === selectedTemplate.schema.length - 1)">{{ isInspectionEditMode ? 'Update Form' : 'Submit Form' }}</button>
+          
+          <ng-container *ngIf="isStepEditable(currentStepIndex)">
+            <button *ngIf="selectedTemplate && (!isDmwUser || isLastEditableStep())" type="button" class="btn btn-secondary" (click)="saveProgress()">Save Progress</button>
+            <button type="submit" class="btn btn-orange" *ngIf="isLastEditableStep()">{{ isInspectionEditMode ? 'Update Form' : 'Submit Form' }}</button>
+          </ng-container>
         </div>
       </div>
     </form>
@@ -643,3 +702,57 @@
     <i class="icon-ok-circled"></i> {{ toastMessage }}
   </div>
 </div>
+
+<!-- Modal: DMW Inspector Site Visit -->
+<div class="modal-overlay" *ngIf="showDmwModal" (click)="closeDmwModalByOverlay($event)">
+  <div class="modal-box issue-modal" (click)="$event.stopPropagation()">
+    <div class="modal-header-strip"></div>
+    <button class="modal-close" (click)="closeDmwModal()">&times;</button>
+    
+    <div class="modal-header">
+      <div class="mh-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+        </svg>
+      </div>
+      <div>
+        <div class="modal-title">{{ isDmwEditMode ? 'Update Site Visit' : 'Log Site Visit' }}</div>
+        <div class="modal-sub">Log a DMW Inspector site visit.</div>
+      </div>
+    </div>
+
+    <form (ngSubmit)="submitDmwVisit()">
+      
+      <div class="context-box">
+        <div class="cb-item">
+          <span class="cb-label">Inspector</span>
+          <span class="cb-val">{{ dmwForm.inspector }}</span>
+        </div>
+        <div class="cb-item input-item">
+          <span class="cb-label">Date <span class="req">*</span></span>
+          <input type="date" name="dmwDate" [(ngModel)]="dmwForm.date" required>
+        </div>
+      </div>
+
+      <div class="form-grid single-col mt-14">
+        <div class="form-field">
+          <label>Comments</label>
+          <textarea name="dmwComments" [(ngModel)]="dmwForm.comments" rows="3" placeholder="Enter comments..."></textarea>
+        </div>
+      </div>
+
+      <div class="form-grid single-col mt-14">
+        <div class="form-field" style="max-width: 200px;">
+          <label>Signature</label>
+          <input type="text" name="dmwSignature" [(ngModel)]="dmwForm.signature" placeholder="Signature...">
+        </div>
+      </div>
+
+      <div class="form-actions">
+        <button type="button" class="btn btn-clear" (click)="closeDmwModal()">Cancel</button>
+        <button type="submit" class="btn btn-orange">{{ isDmwEditMode ? 'Update Log' : 'Save Log' }}</button>
+      </div>
+    </form>
+  </div>
+</div>
+

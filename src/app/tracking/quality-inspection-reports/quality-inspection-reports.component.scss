@@ -265,37 +265,40 @@ main {
 .view-tabs.enhanced {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 8px;
+  gap: 12px;
   margin-bottom: 24px;
-  background: rgba(0, 0, 0, 0.2);
-  padding: 8px;
-  border-radius: var(--radius-xl);
-  border: 1px solid var(--border-subtle);
+  background: transparent;
+  padding: 0;
+  border: none;
 
   button {
-    background: transparent;
-    border: 1px solid transparent;
-    padding: 8px 12px;
+    background: var(--bg-surface-glass);
+    border: 1px solid var(--border-subtle);
+    padding: 12px 16px;
     text-align: left;
     border-radius: var(--radius-lg);
     transition: all .2s ease;
     white-space: normal;
-    min-height: 50px;
+    min-height: 60px;
     display: flex;
     flex-direction: column;
     justify-content: center;
-    gap: 2px;
     color: var(--text-main);
     cursor: pointer;
+    box-shadow: var(--shadow-sm);
 
     &:hover:not(.active) {
-      background: rgba(255, 255, 255, 0.04);
+      background: var(--bg-surface);
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-md);
+      border-color: var(--border-strong);
     }
 
     &.active {
       background: var(--bg-surface);
-      border-color: rgba(var(--color-primary-rgb), 0.3);
-      box-shadow: var(--shadow-md);
+      border-color: var(--color-primary);
+      box-shadow: 0 4px 12px rgba(var(--color-primary-rgb), 0.15);
+      transform: translateY(-2px);
       
       .tab-title {
         color: var(--color-primary);
@@ -1628,4 +1631,70 @@ fieldset.read-only-step {
 .dark-theme fieldset.read-only-step select,
 .dark-theme fieldset.read-only-step textarea {
   background-color: rgba(255, 255, 255, 0.02) !important;
+}
+
+/* Sub-tabs styles */
+.sub-tabs-container {
+  display: flex;
+  gap: 24px;
+  border-bottom: 2px solid var(--border-subtle);
+  margin-bottom: 24px;
+}
+
+.sub-tab-btn {
+  background: none;
+  border: none;
+  padding: 8px 16px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  cursor: pointer;
+  position: relative;
+  transition: color 0.2s ease;
+
+  &:hover {
+    color: var(--text-main);
+  }
+
+  &.active {
+    color: var(--color-primary);
+
+    &::after {
+      content: '';
+      position: absolute;
+      bottom: -2px;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background-color: var(--color-primary);
+    }
+  }
+}
+
+/* Editable table input styles */
+.editable-table {
+  .table-input {
+    width: 100%;
+    padding: 8px 12px;
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-sm);
+    background: var(--bg-surface);
+    color: var(--text-main);
+    font-size: 0.85rem;
+    transition: border-color 0.2s ease;
+
+    &:focus {
+      outline: none;
+      border-color: var(--color-primary);
+    }
+    
+    &[readonly] {
+      background: rgba(0,0,0,0.05);
+      cursor: not-allowed;
+    }
+  }
+
+  .dark-theme & .table-input[readonly] {
+    background: rgba(255,255,255,0.05);
+  }
 }
