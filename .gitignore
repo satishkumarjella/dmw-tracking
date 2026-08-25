@@ -1,27 +1,16 @@
-# Ignore everything by default
-*
-
-# BUT DO NOT ignore these essential project configuration files and folders:
-!/.gitignore
-!/src/
-!/package.json
-!/package-lock.json
-!/angular.json
-!/tsconfig*.json
-!/ionic.config.json
-
-# Inside the src/ folder, still ignore typical generated/build folders if they accidentally get put there
-/src/**/*.js
-/src/**/*.js.map
-/src/**/*.d.ts
-
-# Ignore IDE and system files even inside src
-/src/**/.DS_Store
-/src/**/Thumbs.db
-
-# Ensure node_modules, dist, www, etc., are never included even if the '*' rule above somehow misses them
+# Node and Build
 /node_modules
 /dist
 /www
 /.angular
 /.nx
+
+# Compiled output
+/src/**/*.js
+/src/**/*.js.map
+/src/**/*.d.ts
+
+# Ignore IDE and system files
+.DS_Store
+Thumbs.db
+

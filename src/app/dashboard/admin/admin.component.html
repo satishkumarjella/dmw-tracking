@@ -1,0 +1,88 @@
+<app-module-loader *ngIf="isLoading" moduleName="Admin Dashboard"></app-module-loader>
+<ng-container *ngIf="!isLoading">
+<div class="admin-container">
+  <div class="tabs">
+    <button [class.active]="activeTab === 'users'" (click)="activeTab = 'users'">User Management</button>
+    <button [class.active]="activeTab === 'forms'" (click)="activeTab = 'forms'">Form Builder</button>
+  </div>
+
+  <div class="tab-content" *ngIf="activeTab === 'users'">
+    <div class="toolbar">
+      <h3>Users</h3>
+      <div class="search-box">
+        <ion-icon name="search-outline"></ion-icon>
+        <input type="text" placeholder="Search users by email or role..." [(ngModel)]="searchQuery" />
+      </div>
+    </div>
+    
+    <div class="table-container">
+      <table class="admin-table">
+        <thead>
+          <tr>
+            <th (click)="sortBy('email')" [class.active-sort]="sortColumn === 'email'">
+              Email 
+              <ion-icon *ngIf="sortColumn === 'email'" [name]="sortDirection === 'asc' ? 'chevron-up-outline' : 'chevron-down-outline'"></ion-icon>
+            </th>
+            <th (click)="sortBy('createdAt')" [class.active-sort]="sortColumn === 'createdAt'">
+              Created At
+              <ion-icon *ngIf="sortColumn === 'createdAt'" [name]="sortDirection === 'asc' ? 'chevron-up-outline' : 'chevron-down-outline'"></ion-icon>
+            </th>
+            <th (click)="sortBy('role')" [class.active-sort]="sortColumn === 'role'">
+              Role
+              <ion-icon *ngIf="sortColumn === 'role'" [name]="sortDirection === 'asc' ? 'chevron-up-outline' : 'chevron-down-outline'"></ion-icon>
+            </th>
+            <th>Modules</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let user of filteredAndSortedUsers">
+          <td>{{ user.email }}</td>
+          <td>{{ user.createdAt | date }}</td>
+          <td>
+            <select [value]="user.role" (change)="changeUserRole(user.id, $event)" 
+                    [disabled]="(currentUserRole === 'admin' && (user.role === 'super_admin' || user.role === 'admin')) || currentUserRole === 'user'">
+              <option value="user" [selected]="user.role === 'user'">End User</option>
+              <option value="DMW User" [selected]="user.role === 'DMW User'">DMW User</option>
+              <option value="admin" [selected]="user.role === 'admin'">Admin</option>
+              <option *ngIf="currentUserRole === 'super_admin' || user.role === 'super_admin'" value="super_admin" [selected]="user.role === 'super_admin'">Superadmin</option>
+            </select>
+          </td>
+          <td>
+            <div class="module-checkboxes" *ngIf="user.role === 'user' || user.role === 'DMW User'">
+              <label *ngFor="let module of availableModules">
+                <input type="checkbox" [checked]="hasModule(user, module)" (change)="toggleModule(user, module, $event)" 
+                       [disabled]="currentUserRole === 'user' || (currentUserRole === 'admin' && (user.role === 'super_admin' || user.role === 'admin'))">
+                {{ module }}
+              </label>
+            </div>
+            <div *ngIf="user.role !== 'user' && user.role !== 'DMW User'" style="color: #4ade80; font-size: 0.9em; margin-bottom: 12px;">
+              All Modules (Inherited)
+            </div>
+          </td>
+          <td>
+            <div class="action-buttons">
+              <button class="save-btn" (click)="saveUserModules(user)" 
+                      *ngIf="(user.role === 'user' || user.role === 'DMW User') && (currentUserRole === 'super_admin' || currentUserRole === 'admin')">
+                Save
+              </button>
+              <button class="delete-btn" (click)="deleteUser(user)" 
+                      *ngIf="currentUserRole === 'super_admin' || (currentUserRole === 'admin' && (user.role === 'user' || user.role === 'DMW User'))">
+                Delete
+              </button>
+            </div>
+          </td>
+        </tr>
+        <tr *ngIf="filteredAndSortedUsers.length === 0">
+          <td colspan="5" class="no-results">No users found matching your search.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  </div>
+
+  <div class="tab-content" *ngIf="activeTab === 'forms'">
+    <app-form-builder></app-form-builder>
+  </div>
+</div>
+</ng-container>

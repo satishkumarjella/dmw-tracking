@@ -1,0 +1,35 @@
+<ion-content [fullscreen]="true" class="login-content">
+  <div class="login-wrapper animate-fade-in">
+    <!-- Left Side: Branding / Visual (Hidden on mobile) -->
+    <div class="login-visual">
+      <div class="visual-content animate-slide-up">
+        <h2 class="heading-font" *ngIf="configService.config() as config">{{ config.vendorName }}</h2>
+        <p>404 - Page Not Found.<br/>The operation you are looking for does not exist.</p>
+      </div>
+      <div class="gradient-overlay"></div>
+    </div>
+
+    <!-- Right Side: 404 Action -->
+    <div class="login-form-container">
+      <div class="glass-card login-card animate-slide-up" style="text-align: center;">
+        <div class="brand-eyebrow">ERROR 404</div>
+        <h1 class="heading-font login-title text-gradient">Page Not Found</h1>
+        <p class="login-subtitle">The page you requested could not be found.</p>
+
+        <svg viewBox="0 0 24 24" width="64" height="64" stroke="var(--text-muted)" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round" style="margin: 24px 0;">
+          <circle cx="12" cy="12" r="10"></circle>
+          <line x1="12" y1="8" x2="12" y2="12"></line>
+          <line x1="12" y1="16" x2="12.01" y2="16"></line>
+        </svg>
+
+        <button routerLink="/dashboard" class="btn-premium login-btn" style="margin-top: 16px;">
+          <span>Return to Dashboard</span>
+          <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="5" y1="12" x2="19" y2="12"></line>
+            <polyline points="12 5 19 12 12 19"></polyline>
+          </svg>
+        </button>
+      </div>
+    </div>
+  </div>
+</ion-content>

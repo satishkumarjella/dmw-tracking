@@ -1,0 +1,192 @@
+<div class="fb-wrapper">
+  
+  <div class="sidebar">
+    <div class="sb-header">
+      <h3>Saved Templates</h3>
+      <button class="btn btn-orange btn-sm" (click)="createNew()">+ New</button>
+    </div>
+    <div class="template-list">
+      <div class="template-item" *ngFor="let t of templates" [class.active]="selectedTemplateId === t.id" (click)="selectTemplate(t)">
+        <div class="t-name">{{ t.name }}</div>
+        <div class="t-actions">
+          <button class="btn-clear" (click)="deleteTemplate(t.id!); $event.stopPropagation()">Delete</button>
+        </div>
+      </div>
+      <div class="empty" *ngIf="templates.length === 0">No templates found.</div>
+    </div>
+  </div>
+
+  <div class="builder-container" *ngIf="!showPreview">
+    <div class="builder-header">
+      <div>
+        <h2>{{ selectedTemplateId ? 'Edit Template' : 'Create New Template' }}</h2>
+        <p class="sub">Create dynamic form sections or parse them directly from a PDF template.</p>
+      </div>
+      <button class="btn btn-primary" (click)="togglePreview()">Preview Form</button>
+    </div>
+
+    <div class="card">
+      <div class="form-group">
+        <label>Template Name <span class="req">*</span></label>
+        <input type="text" [(ngModel)]="templateName" placeholder="e.g. General Inspection Log">
+      </div>
+      
+      <div class="form-group">
+        <label>Description</label>
+        <input type="text" [(ngModel)]="templateDescription" placeholder="Optional description">
+      </div>
+
+      <div class="upload-zone">
+        <div style="margin-bottom: 12px; color: var(--text-main); font-weight: 500; font-size: 0.9rem;">Parse fields from PDF Template (Optional)</div>
+        <label class="btn btn-primary" style="display: inline-flex; cursor: pointer; align-items: center; justify-content: center; width: auto; padding: 6px 16px;">
+          <ion-icon name="cloud-upload-outline" style="margin-right: 6px; font-size: 1.1rem;"></ion-icon> Choose File
+          <input type="file" accept="application/pdf" (change)="onFileSelected($event)" style="display: none;">
+        </label>
+        <div *ngIf="isParsing" class="loading">Parsing PDF fields...</div>
+      </div>
+    </div>
+
+    <div class="sections-wrapper">
+      <div class="section-card" *ngFor="let section of sections; let sIdx = index"
+           [draggable]="true"
+           (dragstart)="onDragStart($event, sIdx)"
+           (dragover)="onDragOver($event)"
+           (dragenter)="onDragEnter($event, sIdx)"
+           (dragleave)="onDragLeave($event)"
+           (drop)="onDrop($event, sIdx)"
+           style="cursor: grab;">
+        <div class="sc-header">
+          <input type="text" [(ngModel)]="section.name" class="section-title-input">
+          <div class="sc-actions">
+            <button class="btn btn-secondary btn-sm ml-2" style="display: flex; gap: 4px;" *ngIf="sIdx < sections.length - 1" (click)="mergeWithNext(sIdx)" title="Merge fields with next section">
+              <ion-icon name="git-merge-outline" style="font-size: 1.1rem;"></ion-icon> Merge
+            </button>
+            <button class="btn btn-primary btn-sm ml-2" style="display: flex; gap: 4px;" (click)="addField(sIdx)"><ion-icon name="add-outline" style="font-size: 1.1rem;"></ion-icon> Add Field</button>
+            <button class="btn btn-danger btn-sm ml-2" style="display: flex; gap: 4px;" (click)="removeSection(sIdx)"><ion-icon name="trash-outline" style="font-size: 1.1rem;"></ion-icon> Remove Section</button>
+          </div>
+        </div>
+
+        <div class="field-list">
+          <div class="field-item" *ngFor="let field of section.fields; let i = index">
+            <div class="field-row">
+              <div class="fg">
+                <label>Field Label</label>
+                <input type="text" [(ngModel)]="field.label">
+              </div>
+              <div class="fg">
+                <label>Input Type</label>
+                <select [(ngModel)]="field.type">
+                  <option value="text">Text (Single Line)</option>
+                  <option value="textarea">Textarea (Multi Line)</option>
+                  <option value="number">Number</option>
+                  <option value="date">Date</option>
+                  <option value="time">Time</option>
+                  <option value="checkbox">Checkbox</option>
+                  <option value="radio">Radio Group</option>
+                  <option value="select">Dropdown Select</option>
+                </select>
+              </div>
+              <div class="fg">
+                <label>PDF Bind Name</label>
+                <input type="text" [(ngModel)]="field.pdfFieldName" placeholder="Raw PDF field name">
+              </div>
+              
+              <div class="fg" style="max-width: 80px;">
+                <label>Required</label>
+                <label class="switch">
+                  <input type="checkbox" [(ngModel)]="field.required">
+                  <span class="slider round"></span>
+                </label>
+              </div>
+
+              <div class="fg" style="max-width: 90px;">
+                <label>Analyze?</label>
+                <label class="switch">
+                  <input type="checkbox" [(ngModel)]="field.analyzeField">
+                  <span class="slider round"></span>
+                </label>
+              </div>
+
+              <div class="fg" *ngIf="field.analyzeField" style="max-width: 120px;">
+                <label>Expected Value</label>
+                <input type="text" [(ngModel)]="field.expectedValue" placeholder="e.g. OK">
+              </div>
+
+              <div class="fg" *ngIf="field.type === 'radio' || field.type === 'select'" style="flex: 2;">
+                <label>Options (comma separated)</label>
+                <input type="text" [ngModel]="field.options?.join(', ')" (ngModelChange)="updateFieldOptions(field, $event)" placeholder="e.g. OK, NA, Reject">
+              </div>
+
+              <div class="field-actions">
+                <button class="btn btn-danger btn-sm ml-2" style="display: flex; align-items: center; justify-content: center; padding: 6px; width: 32px; height: 32px; flex-shrink: 0;" (click)="removeField(sIdx, i)">
+                  <ion-icon name="trash-outline" style="font-size: 1.1rem; margin: 0; padding: 0; color: white; display: block;"></ion-icon>
+                </button>
+              </div>
+            </div>
+          </div>
+          
+          <div *ngIf="section.fields.length === 0" class="empty">
+            No fields in this section.
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="add-section-zone">
+       <button class="btn btn-clear w-100" style="padding: 1rem; border: 1px dashed rgba(255,255,255,0.2); border-radius: 8px;" (click)="addSection()">+ Add New Section</button>
+    </div>
+
+    <div class="actions">
+      <button class="btn btn-orange" (click)="saveTemplate()">{{ selectedTemplateId ? 'UPDATE TEMPLATE' : 'SAVE TEMPLATE' }}</button>
+    </div>
+  </div>
+
+  <div class="builder-container preview-container" *ngIf="showPreview">
+    <div class="builder-header">
+      <div>
+        <h2>Preview: {{ templateName || 'Untitled Template' }}</h2>
+        <p class="sub">{{ templateDescription }}</p>
+      </div>
+      <button class="btn btn-clear" (click)="togglePreview()">Back to Builder</button>
+    </div>
+
+    <div class="preview-box">
+      <div class="preview-section" *ngFor="let section of sections">
+        <h3 class="ps-title">{{ section.name }}</h3>
+        
+        <div class="ps-fields" [class.is-checklist]="section.layout === 'checklist'">
+          <div class="ps-field" *ngFor="let field of section.fields">
+            <label>{{ field.label }} <span *ngIf="field.required" style="color: #ef4444;">*</span></label>
+            
+            <input *ngIf="field.type === 'text' || field.type === 'number' || field.type === 'date' || field.type === 'time'" [type]="field.type" class="ps-input" [placeholder]="'Enter ' + field.label">
+            
+            <textarea *ngIf="field.type === 'textarea'" class="ps-input" rows="3" [placeholder]="'Enter ' + field.label"></textarea>
+            
+            <select *ngIf="field.type === 'select'" class="ps-input">
+              <option value="">Select an option</option>
+              <option *ngFor="let opt of field.options" [value]="opt">{{ opt }}</option>
+            </select>
+            
+            <div *ngIf="field.type === 'radio'" class="ps-radio-group">
+              <label *ngFor="let opt of field.options" class="ps-radio">
+                <input type="radio" [name]="field.id" [value]="opt"> {{ opt }}
+              </label>
+            </div>
+            
+            <div *ngIf="field.type === 'checkbox'" class="ps-checkbox">
+              <label>
+                <input type="checkbox"> Check to confirm
+              </label>
+            </div>
+            
+          </div>
+        </div>
+      </div>
+
+      <div *ngIf="sections.length === 0" class="empty">
+        No sections to preview.
+      </div>
+    </div>
+  </div>
+
+</div>
