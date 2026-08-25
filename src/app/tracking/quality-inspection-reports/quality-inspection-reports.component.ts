@@ -9,6 +9,7 @@ import { debounceTime, distinctUntilChanged, switchMap, catchError } from 'rxjs/
 import { ConfigService } from '../../shared/config.service';
 import { ModuleLoaderComponent } from '../../shared/components/module-loader/module-loader.component';
 import { environment } from '../../../environments/environment';
+import { AuthService } from '../../shared/services/auth.service';
 
 export interface ProductionRecord {
   id?: string;
@@ -55,6 +56,7 @@ interface InspectionItem {
   formData?: any;
   formTemplateId?: string;
   createdAt?: string;
+  status?: string;
 }
 
 import { FormBuilderService, FormTemplate } from '../../pages/form-builder/form-builder.service';
@@ -93,6 +95,9 @@ export class QualityInspectionReportsComponent implements OnInit, OnDestroy {
   
   isInspectionEditMode = false;
   editingInspectionId: string | null = null;
+  
+  currentUserRole = '';
+  isDmwUser = false;
 
   girPdfUrl!: SafeResourceUrl;
   paintPdfUrl!: SafeResourceUrl;
@@ -128,7 +133,8 @@ export class QualityInspectionReportsComponent implements OnInit, OnDestroy {
     private configService: ConfigService,
     private sanitizer: DomSanitizer,
     private http: HttpClient,
-    private fbService: FormBuilderService
+    private fbService: FormBuilderService,
+    private authService: AuthService
   ) {}
 
   ngOnInit(): void {
@@ -136,6 +142,14 @@ export class QualityInspectionReportsComponent implements OnInit, OnDestroy {
     setTimeout(() => {
       this.isLoading = false;
     }, 600);
+
+    this.authService.currentUser$.subscribe(user => {
+      if (user) {
+        this.currentUserRole = user.role || '';
+        this.isDmwUser = this.currentUserRole === 'DMW User';
+        this.isAdmin = this.currentUserRole === 'Admin' || this.currentUserRole === 'Superadmin';
+      }
+    });
 
     this.girPdfUrl = this.sanitizer.bypassSecurityTrustResourceUrl(
       'assets/sample/general-inspection-report.pdf'
@@ -246,6 +260,11 @@ export class QualityInspectionReportsComponent implements OnInit, OnDestroy {
     this.activeView = view;
   }
 
+  get totalSubmittedQuantity(): number {
+    if (!this.inspections) return 0;
+    return this.inspections.length;
+  }
+
   openFillModal(): void {
     this.isInspectionEditMode = false;
     this.editingInspectionId = null;
@@ -266,7 +285,7 @@ export class QualityInspectionReportsComponent implements OnInit, OnDestroy {
     }
   }
 
-  submitFillForm(): void {
+  submitFillForm(status: string = 'COMPLETED'): void {
     if (!this.selectedTemplate || !this.selectedRecord?.id) {
       alert('Please select a template and ensure a Production Order is active.');
       return;
@@ -276,7 +295,8 @@ export class QualityInspectionReportsComponent implements OnInit, OnDestroy {
       purchaseOrderId: this.selectedRecord.id,
       inspectorName: 'Admin User', // Mock user
       formData: this.dynamicFormData,
-      formTemplateId: this.selectedTemplate.id
+      formTemplateId: this.selectedTemplate.id,
+      status: status
     };
 
     if (this.isInspectionEditMode && this.editingInspectionId) {
@@ -286,8 +306,12 @@ export class QualityInspectionReportsComponent implements OnInit, OnDestroy {
           if (index !== -1) {
             this.inspections[index] = updatedInspection;
           }
-          this.closeFillModal();
-          this.showToast('Inspection Log updated successfully');
+          if (status === 'COMPLETED') {
+            this.closeFillModal();
+            this.showToast('Inspection Log updated successfully');
+          } else {
+            this.showToast('Progress saved successfully');
+          }
         },
         error: (err) => {
           console.error(err);
@@ -298,8 +322,16 @@ export class QualityInspectionReportsComponent implements OnInit, OnDestroy {
       this.http.post<InspectionItem>(`${environment.apiUrl}/inspections`, payload).subscribe({
         next: (newInspection) => {
           this.inspections = [newInspection, ...this.inspections];
-          this.closeFillModal();
-          this.showToast('Inspection Log submitted successfully');
+          
+          if (status === 'COMPLETED') {
+            this.closeFillModal();
+            this.showToast('Inspection Log submitted successfully');
+          } else {
+            // Set edit mode so subsequent saves update the same record
+            this.isInspectionEditMode = true;
+            this.editingInspectionId = newInspection.id || null;
+            this.showToast('Progress saved successfully');
+          }
         },
         error: (err) => {
           console.error(err);
@@ -601,6 +633,17 @@ export class QualityInspectionReportsComponent implements OnInit, OnDestroy {
   // --- Stepper Logic ---
   currentStepIndex = 0;
 
+  isStepEditable(stepIndex: number): boolean {
+    if (this.isAdmin) return true;
+    if (this.currentUserRole === 'user') {
+      return stepIndex < 5;
+    }
+    if (this.isDmwUser) {
+      return stepIndex === 5;
+    }
+    return true;
+  }
+
   getSectionStats(sectionIdx: number): { completion: number; success: number } {
     if (!this.selectedTemplate || !this.selectedTemplate.schema) {
       return { completion: 0, success: 0 };
@@ -658,6 +701,16 @@ export class QualityInspectionReportsComponent implements OnInit, OnDestroy {
   }
 
   saveProgress() {
-    this.showToast('Progress saved locally.');
+    this.submitFillForm('IN_PROGRESS');
+  }
+
+  hasOtherFields(section: any): boolean {
+    return section.fields && section.fields.some((f: any) => !f.options);
+  }
+
+  getChecklistOptions(section: any): string[] {
+    if (!section || !section.fields) return [];
+    const firstRadio = section.fields.find((f: any) => f.options);
+    return firstRadio ? firstRadio.options : [];
   }
 }

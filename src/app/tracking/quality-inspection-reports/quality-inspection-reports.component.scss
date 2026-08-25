@@ -545,6 +545,23 @@ tbody tr {
   overflow-y: auto;
   overflow-x: hidden;
   box-sizing: border-box;
+
+  /* Ensure scrollbar is always visible and styled */
+  &::-webkit-scrollbar {
+    width: 8px;
+  }
+  &::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.05);
+    border-radius: 8px;
+  }
+  &::-webkit-scrollbar-thumb {
+    background: var(--color-primary);
+    border-radius: 8px;
+    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.1);
+  }
+  &::-webkit-scrollbar-thumb:hover {
+    background: var(--color-secondary);
+  }
 }
 
 @keyframes slideUp {
@@ -1077,7 +1094,8 @@ tbody tr {
   }
 
   tbody tr {
-    transition: background-color 0.15s;
+    transition: background-color var(--transition-normal), transform var(--transition-fast), box-shadow var(--transition-fast);
+    border-left: 3px solid transparent;
     
     &:last-child td {
       border-bottom: none;
@@ -1085,6 +1103,8 @@ tbody tr {
     
     &:hover {
       background-color: rgba(var(--color-primary-rgb), 0.08);
+      border-left: 3px solid var(--color-primary);
+      box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);
     }
   }
 }
@@ -1412,7 +1432,14 @@ tbody tr {
   border-color: var(--color-primary);
   background: rgba(var(--color-primary-rgb), 0.1);
   color: var(--color-primary);
-  box-shadow: 0 0 0 4px rgba(var(--color-primary-rgb), 0.1);
+  box-shadow: 0 0 0 4px rgba(var(--color-primary-rgb), 0.15);
+  animation: pulse-primary 2s infinite;
+}
+
+@keyframes pulse-primary {
+  0% { box-shadow: 0 0 0 0 rgba(var(--color-primary-rgb), 0.4); }
+  70% { box-shadow: 0 0 0 8px rgba(var(--color-primary-rgb), 0); }
+  100% { box-shadow: 0 0 0 0 rgba(var(--color-primary-rgb), 0); }
 }
 
 .stepper-node.completed .node-circle {
@@ -1552,4 +1579,53 @@ tbody tr {
       }
     }
   }
+}
+
+/* --- Disabled Form Field Readability Overrides --- */
+input:disabled,
+select:disabled,
+textarea:disabled {
+  opacity: 1 !important;
+  color: var(--text-main) !important;
+  -webkit-text-fill-color: var(--text-main) !important;
+  background-color: rgba(0, 0, 0, 0.05) !important;
+  cursor: not-allowed !important;
+}
+
+.dark-theme input:disabled,
+.dark-theme select:disabled,
+.dark-theme textarea:disabled,
+[data-theme="dark"] input:disabled,
+[data-theme="dark"] select:disabled,
+[data-theme="dark"] textarea:disabled {
+  background-color: rgba(255, 255, 255, 0.05) !important;
+}
+
+input[type="radio"]:disabled,
+input[type="checkbox"]:disabled {
+  opacity: 0.9 !important;
+  cursor: not-allowed !important;
+}
+
+input[type="radio"]:disabled:checked,
+input[type="checkbox"]:disabled:checked {
+  opacity: 1 !important;
+  filter: brightness(1.1) !important;
+}
+
+fieldset.read-only-step {
+  opacity: 0.95;
+  transition: opacity 0.2s ease;
+  pointer-events: none; /* Fallback for older browsers not fully supporting inert */
+
+  input, select, textarea {
+    background-color: rgba(0, 0, 0, 0.02) !important;
+    cursor: default !important;
+  }
+}
+
+.dark-theme fieldset.read-only-step input,
+.dark-theme fieldset.read-only-step select,
+.dark-theme fieldset.read-only-step textarea {
+  background-color: rgba(255, 255, 255, 0.02) !important;
 }

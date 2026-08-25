@@ -134,7 +134,7 @@
                 <div>
                   <div class="panel-topline">GENERAL INSPECTION LOG</div>
                   <h3>Inspections Requested</h3>
-                  <p>0 submitted of {{ selectedRecord.quantity || selectedRecord.orderQuantity || 0 }} required</p>
+                  <p>{{ totalSubmittedQuantity }} submitted of {{ selectedRecord.quantity || selectedRecord.orderQuantity || 0 }} required</p>
                 </div>
                 <div class="d-flex gap-2" style="display: flex; gap: 8px;">
                   <button class="btn btn-orange btn-new" (click)="openFillModal()">+ Fill Inspection Form</button>
@@ -151,7 +151,7 @@
                       <th>PROD. ORDER #</th>
                       <th>INSPECTOR</th>
                       <th>RESULTS</th>
-                      <th *ngIf="isAdmin" style="text-align: right;">ACTIONS</th>
+                      <th style="text-align: right;">ACTIONS</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -184,7 +184,7 @@
                           </div>
                         </ng-container>
                       </td>
-                      <td *ngIf="isAdmin" class="action-cell" style="text-align: right; white-space: nowrap;">
+                      <td class="action-cell" style="text-align: right; white-space: nowrap;">
                         <button class="btn-icon" (click)="downloadFilledPdf(insp)" title="Download PDF">
                           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" width="16" height="16">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
@@ -195,7 +195,7 @@
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path>
                           </svg>
                         </button>
-                        <button class="btn-icon text-danger" (click)="deleteInspection(insp.id)" title="Delete Inspection">
+                        <button *ngIf="isAdmin" class="btn-icon text-danger" (click)="deleteInspection(insp.id)" title="Delete Inspection">
                           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" width="16" height="16">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
                           </svg>
@@ -237,7 +237,7 @@
                       <th>RESOLUTION</th>
                       <th>SOURCE (NC)</th>
                       <th>RECORDED BY</th>
-                      <th *ngIf="isAdmin" style="text-align: right;">ACTIONS</th>
+                      <th style="text-align: right;">ACTIONS</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -253,13 +253,13 @@
                       <td>{{ iss.resolution }}</td>
                       <td>{{ iss.sourceOfNonConformance }}</td>
                       <td>{{ iss.recordedBy }}</td>
-                      <td *ngIf="isAdmin" class="action-cell" style="text-align: right; white-space: nowrap;">
+                      <td class="action-cell" style="text-align: right; white-space: nowrap;">
                         <button class="btn-icon" (click)="editIssue(iss)" title="Edit Issue">
                           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" width="16" height="16">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path>
                           </svg>
                         </button>
-                        <button class="btn-icon text-danger" (click)="deleteIssue(iss.id)" title="Delete Issue">
+                        <button *ngIf="isAdmin" class="btn-icon text-danger" (click)="deleteIssue(iss.id)" title="Delete Issue">
                           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" width="16" height="16">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
                           </svg>
@@ -267,7 +267,7 @@
                       </td>
                     </tr>
                     <tr *ngIf="issues.length === 0">
-                      <td [attr.colspan]="isAdmin ? 12 : 11" class="empty-state">
+                      <td colspan="12" class="empty-state">
                         <div class="es-icon">!</div>
                         <p>No issues reported yet for this production order.</p>
                       </td>
@@ -320,18 +320,18 @@
     <div class="modal-sub">{{ isInspectionEditMode ? 'Modify an existing inspection record.' : 'Create a new inspection record for this Production Order.' }}</div>
 
     <form (ngSubmit)="submitFillForm()">
-      <div class="form-grid">
+      <div class="form-grid three" style="margin-bottom: 16px;">
         <div class="form-field">
           <label>Job No. <span class="req">*</span></label>
-          <input type="text" name="jobNo" [(ngModel)]="fillForm.jobNo" required>
+          <input type="text" name="jobNo" [(ngModel)]="fillForm.jobNo" readonly required>
         </div>
         <div class="form-field">
           <label>WO # <span class="req">*</span></label>
-          <input type="text" name="wo" [(ngModel)]="fillForm.wo" readonly>
+          <input type="text" name="wo" [(ngModel)]="fillForm.wo" readonly required>
         </div>
         <div class="form-field">
           <label>Mark <span class="req">*</span></label>
-          <input type="text" name="mark" [(ngModel)]="fillForm.mark" required>
+          <input type="text" name="mark" [(ngModel)]="fillForm.mark" readonly required>
         </div>
       </div>
         
@@ -368,60 +368,121 @@
           </div>
         </div>
         
+        <div style="position: relative;">
+        <fieldset [attr.inert]="!isStepEditable(currentStepIndex) ? '' : null" [class.read-only-step]="!isStepEditable(currentStepIndex)" style="border: none; padding: 0; margin: 0;">
         <div class="form-grid single-col">
           <div class="form-section-wrapper" *ngIf="selectedTemplate.schema[currentStepIndex] as section">
             <h4 class="section-header">Section {{ currentStepIndex + 1 }}: {{ section.name }}</h4>
             
-            <div class="form-grid" *ngIf="section.layout !== 'checklist'">
-              <div class="form-field" *ngFor="let field of section.fields">
-                <label>{{ field.label }} <span class="req" *ngIf="field.required">*</span></label>
-                
-                <ng-container [ngSwitch]="field.type">
-                  <input *ngSwitchCase="'text'" type="text" [name]="field.id" [(ngModel)]="dynamicFormData[field.id]" [required]="!!field.required">
-                  
-                  <textarea *ngSwitchCase="'textarea'" [name]="field.id" [(ngModel)]="dynamicFormData[field.id]" rows="3" [required]="!!field.required"></textarea>
-                  
-                  <div *ngSwitchCase="'checkbox'" class="radio-group">
-                    <label>
-                      <input type="checkbox" [name]="field.id" [(ngModel)]="dynamicFormData[field.id]" [required]="!!field.required">
-                      {{ field.label }}
-                    </label>
+            <div class="form-grid" style="background: var(--bg-surface-glass); border: 1px solid var(--border-subtle); padding: 12px; border-radius: var(--radius-lg);" *ngIf="section.layout !== 'checklist' && section.layout !== 'summary'">
+              <ng-container *ngFor="let field of section.fields; let idx = index">
+                <div [style.grid-column]="field.type === 'textarea' ? '1 / -1' : 'auto'" style="background: rgba(0,0,0,0.15); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); padding: 8px 12px; display: flex; flex-direction: column; justify-content: center;">
+                  <div style="color: var(--color-primary); font-size: 0.65rem; letter-spacing: 0.05em; text-transform: uppercase; font-weight: 600; margin-bottom: 4px;">
+                    {{ field.label }} <span class="req" *ngIf="field.required" style="color: #ef4444;">*</span>
                   </div>
+                  
+                  <div [ngSwitch]="field.type">
+                    <input *ngSwitchCase="'text'" type="text" [name]="field.id" [(ngModel)]="dynamicFormData[field.id]" [required]="!!field.required" style="width: 100%; background: var(--bg-surface); border: 1px solid var(--border-subtle); border-radius: var(--radius-sm); padding: 6px 10px; color: var(--text-main); font-size: 0.8rem;">
+                    
+                    <textarea *ngSwitchCase="'textarea'" [name]="field.id" [(ngModel)]="dynamicFormData[field.id]" rows="2" [required]="!!field.required" style="width: 100%; background: var(--bg-surface); border: 1px solid var(--border-subtle); border-radius: var(--radius-sm); padding: 6px 10px; color: var(--text-main); font-size: 0.8rem;"></textarea>
+                    
+                    <div *ngSwitchCase="'checkbox'" style="padding-top: 2px;">
+                      <label style="display: flex; align-items: center; color: var(--text-main); font-weight: 500; font-size: 0.8rem; cursor: pointer;">
+                        <input type="checkbox" [name]="field.id" [(ngModel)]="dynamicFormData[field.id]" [required]="!!field.required" style="width: 14px; height: 14px; accent-color: var(--color-primary); margin-right: 6px;">
+                        {{ field.label }}
+                      </label>
+                    </div>
 
-                  <select *ngSwitchCase="'select'" [name]="field.id" [(ngModel)]="dynamicFormData[field.id]" [required]="!!field.required">
-                    <option value="">Select option</option>
-                    <option *ngFor="let opt of field.options" [value]="opt">{{ opt }}</option>
-                  </select>
+                    <select *ngSwitchCase="'select'" [name]="field.id" [(ngModel)]="dynamicFormData[field.id]" [required]="!!field.required" style="width: 100%; background: var(--bg-surface); border: 1px solid var(--border-subtle); border-radius: var(--radius-sm); padding: 6px 10px; color: var(--text-main); font-size: 0.8rem;">
+                      <option value="">Select option</option>
+                      <option *ngFor="let opt of field.options" [value]="opt">{{ opt }}</option>
+                    </select>
 
-                  <div *ngSwitchCase="'radio'" class="radio-group">
-                    <label *ngFor="let opt of field.options; let idx = index">
-                      <input type="radio" [name]="field.id" [value]="opt" [(ngModel)]="dynamicFormData[field.id]" [required]="!!field.required">
-                      {{ opt }}
-                    </label>
+                    <div *ngSwitchCase="'radio'" style="display: flex; gap: 16px; padding-top: 2px; flex-wrap: wrap;">
+                      <label *ngFor="let opt of field.options" style="display: flex; align-items: center; color: var(--text-main); font-weight: 500; font-size: 0.8rem; cursor: pointer;">
+                        <input type="radio" [name]="field.id" [value]="opt" [(ngModel)]="dynamicFormData[field.id]" [required]="!!field.required" style="width: 14px; height: 14px; accent-color: var(--color-primary); margin-right: 6px;">
+                        {{ opt }}
+                      </label>
+                    </div>
                   </div>
-                </ng-container>
-              </div>
+                </div>
+              </ng-container>
             </div>
             
             <div class="table-responsive" *ngIf="section.layout === 'checklist' && section.fields.length > 0">
               <table class="checklist-table">
                 <thead>
                   <tr>
-                    <th class="radio-header" *ngFor="let opt of section.fields[0]?.options">{{ opt }}</th>
+                    <th class="radio-header" *ngFor="let opt of getChecklistOptions(section)">{{ opt }}</th>
                     <th class="task-header">Task Description</th>
                   </tr>
                 </thead>
                 <tbody>
-                  <tr *ngFor="let field of section.fields">
-                    <td class="radio-cell" *ngFor="let opt of field.options">
-                      <input type="radio" [name]="field.id" [value]="opt" [(ngModel)]="dynamicFormData[field.id]" [required]="!!field.required">
-                    </td>
-                    <td class="task-cell">{{ field.label }}</td>
-                  </tr>
+                  <ng-container *ngFor="let field of section.fields">
+                    <tr *ngIf="field.options">
+                      <td class="radio-cell" *ngFor="let opt of field.options">
+                        <input type="radio" [name]="field.id" [value]="opt" [(ngModel)]="dynamicFormData[field.id]" [required]="!!field.required">
+                      </td>
+                      <td class="task-cell">{{ field.label }}</td>
+                    </tr>
+                  </ng-container>
                 </tbody>
               </table>
             </div>
+
+            <!-- Enhanced UI for separated text/textarea fields (like Initials/Comments) in checklist sections -->
+            <div *ngIf="section.layout === 'checklist' && hasOtherFields(section)" style="margin-top: 16px;">
+              <div class="form-grid" style="background: var(--bg-surface-glass); border: 1px solid var(--border-subtle); padding: 12px; border-radius: var(--radius-lg);">
+                <ng-container *ngFor="let field of section.fields">
+                  <div *ngIf="!field.options" [style.grid-column]="field.type === 'textarea' ? '1 / -1' : 'auto'" style="background: rgba(0,0,0,0.15); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); padding: 8px 12px; display: flex; flex-direction: column; justify-content: center;">
+                    <div style="color: var(--color-primary); font-size: 0.65rem; letter-spacing: 0.05em; text-transform: uppercase; font-weight: 600; margin-bottom: 4px;">
+                      {{ field.label }} <span class="req" *ngIf="field.required" style="color: #ef4444;">*</span>
+                    </div>
+                    <div>
+                      <input *ngIf="field.type === 'text'" type="text" [name]="field.id" [(ngModel)]="dynamicFormData[field.id]" [required]="!!field.required" style="width: 100%; background: var(--bg-surface); border: 1px solid var(--border-subtle); border-radius: var(--radius-sm); padding: 6px 10px; color: var(--text-main); font-size: 0.8rem;">
+                      <textarea *ngIf="field.type === 'textarea'" [name]="field.id" [(ngModel)]="dynamicFormData[field.id]" rows="2" [required]="!!field.required" style="width: 100%; background: var(--bg-surface); border: 1px solid var(--border-subtle); border-radius: var(--radius-sm); padding: 6px 10px; color: var(--text-main); font-size: 0.8rem;"></textarea>
+                    </div>
+                  </div>
+                </ng-container>
+              </div>
+            </div>
+
+            <!-- Custom Summary Layout -->
+            <div *ngIf="section.layout === 'summary'">
+              <div class="summary-metrics-container" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; margin-bottom: 16px;">
+                <ng-container *ngFor="let s of selectedTemplate.schema; let idx = index">
+                  <div class="stat-card" *ngIf="s.layout !== 'summary'" style="padding: 12px; background: rgba(0,0,0,0.03); border: 1px solid var(--border-subtle); border-radius: var(--radius-md);">
+                    <div class="stat-label" style="font-size: 0.7rem; font-weight: 700; margin-bottom: 8px; color: var(--color-primary); letter-spacing: 0.05em; text-transform: uppercase;">{{ s.name }}</div>
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                      <div>
+                        <div style="font-size: 0.65rem; color: var(--text-muted); margin-bottom: 2px;">Completion</div>
+                        <strong style="font-size: 0.85rem;">{{ getSectionStats(idx).completion }}%</strong>
+                      </div>
+                      <div style="text-align: right;">
+                        <div style="font-size: 0.65rem; color: var(--text-muted); margin-bottom: 2px;">Success</div>
+                        <strong style="font-size: 0.85rem;" [style.color]="getSectionStats(idx).success < 100 ? '#ef4444' : '#10b981'">{{ getSectionStats(idx).success }}%</strong>
+                      </div>
+                    </div>
+                  </div>
+                </ng-container>
+              </div>
+
+              <div style="background: var(--bg-surface-glass); border-radius: var(--radius-lg); border: 1px solid var(--border-subtle); margin-top: 16px; box-shadow: var(--shadow-sm); overflow: hidden;">
+                <h5 style="margin: 0; padding: 10px 12px; font-size: 0.85rem; color: var(--text-main); font-family: var(--font-family-heading); border-bottom: 1px solid var(--border-subtle); font-weight: 700; background: rgba(0,0,0,0.2);">Inspector Comments</h5>
+                <div class="form-grid" style="padding: 12px;">
+                  <div *ngFor="let field of section.fields" [style.grid-column]="field.type === 'textarea' ? '1 / -1' : 'auto'" style="background: rgba(0,0,0,0.15); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); padding: 8px 12px; display: flex; flex-direction: column;">
+                    <div style="color: var(--color-primary); font-size: 0.65rem; letter-spacing: 0.05em; text-transform: uppercase; font-weight: 600; margin-bottom: 4px;">
+                      {{ field.label }} <span class="req" *ngIf="field.required" style="color: #ef4444;">*</span>
+                    </div>
+                    <textarea [name]="field.id" [(ngModel)]="dynamicFormData[field.id]" rows="2" [required]="!!field.required" style="width: 100%; background: var(--bg-surface); border: 1px solid var(--border-subtle); border-radius: var(--radius-sm); padding: 6px 10px; color: var(--text-main); font-size: 0.8rem;"></textarea>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
+        </div>
+        </fieldset>
+        <div *ngIf="!isStepEditable(currentStepIndex)" style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; z-index: 10; cursor: not-allowed;" title="You do not have permission to edit this step."></div>
         </div>
       </div>
       
@@ -436,8 +497,8 @@
         <div class="action-group-right">
           <button *ngIf="selectedTemplate" type="button" class="btn btn-clear" (click)="prevStep()" [disabled]="currentStepIndex === 0">Back</button>
           <button *ngIf="selectedTemplate && currentStepIndex < selectedTemplate.schema.length - 1" type="button" class="btn btn-secondary" (click)="nextStep()">Next</button>
-          <button *ngIf="selectedTemplate" type="button" class="btn btn-secondary" (click)="saveProgress()">Save Progress</button>
-          <button type="submit" class="btn btn-orange" *ngIf="!selectedTemplate || currentStepIndex === selectedTemplate.schema.length - 1">{{ isInspectionEditMode ? 'Update Form' : 'Submit Form' }}</button>
+          <button *ngIf="selectedTemplate && (!isDmwUser || currentStepIndex === selectedTemplate.schema.length - 1)" type="button" class="btn btn-secondary" (click)="saveProgress()">Save Progress</button>
+          <button type="submit" class="btn btn-orange" *ngIf="(!selectedTemplate || currentStepIndex === selectedTemplate.schema.length - 1)">{{ isInspectionEditMode ? 'Update Form' : 'Submit Form' }}</button>
         </div>
       </div>
     </form>

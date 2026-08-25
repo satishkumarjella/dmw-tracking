@@ -85,7 +85,7 @@
           </div>
 
           <!-- Empty State -->
-          <ng-container *ngIf="!isLoading && (searchResults$ | async) as results">
+          <ng-container *ngIf="!isLoading && hasSearched">
             <div class="dropdown-state-item empty-state" *ngIf="results.length === 0 && globalPoSearch">
               <ion-icon name="search-outline"></ion-icon>
               <span>No results found for "{{ globalPoSearch }}"</span>

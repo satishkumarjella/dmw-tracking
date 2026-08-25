@@ -53,7 +53,7 @@ export class DashboardHeaderComponent implements OnInit {
   sanitizer = inject(DomSanitizer);
 
   private searchTerms = new Subject<string>();
-  searchResults$: Observable<SearchResult[]> = of([]);
+  results: SearchResult[] = [];
   showDropdown = false;
   isLoading = false;
   hasSearched = false;
@@ -71,7 +71,7 @@ export class DashboardHeaderComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.searchResults$ = this.searchTerms.pipe(
+    this.searchTerms.pipe(
       debounceTime(300),
       distinctUntilChanged(),
       switchMap((term: string) => {
@@ -88,9 +88,8 @@ export class DashboardHeaderComponent implements OnInit {
           catchError(() => of([]))
         );
       })
-    );
-
-    this.searchResults$.subscribe(results => {
+    ).subscribe(results => {
+      this.results = results;
       this.isLoading = false;
       // We keep showDropdown true if hasSearched is true, so we can show "No results"
       if (this.hasSearched && !this.globalPoSearch.trim()) {
