@@ -83,7 +83,10 @@
           <div class="table-toolbar">
             <div class="toolbar-meta">
               <span class="meta-pill">Live overview</span>
-              <span class="meta-pill neutral">{{ poData?.abms?.length || 0 }} rows</span>
+              <span class="meta-pill neutral">{{ filteredAbms.length || 0 }} rows</span>
+            </div>
+            <div class="toolbar-actions">
+              <input type="text" class="search-input" placeholder="Search table..." [(ngModel)]="searchTerm" />
             </div>
           </div>
 
@@ -101,7 +104,7 @@
               </thead>
 
               <tbody>
-                <tr *ngFor="let r of poData?.abms">
+                <tr *ngFor="let r of filteredAbms">
                   <td>
                     <span class="abm-tag">{{ r.id }}</span>
                   </td>

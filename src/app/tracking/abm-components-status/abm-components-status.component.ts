@@ -2,8 +2,11 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
+import { HttpClient } from '@angular/common/http';
 import { ConfigService } from '../../shared/config.service';
 import { ModuleLoaderComponent } from '../../shared/components/module-loader/module-loader.component';
+import { environment } from '../../../environments/environment';
+import { lastValueFrom } from 'rxjs';
 
 @Component({
   selector: 'app-abm-components-status',
@@ -19,25 +22,32 @@ export class AbmComponentsStatusComponent implements OnInit, OnDestroy {
   poInput: string = '';
   hasError: boolean = false;
   showResult: boolean = false;
+  loadingResult: boolean = false;
 
   poData: any = null;
   totReq: number = 0;
   totRcv: number = 0;
   totOpen: number = 0;
 
-  private DB: any = {
-    '25280-A01-01': {
-      mark: '36785-A01-01-01',
-      markDesc: 'Conveyor Drive Assembly — Section A01',
-      abms: [
-        { id: 'ABM 1', desc: 'Gear', descSub: 'Helical Drive Gear — 12T', reqQty: 10, po: '46001', rcv: 5 },
-        { id: 'ABM 2', desc: 'Motor', descSub: '3HP AC Motor — 460V 60Hz', reqQty: 20, po: '46002', rcv: 10 },
-        { id: 'ABM 3', desc: 'Drive', descSub: 'Variable Frequency Drive', reqQty: 25, po: '46003', rcv: 20 }
-      ]
-    }
-  };
+  searchTerm: string = '';
 
-  constructor(private configService: ConfigService) {}
+  get filteredAbms(): any[] {
+    if (!this.poData || !this.poData.abms) return [];
+    if (!this.searchTerm) return this.poData.abms;
+    
+    const term = this.searchTerm.toLowerCase();
+    return this.poData.abms.filter((item: any) => 
+      (item.id && item.id.toLowerCase().includes(term)) ||
+      (item.desc && item.desc.toLowerCase().includes(term)) ||
+      (item.descSub && item.descSub.toLowerCase().includes(term)) ||
+      (item.po && item.po.toLowerCase().includes(term))
+    );
+  }
+
+  constructor(
+    private configService: ConfigService,
+    private http: HttpClient
+  ) {}
 
   ngOnInit() {
     this.configService.applyModuleTheme('abm-status');
@@ -50,7 +60,7 @@ export class AbmComponentsStatusComponent implements OnInit, OnDestroy {
     this.configService.applyModuleTheme(null);
   }
 
-  lookup(): void {
+  async lookup(): Promise<void> {
     const raw = this.poInput.trim().toUpperCase();
 
     this.hasError = false;
@@ -65,36 +75,64 @@ export class AbmComponentsStatusComponent implements OnInit, OnDestroy {
       return;
     }
 
-    const rec = this.DB[raw];
+    this.loadingResult = true;
 
-    if (!rec) {
-      this.hasError = true;
-      return;
-    }
+    try {
+      const results: any[] = await lastValueFrom(
+        this.http.get<any[]>(`${environment.apiUrl}/abm?order=${raw}`)
+      );
 
-    this.poData = {
-      po: raw,
-      ...rec
-    };
-
-    this.totReq = rec.abms.reduce((sum: number, item: any) => sum + item.reqQty, 0);
-    this.totRcv = rec.abms.reduce((sum: number, item: any) => sum + item.rcv, 0);
-    this.totOpen = rec.abms.reduce((sum: number, item: any) => sum + (item.reqQty - item.rcv), 0);
-
-    this.showResult = true;
-
-    setTimeout(() => {
-      const el = document.getElementById('resultPanel');
-      if (el) {
-        el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      if (!results || results.length === 0) {
+        this.hasError = true;
+        this.loadingResult = false;
+        return;
       }
-    }, 50);
+
+      // Map the returned data
+      const firstRow = results[0];
+      
+      const mappedAbms = results.map(row => ({
+        id: row.wbsElement || 'Unknown',
+        desc: row.material || 'Unknown',
+        descSub: row.materialDescription || '',
+        reqQty: parseInt(row.productionOrderReqQty, 10) || 0,
+        po: row.order || '',
+        rcv: parseInt(row.goodsRecieptQty, 10) || 0
+      }));
+
+      this.poData = {
+        po: raw,
+        mark: firstRow.projectDefinition || '',
+        markDesc: firstRow.finalAssembly || '',
+        abms: mappedAbms
+      };
+
+      this.totReq = mappedAbms.reduce((sum: number, item: any) => sum + item.reqQty, 0);
+      this.totRcv = mappedAbms.reduce((sum: number, item: any) => sum + item.rcv, 0);
+      this.totOpen = mappedAbms.reduce((sum: number, item: any) => sum + (item.reqQty - item.rcv), 0);
+
+      this.showResult = true;
+      
+      setTimeout(() => {
+        const el = document.getElementById('resultPanel');
+        if (el) {
+          el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      }, 50);
+
+    } catch (error) {
+      console.error('Error fetching ABM data', error);
+      this.hasError = true;
+    } finally {
+      this.loadingResult = false;
+    }
   }
 
   clearAll(): void {
     this.poInput = '';
     this.hasError = false;
     this.showResult = false;
+    this.loadingResult = false;
     this.poData = null;
     this.totReq = 0;
     this.totRcv = 0;
