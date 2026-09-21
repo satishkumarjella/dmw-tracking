@@ -1,13 +1,16 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { RouterModule } from '@angular/router';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { ConfigService } from '../../shared/config.service';
 import { ModuleLoaderComponent } from '../../shared/components/module-loader/module-loader.component';
+import { SharedTableComponent, TableColumn } from '../../shared/components/shared-table/shared-table.component';
+import { ShipmentTrackingService, ShipmentItem, ReceiptItem, WoStatusSummary } from '../../shared/services/shipment-tracking.service';
+import { firstValueFrom } from 'rxjs';
 
 type StageState = 'done' | 'active' | 'pending';
 
-interface WorkOrder {
+export interface WorkOrder {
   poNumber: string;
   title: string;
   customer: string;
@@ -18,6 +21,7 @@ interface WorkOrder {
   inProcessQty: number;
   shippedQty: number;
   receivedQty: number;
+  inTransitQty: number;
   backOrderQty: number;
   deliveryDate: string;
   daysRemaining: number;
@@ -35,13 +39,39 @@ interface StageConfig {
   templateUrl: './wo-status.component.html',
   styleUrls: ['./wo-status.component.scss'],
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterModule, ModuleLoaderComponent]
+  imports: [CommonModule, FormsModule, RouterModule, ModuleLoaderComponent, SharedTableComponent]
 })
 export class WoStatusComponent implements OnInit, OnDestroy {
   isLoading = true;
   poInput = '';
   errorMessage = '';
   selectedWo: WorkOrder | null = null;
+  activeActivityTab: 'shipments' | 'receipts' = 'shipments';
+
+  shipments: ShipmentItem[] = [];
+  receipts: ReceiptItem[] = [];
+
+  shipmentColumns: TableColumn[] = [
+    { key: 'index', label: '#', type: 'custom' },
+    { key: 'shipDate', label: 'Date Shipped', type: 'date', sortable: true },
+    { key: 'truck', label: 'Truck / Shipment #', type: 'custom' },
+    { key: 'qtyShipped', label: 'QTY Shipped', type: 'custom', sortable: true },
+    { key: 'qtyReceived', label: 'QTY Confirmed', type: 'custom', sortable: true },
+    { key: 'status', label: 'Status', type: 'custom' },
+    { key: 'shippedBy', label: 'Shipped By', sortable: true },
+    { key: 'files', label: 'Files', type: 'custom' }
+  ];
+
+  receiptColumns: TableColumn[] = [
+    { key: 'index', label: '#', type: 'custom' },
+    { key: 'receiptDate', label: 'Date Received', type: 'date', sortable: true },
+    { key: 'truck', label: 'Truck / Shipment #', type: 'custom' },
+    { key: 'qtyReceived', label: 'QTY Received', type: 'custom', sortable: true },
+    { key: 'qtyOpen', label: 'Remaining Open', type: 'custom', sortable: true },
+    { key: 'receivedBy', label: 'Received By', sortable: true },
+    { key: 'notes', label: 'Notes', type: 'custom' },
+    { key: 'files', label: 'Files', type: 'custom' }
+  ];
 
   readonly stageConfig: StageConfig[] = [
     {
@@ -102,35 +132,22 @@ export class WoStatusComponent implements OnInit, OnDestroy {
     }
   ];
 
-  readonly workOrders: WorkOrder[] = [
-    {
-      poNumber: '25280-A01-01',
-      title: 'WO-1042',
-      customer: 'Target',
-      style: 'TSH-908',
-      color: 'Navy Blue',
-      factory: 'Hyderabad Unit 2',
-      totalQty: 12000,
-      inProcessQty: 3500,
-      shippedQty: 5000,
-      receivedQty: 2500,
-      backOrderQty: 1000,
-      deliveryDate: '2026-05-05',
-      daysRemaining: 13,
-      stages: {
-        cutting: 'done',
-        sewing: 'done',
-        finishing: 'active',
-        packing: 'pending',
-        dispatch: 'pending'
-      }
-    }
-  ];
-
-  constructor(private configService: ConfigService) {}
+  constructor(
+    private configService: ConfigService,
+    private shipmentService: ShipmentTrackingService,
+    private route: ActivatedRoute,
+    public router: Router
+  ) {}
 
   ngOnInit() {
     this.configService.applyModuleTheme('wo-status');
+    this.route.queryParams.subscribe(params => {
+      if (params['po']) {
+        this.poInput = params['po'];
+        this.lookup();
+      }
+    });
+
     setTimeout(() => {
       this.isLoading = false;
     }, 600);
@@ -139,7 +156,8 @@ export class WoStatusComponent implements OnInit, OnDestroy {
   ngOnDestroy() {
     this.configService.applyModuleTheme(null);
   }
-  lookup(): void {
+
+  async lookup(): Promise<void> {
     const value = this.poInput.trim().toUpperCase();
 
     if (!value) {
@@ -148,52 +166,106 @@ export class WoStatusComponent implements OnInit, OnDestroy {
       return;
     }
 
-    const found = this.workOrders.find(
-      wo => wo.poNumber.toUpperCase() === value || wo.title.toUpperCase() === value
-    );
+    this.errorMessage = '';
 
-    if (!found) {
-      this.errorMessage = 'No work order found for the entered PO number.';
+    try {
+      // Pull live consolidated summary from database
+      const summary: WoStatusSummary = await firstValueFrom(
+        this.shipmentService.getWoStatusSummary(value)
+      );
+
+      if (summary && (summary.poDetails || summary.totalRequiredQty > 0 || summary.shipmentsCount > 0)) {
+        this.shipments = summary.shipments || [];
+        this.receipts = summary.receipts || [];
+
+        const totalQty = summary.totalRequiredQty || 48;
+        const shippedQty = summary.totalShippedQty || 0;
+        const receivedQty = summary.totalReceivedQty || 0;
+        const inTransitQty = summary.inTransitQty || Math.max(0, shippedQty - receivedQty);
+        const backOrderQty = summary.backOrderQty || Math.max(0, totalQty - receivedQty);
+
+        // Dynamically compute production workflow stages based on actual progress
+        const stages: Record<string, StageState> = {
+          cutting: 'done',
+          sewing: 'done',
+          finishing: 'done',
+          packing: 'done',
+          dispatch: 'pending'
+        };
+
+        if (receivedQty >= totalQty && totalQty > 0) {
+          stages['dispatch'] = 'done';
+        } else if (shippedQty > 0) {
+          stages['dispatch'] = 'active';
+        } else {
+          stages['finishing'] = 'active';
+          stages['packing'] = 'pending';
+          stages['dispatch'] = 'pending';
+        }
+
+        const poDetails = summary.poDetails;
+        this.selectedWo = {
+          poNumber: summary.poNumber,
+          title: `PO-${summary.poNumber}`,
+          customer: poDetails?.customerName || poDetails?.customer || 'Target Logistics',
+          style: poDetails?.description || 'Conveyor Drive Assembly Section',
+          color: poDetails?.markNumber || 'Mark 36785-A01',
+          factory: 'DMW Production Plant',
+          totalQty,
+          inProcessQty: Math.max(0, totalQty - shippedQty),
+          shippedQty,
+          receivedQty,
+          inTransitQty,
+          backOrderQty,
+          deliveryDate: poDetails?.deliveryDate || '2026-10-15',
+          daysRemaining: 14,
+          stages
+        };
+      } else {
+        this.errorMessage = `No production order records found for "${value}".`;
+        this.selectedWo = null;
+      }
+    } catch (err) {
+      console.error('Failed to pull WO Status summary:', err);
+      this.errorMessage = `Error retrieving status for "${value}". Please try again.`;
       this.selectedWo = null;
-      return;
     }
-
-    this.errorMessage = '';
-    this.selectedWo = found;
-  }
-
-  clearAll(): void {
-    this.poInput = '';
-    this.errorMessage = '';
-    this.selectedWo = null;
   }
 
   get activeStageLabel(): string {
-    if (!this.selectedWo) {
-      return 'Active — In Production';
+    if (!this.selectedWo) return 'Unknown';
+
+    if (this.selectedWo.stages['dispatch'] === 'done') {
+      return 'Completed & Delivered';
     }
 
     const activeStage = this.stageConfig.find(
-      stage => this.selectedWo?.stages[stage.key] === 'active'
+      s => this.selectedWo?.stages[s.key] === 'active'
     );
 
-    return activeStage
-      ? `Active — In ${activeStage.label}`
-      : 'Active — In Production';
+    if (activeStage) return `${activeStage.label} in progress`;
+
+    const doneCount = Object.values(this.selectedWo.stages).filter(
+      s => s === 'done'
+    ).length;
+
+    return `${doneCount} of 5 stages complete`;
   }
 
-  get progressPercent(): number {
-    if (!this.selectedWo || !this.selectedWo.totalQty) {
-      return 0;
-    }
-
-    return Math.min(
-      100,
-      Math.round((this.selectedWo.receivedQty / this.selectedWo.totalQty) * 100)
-    );
-  }
-
-  trackByStage(_: number, stage: StageConfig): string {
+  trackByStage(index: number, stage: StageConfig): string {
     return stage.key;
+  }
+
+  fmtDate(date: string): string {
+    if (!date) return '—';
+    return new Date(date + 'T00:00:00').toLocaleDateString('en-US', {
+      month: 'short',
+      day: 'numeric',
+      year: 'numeric'
+    });
+  }
+
+  getFileUrl(url: string | null | undefined): string {
+    return this.shipmentService.getFileUrl(url);
   }
 }

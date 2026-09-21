@@ -1,5 +1,5 @@
 import { Component, OnInit, OnDestroy, ViewEncapsulation } from '@angular/core';
-import { Router, RouterModule, NavigationEnd } from '@angular/router';
+import { Router, RouterModule, NavigationEnd, ActivatedRoute } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Subscription } from 'rxjs';
@@ -31,7 +31,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
   activeChildComponent: any;
   private routerSub!: Subscription;
 
-  constructor(private router: Router, private authService: AuthService, private toastService: ToastService) {
+  constructor(private router: Router, private route: ActivatedRoute, private authService: AuthService, private toastService: ToastService) {
     addIcons({ settingsOutline, personCircleOutline, optionsOutline, helpCircleOutline, logOutOutline, chevronBackOutline, menuOutline, searchOutline, informationCircleOutline, barcodeOutline });
     this.checkRoute(this.router.url);
     this.routerSub = this.router.events.pipe(
@@ -41,7 +41,13 @@ export class DashboardComponent implements OnInit, OnDestroy {
     });
   }
 
-  ngOnInit() { }
+  ngOnInit() { 
+    this.route.queryParams.subscribe(params => {
+      if (params['po']) {
+        this.globalPoSearch = params['po'];
+      }
+    });
+  }
 
   ngOnDestroy() {
     if (this.routerSub) {
@@ -94,6 +100,15 @@ export class DashboardComponent implements OnInit, OnDestroy {
   triggerSearch() {
     if (this.activeChildComponent && this.globalPoSearch) {
       this.activeChildComponent.poInput = this.globalPoSearch;
+      if (typeof this.activeChildComponent.lookup === 'function') {
+        this.activeChildComponent.lookup();
+      }
+    }
+  }
+
+  onProjectSearchTriggered(projectDef: string) {
+    if (this.activeChildComponent && this.activeModule === 'project-dashboard') {
+      this.activeChildComponent.projectDefInput = projectDef;
       if (typeof this.activeChildComponent.lookup === 'function') {
         this.activeChildComponent.lookup();
       }

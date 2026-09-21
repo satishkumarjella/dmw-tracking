@@ -77,7 +77,6 @@ main {
   padding: 40px 20px;
   text-align: center;
   background: var(--bg-surface-glass);
-  backdrop-filter: blur(10px);
   border: 1px dashed var(--border-subtle);
   border-radius: var(--radius-xl);
   color: var(--text-muted);
@@ -129,8 +128,6 @@ main {
 
 .po-strip.enhanced {
   background: var(--bg-surface-glass);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
   border-radius: var(--radius-xl) var(--radius-xl) 0 0;
   border: 1px solid var(--border-subtle);
   border-bottom: none;

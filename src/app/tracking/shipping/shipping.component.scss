@@ -53,7 +53,7 @@ textarea {
 .btn-new,
 .btn-submit,
 .head-action {
-  background: linear-gradient(135deg, var(--color-primary), var(--color-secondary));
+  background: var(--color-button);
   color: #fff;
   border: none;
   border-radius: var(--radius-md);
@@ -132,7 +132,6 @@ textarea {
   padding: 88px 20px;
   text-align: center;
   background: var(--bg-surface-glass);
-  backdrop-filter: blur(10px);
   border: 1px dashed var(--border-subtle);
   border-radius: var(--radius-xl);
   color: var(--text-muted);
@@ -184,8 +183,6 @@ textarea {
 
 .wo-strip.enhanced {
   background: var(--bg-surface-glass);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
   border-radius: var(--radius-xl) var(--radius-xl) 0 0;
   border: 1px solid var(--border-subtle);
   border-bottom: none;
@@ -250,6 +247,22 @@ textarea {
   font-weight: 700;
   font-size: 0.82rem;
   letter-spacing: 0.03em;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+
+  &.alt-nav {
+    background: var(--bg-surface-glass);
+    border: 1px solid var(--border-subtle);
+    color: var(--text-main);
+    box-shadow: none;
+
+    &:hover {
+      background: rgba(var(--color-primary-rgb), 0.1);
+      border-color: var(--color-primary);
+      color: var(--color-primary);
+    }
+  }
 }
 
 .wo-badge {
@@ -518,9 +531,22 @@ tbody tr {
     color: #b45309;
   }
 
-  &.sp-closed {
+  &.sp-closed,
+  &.status-received {
     background: #dcfce7;
     color: #15803d;
+  }
+
+  &.sp-progress,
+  &.status-partial {
+    background: #e0e7ff;
+    color: #3730a3;
+  }
+
+  &.sp-open,
+  &.status-pending {
+    background: #fef3c7;
+    color: #b45309;
   }
 }
 
@@ -562,7 +588,6 @@ tbody tr {
   justify-content: center;
   padding: 32px 20px;
   z-index: 500;
-  backdrop-filter: blur(4px);
   animation: fadeIn 0.2s ease-out;
 }
 

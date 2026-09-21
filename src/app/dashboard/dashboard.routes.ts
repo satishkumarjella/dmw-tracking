@@ -26,6 +26,15 @@ export const dashboardRoutes: Routes = [
                     ),
             },
             {
+                path: 'project-dashboard',
+                canActivate: [RoleGuard],
+                data: { module: 'project-dashboard' },
+                loadComponent: () =>
+                    import('../tracking/project-dashboard/project-dashboard.component').then(
+                        (m) => m.ProjectDashboardComponent
+                    ),
+            },
+            {
                 path: 'receiving',
                 canActivate: [RoleGuard],
                 data: { module: 'receiving' },

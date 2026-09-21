@@ -9,27 +9,57 @@ import { addIcons } from 'ionicons';
 import { searchOutline, chevronUpOutline, chevronDownOutline } from 'ionicons/icons';
 import { ModuleLoaderComponent } from '../../shared/components/module-loader/module-loader.component';
 import { FormBuilderComponent } from '../../pages/form-builder/form-builder.component';
+import { SharedTableComponent, TableColumn } from '../../shared/components/shared-table/shared-table.component';
+import { ConfigService } from '../../shared/config.service';
 
 @Component({
   selector: 'app-admin',
   templateUrl: './admin.component.html',
   styleUrls: ['./admin.component.scss'],
   standalone: true,
-  imports: [CommonModule, FormsModule, IonIcon, ModuleLoaderComponent, FormBuilderComponent]
+  imports: [CommonModule, FormsModule, IonIcon, ModuleLoaderComponent, FormBuilderComponent, SharedTableComponent]
 })
 export class AdminComponent implements OnInit {
   isLoading = true;
-  activeTab: 'users' | 'forms' = 'users';
+  activeTab: 'users' | 'forms' | 'theme' = 'users';
   users: any[] = [];
-  availableModules = ['wo-status', 'abm-status', 'quality-inspection', 'shipping', 'receiving'];
+  availableModules = ['wo-status', 'abm-status', 'quality-inspection', 'shipping', 'receiving', 'project-dashboard'];
   currentUserRole = 'user';
 
-  // Search & Sort State
-  searchQuery: string = '';
-  sortColumn: string = 'createdAt';
-  sortDirection: 'asc' | 'desc' = 'desc';
+  userColumns: TableColumn[] = [
+    { key: 'email', label: 'Email', sortable: true },
+    { key: 'createdAt', label: 'Created At', type: 'date', sortable: true },
+    { key: 'role', label: 'Role', type: 'custom', sortable: true },
+    { key: 'modules', label: 'Modules', type: 'custom' },
+    { key: 'actions', label: 'Actions', type: 'custom' }
+  ];
 
-  constructor(private http: HttpClient, private authService: AuthService, private toastService: ToastService) {
+  // Search State
+  searchQuery: string = '';
+
+  // Theme State
+  themeConfig: Record<string, string> = {
+    primary: '#FD7B01',
+    secondary: '#0061AA',
+    buttonColor: '#b15601',
+    excel: '#107c41',
+    success: '#107c41',
+    warning: '#d83b01',
+    danger: '#a80000',
+    'bg-body': '#f3f2f1',
+    'bg-surface': '#ffffff',
+    'text-main': '#201f1e',
+    'text-muted': '#605e5c',
+    'border-subtle': '#edebe9',
+    'border-strong': '#c8c6c4'
+  };
+
+  constructor(
+    private http: HttpClient, 
+    private authService: AuthService, 
+    private toastService: ToastService,
+    private configService: ConfigService
+  ) {
     addIcons({ searchOutline, chevronUpOutline, chevronDownOutline });
     this.authService.currentUser$.subscribe(user => {
       if (user) this.currentUserRole = user.role;
@@ -38,10 +68,40 @@ export class AdminComponent implements OnInit {
 
   ngOnInit() {
     this.loadUsers();
+    this.loadTheme();
     // Simulate premium module loading effect
     setTimeout(() => {
       this.isLoading = false;
     }, 1200);
+  }
+
+  loadTheme() {
+    const config = this.configService.config();
+    if (config && config.theme) {
+      this.themeConfig = { ...this.themeConfig, ...config.theme };
+    }
+  }
+
+  saveTheme() {
+    const tenantId = this.authService.getTenantId();
+    if (!tenantId) return;
+
+    this.http.post('http://localhost:3000/config', { theme: this.themeConfig }, {
+      headers: { 'x-tenant-id': tenantId, Authorization: `Bearer ${this.authService.getToken()}` }
+    }).subscribe({
+      next: (res: any) => {
+        this.toastService.success('Theme saved successfully!');
+        // Update local service and DOM immediately
+        const currentConfig = this.configService.config();
+        if (currentConfig) {
+          currentConfig.theme = res.theme;
+          this.configService.config.set(currentConfig);
+          // @ts-ignore
+          this.configService.applyTheme(res.theme);
+        }
+      },
+      error: (err) => this.toastService.error('Failed to save theme: ' + (err.error?.message || err.message))
+    });
   }
 
   loadUsers() {
@@ -106,45 +166,5 @@ export class AdminComponent implements OnInit {
     });
   }
 
-  // --- Search and Sort Logic ---
-
-  sortBy(column: string) {
-    if (this.sortColumn === column) {
-      this.sortDirection = this.sortDirection === 'asc' ? 'desc' : 'asc';
-    } else {
-      this.sortColumn = column;
-      this.sortDirection = 'asc';
-    }
-  }
-
-  get filteredAndSortedUsers(): any[] {
-    let result = this.users;
-
-    if (this.searchQuery) {
-      const query = this.searchQuery.toLowerCase();
-      result = result.filter(u => 
-        (u.email && u.email.toLowerCase().includes(query)) ||
-        (u.role && u.role.toLowerCase().includes(query))
-      );
-    }
-
-    result.sort((a, b) => {
-      let valA = a[this.sortColumn];
-      let valB = b[this.sortColumn];
-
-      if (this.sortColumn === 'createdAt') {
-        valA = new Date(valA).getTime();
-        valB = new Date(valB).getTime();
-      } else {
-        valA = valA ? valA.toString().toLowerCase() : '';
-        valB = valB ? valB.toString().toLowerCase() : '';
-      }
-
-      if (valA < valB) return this.sortDirection === 'asc' ? -1 : 1;
-      if (valA > valB) return this.sortDirection === 'asc' ? 1 : -1;
-      return 0;
-    });
-
-    return result;
-  }
+  // --- Search and Sort Logic is now handled by SharedTableComponent ---
 }

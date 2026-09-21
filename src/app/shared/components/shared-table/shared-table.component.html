@@ -1,0 +1,114 @@
+<div class="table-container cyber-card">
+  <div class="table-wrapper">
+    <!-- Built-in Search Bar -->
+    <div class="table-search-bar" *ngIf="enableSearch">
+      <div class="search-input-wrapper">
+        <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" fill="none" stroke-width="2" class="search-icon">
+          <circle cx="11" cy="11" r="8"></circle>
+          <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+        </svg>
+        <input type="text" [(ngModel)]="searchTerm" [placeholder]="searchPlaceholder" class="search-input" />
+        <button *ngIf="searchTerm" type="button" class="clear-search-btn" (click)="searchTerm = ''" title="Clear search">×</button>
+      </div>
+    </div>
+
+    <table class="cyber-table">
+      <thead>
+        <tr>
+          <th *ngFor="let col of columns" [style.width]="col.width || 'auto'"
+              [class.sortable]="col.sortable" (click)="onSort(col)">
+            <div class="th-content" style="display: flex; align-items: center; gap: 4px;">
+              <span>{{ col.label }}</span>
+              <span class="sort-icon" *ngIf="col.sortable" [class.active]="sortColumn === col.key" style="cursor: pointer; opacity: 0.5;">
+                {{ sortColumn === col.key ? (sortDirection === 'asc' ? '▲' : '▼') : '⇅' }}
+              </span>
+            </div>
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let row of processedData; let i = index" 
+            (click)="onRowClick(row)" 
+            [class.clickable]="isRowClickable">
+            
+          <td *ngFor="let col of columns">
+            <ng-container [ngSwitch]="col.type">
+              <!-- Custom Type -->
+              <ng-container *ngSwitchCase="'custom'">
+                <ng-container *ngTemplateOutlet="customCellTemplates[col.key] || defaultCustomTpl; context: { $implicit: row, index: i, col: col }">
+                </ng-container>
+              </ng-container>
+
+              <!-- Badge Type -->
+              <ng-container *ngSwitchCase="'badge'">
+                <span class="status-badge" [ngClass]="col.badgeClass ? col.badgeClass(resolvePath(row, col, i)) : ''">
+                  {{ resolvePath(row, col, i) || 'N/A' }}
+                </span>
+              </ng-container>
+
+              <!-- Date Type -->
+              <ng-container *ngSwitchCase="'date'">
+                {{ resolvePath(row, col, i) ? (resolvePath(row, col, i) | date:'shortDate') : 'N/A' }}
+              </ng-container>
+
+              <!-- Boolean Type -->
+              <ng-container *ngSwitchCase="'boolean'">
+                {{ resolvePath(row, col, i) ? 'Yes' : 'No' }}
+              </ng-container>
+
+              <!-- Default Text -->
+              <ng-container *ngSwitchDefault>
+                {{ resolvePath(row, col, i) || 'N/A' }}
+              </ng-container>
+            </ng-container>
+          </td>
+
+        </tr>
+        
+        <!-- Empty State Row -->
+        <tr *ngIf="!processedData || processedData.length === 0" class="empty-row">
+          <td [attr.colspan]="columns.length" class="empty-cell">
+            <div class="table-empty-state">
+              <p>{{ emptyMessage }}</p>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+      <ng-content select="[table-footer]"></ng-content>
+    </table>
+
+    <!-- Built-in Pagination Bar -->
+    <div class="table-pagination" *ngIf="enablePagination && data && data.length > 0">
+      <div class="pagination-info">
+        Showing {{ paginationStartIndex }} to {{ paginationEndIndex }} of {{ sortedData.length }} records
+      </div>
+      
+      <div class="pagination-controls">
+        <div class="page-size-selector">
+          <label>Rows per page:</label>
+          <select [(ngModel)]="pageSize" (change)="onPageSizeChange()">
+            <option *ngFor="let size of pageSizeOptions" [value]="size">{{ size }}</option>
+          </select>
+        </div>
+
+        <div class="page-buttons">
+          <button class="btn-page" [disabled]="currentPage === 1" (click)="setPage(currentPage - 1)">
+            &laquo; Prev
+          </button>
+          
+          <span class="page-indicator">
+            Page {{ currentPage }} of {{ totalPages }}
+          </span>
+          
+          <button class="btn-page" [disabled]="currentPage === totalPages" (click)="setPage(currentPage + 1)">
+            Next &raquo;
+          </button>
+        </div>
+      </div>
+    </div>
+    
+    <ng-template #defaultCustomTpl let-row>
+      {{ row | json }}
+    </ng-template>
+  </div>
+</div>

@@ -9,6 +9,27 @@
   </div>
 
   <div class="grid-bottom" *ngIf="configService.config() as config">
+    <!-- Home Button (Sidebar Only) -->
+    <a *ngIf="!isDashboardRoute" (click)="navigate.emit('')" class="card" [class.active]="isDashboardRoute"
+       style="--card-accent: #0061aa; --card-accent-rgb: 0, 97, 170;">
+      <div class="card-header-row">
+        <div class="icon-badge">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+            <polyline points="9 22 9 12 15 12 15 22"></polyline>
+          </svg>
+          <span class="card-num">Home</span>
+        </div>
+        <div class="card-title">
+          <span class="desktop-title">Dashboard Home</span>
+          <span class="mobile-title">Home</span>
+        </div>
+      </div>
+      <div class="card-divider"></div>
+      <p class="card-desc">Return to the main dashboard menu.</p>
+    </a>
+
+
     @for (module of config.modules; track module.id) {
       <ng-container *ngIf="hasAccess(module.id)">
         <a (click)="navigate.emit(module.route)" class="card" [class.active]="activeModule === module.id"
@@ -35,7 +56,7 @@
     
     <a *ngIf="currentUserRole === 'admin' || currentUserRole === 'super_admin'"
        (click)="navigate.emit('admin')" class="card" [class.active]="activeModule === 'admin'"
-       style="--card-accent: #0ea5e9; --card-accent-rgb: 14, 165, 233;">
+       style="--card-accent: #0061aa; --card-accent-rgb: 0, 97, 170;">
       <div class="card-header-row">
         <div class="icon-badge">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">

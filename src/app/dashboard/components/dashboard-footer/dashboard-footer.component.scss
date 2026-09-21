@@ -4,8 +4,6 @@
 
 .footer-glass {
   background: var(--bg-surface-glass);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
   border-top: 1px solid var(--border-subtle);
   padding: 12px 24px;
 }

@@ -2,242 +2,259 @@
   <app-module-loader *ngIf="isLoading" moduleName="Shipping"></app-module-loader>
   <ng-container *ngIf="!isLoading">
     <main>
-    <div class="state-banner error" *ngIf="showError">
-      <div class="state-icon">
-        <svg viewBox="0 0 24 24">
-          <circle cx="12" cy="12" r="10"></circle>
-          <line x1="12" y1="8" x2="12" y2="12"></line>
-          <line x1="12" y1="16" x2="12.01" y2="16"></line>
-        </svg>
+      <div class="state-banner error" *ngIf="showError">
+        <div class="state-icon">
+          <svg viewBox="0 0 24 24">
+            <circle cx="12" cy="12" r="10"></circle>
+            <line x1="12" y1="8" x2="12" y2="12"></line>
+            <line x1="12" y1="16" x2="12.01" y2="16"></line>
+          </svg>
+        </div>
+        <div>
+          <div class="state-title">PO Not Found</div>
+          <div class="state-text">No work order found for the entered PO number.</div>
+        </div>
       </div>
-      <div>
-        <div class="state-title">PO Not Found</div>
-        <div class="state-text">No work order found for the entered PO number.</div>
-      </div>
-    </div>
 
-    <div class="empty-search-state" *ngIf="!selectedRecord && !showError">
-      <div class="empty-icon">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
-          <circle cx="11" cy="11" r="8"></circle>
-          <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-        </svg>
+      <div class="empty-search-state" *ngIf="!selectedRecord && !showError">
+        <div class="empty-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+            <circle cx="11" cy="11" r="8"></circle>
+            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+          </svg>
+        </div>
+        <h3>No Production Order Selected</h3>
+        <p>Use the global search bar in the header to find a PO and view shipping details.</p>
       </div>
-      <h3>No Production Order Selected</h3>
-      <p>Use the global search bar in the header to find a PO and view shipping details.</p>
-    </div>
 
-    <section id="resultPanel" *ngIf="selectedRecord">
-      <div class="wo-strip enhanced">
-        <div class="wo-main">
-          <div>
-            <div class="wo-eyebrow">Production Order</div>
-            <div class="wo-po">{{ currentPO }}</div>
-            <div class="wo-meta">
-              <span>Shipping Module</span>
-              <span>•</span>
-              <span>{{ selectedRecord.mark }}</span>
-              <span>•</span>
-              <span>{{ selectedRecord.markDesc }}</span>
+      <section id="resultPanel" *ngIf="selectedRecord">
+        <div class="wo-strip enhanced">
+          <div class="wo-main">
+            <div>
+              <div class="wo-eyebrow">Production Order</div>
+              <div class="wo-po">{{ currentPO }}</div>
+              <div class="wo-meta">
+                <span>Shipping Module</span>
+                <span>•</span>
+                <span>{{ selectedRecord.mark }}</span>
+                <span>•</span>
+                <span>{{ selectedRecord.markDesc }}</span>
+              </div>
+            </div>
+
+            <div class="wo-actions">
+              <div class="wo-badge">
+                <span class="bd"></span>
+                Active
+              </div>
+              <a class="head-action alt-nav" [routerLink]="['/dashboard/receiving']" [queryParams]="{ po: currentPO }"
+                title="Navigate to Inbound Receiving for this PO">
+                Inbound Receiving →
+              </a>
+              <a class="head-action alt-nav" [routerLink]="['/dashboard/wo-status']" [queryParams]="{ po: currentPO }"
+                title="Navigate to Work Order Status for this PO">
+                WO Status →
+              </a>
+              <button class="head-action" type="button" (click)="openModal()">+ New Shipment</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel-body">
+          <div class="summary-grid">
+            <div class="stat-card primary-stat">
+              <span class="stat-label">Shipping Summary</span>
+              <strong>{{ selectedRecord.mark }}</strong>
+              <small>{{ selectedRecord.markDesc }}</small>
+            </div>
+
+            <div class="stat-card">
+              <span class="stat-label">Required</span>
+              <strong>{{ selectedRecord.totalQty }}</strong>
+              <small>Total production quantity</small>
+            </div>
+
+            <div class="stat-card">
+              <span class="stat-label">Shipped</span>
+              <strong>{{ totalShipped }}</strong>
+              <small>Completed outbound quantity</small>
+            </div>
+
+            <div class="stat-card">
+              <span class="stat-label">Open</span>
+              <strong>{{ totalOpen }}</strong>
+              <small>Remaining to dispatch</small>
             </div>
           </div>
 
-          <div class="wo-actions">
-            <div class="wo-badge">
-              <span class="bd"></span>
-              Active
-            </div>
-            <button class="head-action" type="button" (click)="openModal()">+ New Shipment</button>
-          </div>
-        </div>
-      </div>
-
-      <div class="panel-body">
-        <div class="summary-grid">
-          <div class="stat-card primary-stat">
-            <span class="stat-label">Shipping Summary</span>
-            <strong>{{ selectedRecord.mark }}</strong>
-            <small>{{ selectedRecord.markDesc }}</small>
-          </div>
-
-          <div class="stat-card">
-            <span class="stat-label">Required</span>
-            <strong>{{ selectedRecord.totalQty }}</strong>
-            <small>Total production quantity</small>
-          </div>
-
-          <div class="stat-card">
-            <span class="stat-label">Shipped</span>
-            <strong>{{ totalShipped }}</strong>
-            <small>Completed outbound quantity</small>
-          </div>
-
-          <div class="stat-card">
-            <span class="stat-label">Open</span>
-            <strong>{{ totalOpen }}</strong>
-            <small>Remaining to dispatch</small>
-          </div>
-        </div>
-
-        <div class="hist-header">
-          <div>
-            <h3>Shipment History</h3>
-            <p>All outbound deliveries logged for this production order.</p>
-          </div>
-
-          <button class="btn-new" type="button" (click)="openModal()">+ New Shipment</button>
-        </div>
-
-        <div class="content-panel">
-          <div class="panel-topline">Outbound Shipment Register</div>
-
-          <div class="table-toolbar">
-            <div class="toolbar-meta">
-              <span class="meta-pill live">Live tracking</span>
-              <span class="meta-pill neutral">{{ shipments.length }} entries</span>
+          <div class="hist-header">
+            <div>
+              <h3>Shipment History</h3>
+              <p>All outbound deliveries logged for this production order.</p>
             </div>
           </div>
 
-          <div class="tbl-wrap">
-            <table>
-              <thead>
-                <tr>
-                  <th>#</th>
-                  <th>Date Shipped</th>
-                  <th>Truck / Shipment #</th>
-                  <th>Production Order #</th>
-                  <th class="right">QTY Required</th>
-                  <th class="right">QTY Shipped</th>
-                  <th class="right">QTY Open</th>
-                  <th>Shipped By</th>
-                  <th class="center">Docs</th>
-                  <th class="center">Picture</th>
-                </tr>
-              </thead>
+          <div class="content-panel">
+            <div class="panel-topline">Outbound Shipment Register</div>
 
-              <tbody *ngIf="shipments.length; else emptyState">
-                <tr *ngFor="let s of shipments; let i = index">
-                  <td>{{ formatIndex(i) }}</td>
-                  <td class="date-cell">{{ formatDate(s.date) }}</td>
-                  <td><span class="truck-cell">{{ s.truck }}</span></td>
-                  <td class="po-cell">{{ s.po }}</td>
-                  <td class="qty-req right">{{ s.qtyReq }}</td>
-                  <td>
-                    <div class="qty-rcv right">{{ s.qtyShip }}</div>
-                    <div class="prog-wrap">
-                      <div class="prog-bar">
-                        <div class="prog-fill" [style.width.%]="getProgress(s)"></div>
-                      </div>
-                      <div class="prog-pct">{{ getProgress(s) }}%</div>
-                    </div>
-                  </td>
-                  <td class="qty-open right" [ngClass]="s.qtyOpen > 0 ? 'has-open' : 'no-open'">
-                    {{ s.qtyOpen }}
-                  </td>
-                  <td>{{ s.by }}</td>
-                  <td class="center">
-                    <a *ngIf="s.docUrl; else noDoc" class="file-link doc" [href]="s.docUrl"
-                      [download]="s.docName || ''">
-                      {{ s.docName }}
-                    </a>
-                    <ng-template #noDoc><span class="no-file">No doc</span></ng-template>
-                  </td>
-                  <td class="center">
-                    <a *ngIf="s.picUrl; else noPic" class="file-link pic" [href]="s.picUrl" target="_blank">
-                      {{ s.picName }}
-                    </a>
-                    <ng-template #noPic><span class="no-file">No image</span></ng-template>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
+            <div class="table-toolbar" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+              <div class="toolbar-meta">
+                <span class="meta-pill live">Live tracking</span>
+                <span class="meta-pill neutral">{{ shipments.length }} entries</span>
+              </div>
+              <div class="quick-filter-wrapper" style="position: relative; display: flex; align-items: center; width: 300px;">
+                <svg viewBox="0 0 24 24" width="15" height="15" stroke="currentColor" fill="none" stroke-width="2" style="position: absolute; left: 12px; opacity: 0.5;">
+                  <circle cx="11" cy="11" r="8"></circle>
+                  <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                </svg>
+                <input type="text" [(ngModel)]="searchQuery" placeholder="Filter shipments..." 
+                       style="width: 100%; padding: 8px 12px 8px 36px; border: 1px solid var(--border); border-radius: 6px; font-size: 0.9rem;" />
+              </div>
+            </div>
 
-            <ng-template #emptyState>
-              <tbody>
-                <tr>
-                  <td colspan="10">
-                    <div class="empty-state">
-                      No shipments recorded yet. Click <strong>+ New Shipment</strong> to log the first delivery.
-                    </div>
-                  </td>
-                </tr>
-              </tbody>
-            </ng-template>
+            <div class="tbl-wrap">
+              <app-shared-table 
+                [data]="shipments" 
+                [columns]="tableColumns" 
+                [searchTerm]="searchQuery"
+                [enablePagination]="true"
+                emptyMessage="No shipments recorded yet. Click + New Shipment to log the first delivery."
+                [customCellTemplates]="{
+                  'index': indexTpl,
+                  'truck': truckTpl,
+                  'qtyShip': qtyShipTpl,
+                  'qtyOpen': qtyOpenTpl,
+                  'status': statusTpl,
+                  'docs': docsTpl,
+                  'picture': pictureTpl
+                }">
+              </app-shared-table>
+
+              <ng-template #indexTpl let-row let-index="index">
+                {{ formatIndex(index) }}
+              </ng-template>
+
+              <ng-template #truckTpl let-row>
+                <span class="truck-cell">{{ row.truck }}</span>
+              </ng-template>
+
+              <ng-template #qtyShipTpl let-row>
+                <div class="qty-rcv right">{{ row.qtyShip }}</div>
+                <div class="prog-wrap">
+                  <div class="prog-bar">
+                    <div class="prog-fill" [style.width.%]="getProgress(row)"></div>
+                  </div>
+                  <div class="prog-pct">{{ getProgress(row) }}%</div>
+                </div>
+              </ng-template>
+
+              <ng-template #qtyOpenTpl let-row>
+                <div class="qty-open right" [ngClass]="row.qtyOpen > 0 ? 'has-open' : 'no-open'">
+                  {{ row.qtyOpen }}
+                </div>
+              </ng-template>
+
+              <ng-template #statusTpl let-row>
+                <span class="status-badge" [ngClass]="getStatusBadgeClass(row.status)">
+                  {{ getStatusLabel(row.status) }}
+                </span>
+              </ng-template>
+
+              <ng-template #docsTpl let-row>
+                <div class="center">
+                  <a *ngIf="row.docUrl; else noDoc" class="file-link doc" [href]="row.docUrl"
+                    [download]="row.docName || ''" target="_blank">
+                    {{ row.docName }}
+                  </a>
+                  <ng-template #noDoc><span class="no-file">No doc</span></ng-template>
+                </div>
+              </ng-template>
+
+              <ng-template #pictureTpl let-row>
+                <div class="center">
+                  <a *ngIf="row.picUrl; else noPic" class="file-link pic" [href]="row.picUrl" target="_blank">
+                    {{ row.picName }}
+                  </a>
+                  <ng-template #noPic><span class="no-file">No image</span></ng-template>
+                </div>
+              </ng-template>
+            </div>
           </div>
         </div>
-      </div>
-    </section>
-  </main>
+      </section>
+    </main>
 
-  <div class="modal-overlay" *ngIf="isModalOpen" (click)="onOverlayClick($event)">
-    <div class="modal-box">
-      <button class="modal-close" type="button" (click)="closeModal()">×</button>
+    <div class="modal-overlay" *ngIf="isModalOpen" (click)="onOverlayClick($event)">
+      <div class="modal-box">
+        <button class="modal-close" type="button" (click)="closeModal()">×</button>
 
-      <div class="modal-title">New Shipment Entry</div>
-      <div class="modal-sub">Log an outbound delivery — complete all fields and attach documentation.</div>
+        <div class="modal-title">New Shipment Entry</div>
+        <div class="modal-sub">Log an outbound delivery — complete all fields and attach documentation.</div>
 
-      <div class="form-grid">
-        <div class="form-field">
-          <label>Date Shipped <span class="req">*</span></label>
-          <input type="date" [(ngModel)]="form.date" />
+        <div class="form-grid">
+          <div class="form-field">
+            <label>Date Shipped <span class="req">*</span></label>
+            <input type="date" [(ngModel)]="form.date" />
+          </div>
+
+          <div class="form-field">
+            <label>Truck / Shipment # <span class="req">*</span></label>
+            <input type="text" [(ngModel)]="form.truck" placeholder="e.g. TRK-42" />
+          </div>
         </div>
 
-        <div class="form-field">
-          <label>Truck / Shipment # <span class="req">*</span></label>
-          <input type="text" [(ngModel)]="form.truck" placeholder="e.g. TRK-42" />
-        </div>
-      </div>
+        <div class="form-grid mt-14">
+          <div class="form-field">
+            <label>Production Order #</label>
+            <input type="text" [value]="currentPO" readonly />
+          </div>
 
-      <div class="form-grid mt-14">
-        <div class="form-field">
-          <label>Production Order #</label>
-          <input type="text" [value]="currentPO" readonly />
-        </div>
-
-        <div class="form-field">
-          <label>Shipped By <span class="req">*</span></label>
-          <input type="text" [(ngModel)]="form.by" placeholder="Full name" />
-        </div>
-      </div>
-
-      <div class="form-grid three mt-14">
-        <div class="form-field">
-          <label>QTY Required</label>
-          <input type="number" [value]="selectedRecord?.totalQty" readonly />
+          <div class="form-field">
+            <label>Shipped By <span class="req">*</span></label>
+            <input type="text" [(ngModel)]="form.by" placeholder="Full name" />
+          </div>
         </div>
 
-        <div class="form-field">
-          <label>QTY Shipped <span class="req">*</span></label>
-          <input type="number" [(ngModel)]="form.qtyShip" (input)="calcOpen()" min="0" />
+        <div class="form-grid three mt-14">
+          <div class="form-field">
+            <label>QTY Required</label>
+            <input type="number" [value]="selectedRecord?.totalQty" readonly />
+          </div>
+
+          <div class="form-field">
+            <label>QTY Shipped <span class="req">*</span></label>
+            <input type="number" [(ngModel)]="form.qtyShip" (input)="calcOpen()" min="0" />
+          </div>
+
+          <div class="form-field">
+            <label>QTY Open (auto)</label>
+            <input type="number" [(ngModel)]="form.qtyOpen" readonly />
+          </div>
         </div>
 
-        <div class="form-field">
-          <label>QTY Open (auto)</label>
-          <input type="number" [(ngModel)]="form.qtyOpen" readonly />
-        </div>
-      </div>
+        <div class="form-grid mt-14">
+          <div class="form-field">
+            <label>Upload Shipping Docs</label>
+            <input type="file" accept=".pdf,.doc,.docx,.xls,.xlsx" (change)="handleDocFile($event)" />
+          </div>
 
-      <div class="form-grid mt-14">
-        <div class="form-field">
-          <label>Upload Shipping Docs</label>
-          <input type="file" accept=".pdf,.doc,.docx,.xls,.xlsx" (change)="handleDocFile($event)" />
+          <div class="form-field">
+            <label>Upload Picture</label>
+            <input type="file" accept=".jpg,.jpeg,.png,.webp" (change)="handlePicFile($event)" />
+          </div>
         </div>
 
-        <div class="form-field">
-          <label>Upload Picture</label>
-          <input type="file" accept=".jpg,.jpeg,.png,.webp" (change)="handlePicFile($event)" />
+        <div class="form-actions">
+          <button class="btn-cancel" type="button" (click)="closeModal()" [disabled]="isSubmitting">Cancel</button>
+          <button class="btn-submit" type="button" (click)="submitShipment()" [disabled]="isSubmitting">
+            {{ isSubmitting ? 'Saving Shipment...' : 'Submit Shipment' }}
+          </button>
         </div>
-      </div>
-
-      <div class="form-actions">
-        <button class="btn-cancel" type="button" (click)="closeModal()">Cancel</button>
-        <button class="btn-submit" type="button" (click)="submitShipment()">Submit Shipment</button>
       </div>
     </div>
-  </div>
 
-  <div class="toast" *ngIf="toastMessage">
-    {{ toastMessage }}
-  </div>
+    <div class="toast" *ngIf="toastMessage">
+      {{ toastMessage }}
+    </div>
   </ng-container>
 </div>

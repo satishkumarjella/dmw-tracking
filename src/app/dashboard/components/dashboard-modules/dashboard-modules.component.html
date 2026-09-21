@@ -1,47 +1,46 @@
 <div class="hero-container" *ngIf="isDashboardRoute && configService.config() as config">
-  <!-- Animated Background Elements -->
-  <div class="mesh-bg">
-    <div class="mesh-orb orb-1"></div>
-    <div class="mesh-orb orb-2"></div>
-  </div>
-
   <div class="hero-content">
     <div class="hero-header">
       <div class="greeting-area">
-        <h1 class="greeting-title">{{ greeting }}, <span class="text-gradient">Admin</span></h1>
-        <p class="greeting-subtitle">Here's what's happening today.</p>
+        <div class="company-badge">Enterprise Operations</div>
+        <h1 class="greeting-title">{{ greeting }}, Admin</h1>
+        <p class="greeting-subtitle">Production Tracking & Supply Chain Intelligence Dashboard</p>
       </div>
       <div class="date-badge">
-        <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
           <line x1="16" y1="2" x2="16" y2="6"></line>
           <line x1="8" y1="2" x2="8" y2="6"></line>
           <line x1="3" y1="10" x2="21" y2="10"></line>
         </svg>
-        <span>{{ currentDate | date:'EEEE, MMM d' }}</span>
+        <span>{{ currentDate | date:'EEEE, MMM d, y' }}</span>
       </div>
     </div>
 
+    <!-- Power BI Style KPI Scorecard Grid -->
     <div class="kpi-grid">
       <div class="kpi-card" *ngFor="let stat of kpiStats">
-        <div class="kpi-icon" [style.color]="stat.color" [style.background]="stat.color + '1A'">
-          <!-- We could render dynamic icons here based on stat.icon but for now we'll use a generic metric icon or dynamic one if possible. -->
-          <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <polyline *ngIf="stat.icon === 'check-circle'" points="22 11.08 22 12 22 12 22 12.01"></polyline>
-            <path *ngIf="stat.icon === 'check-circle'" d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
-            <polyline *ngIf="stat.icon === 'check-circle'" points="22 4 12 14.01 9 11.01"></polyline>
+        <div class="kpi-top">
+          <span class="kpi-label">{{ stat.label }}</span>
+          <div class="kpi-icon-pill" [style.color]="stat.color" [style.background]="stat.color + '15'">
+            <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline *ngIf="stat.icon === 'check-circle'" points="22 11.08 22 12 22 12 22 12.01"></polyline>
+              <path *ngIf="stat.icon === 'check-circle'" d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+              <polyline *ngIf="stat.icon === 'check-circle'" points="22 4 12 14.01 9 11.01"></polyline>
 
-            <rect *ngIf="stat.icon === 'briefcase'" x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
-            <path *ngIf="stat.icon === 'briefcase'" d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>
+              <rect *ngIf="stat.icon === 'briefcase'" x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
+              <path *ngIf="stat.icon === 'briefcase'" d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>
 
-            <circle *ngIf="stat.icon === 'alert-circle'" cx="12" cy="12" r="10"></circle>
-            <line *ngIf="stat.icon === 'alert-circle'" x1="12" y1="8" x2="12" y2="12"></line>
-            <line *ngIf="stat.icon === 'alert-circle'" x1="12" y1="16" x2="12.01" y2="16"></line>
-          </svg>
+              <circle *ngIf="stat.icon === 'alert-circle'" cx="12" cy="12" r="10"></circle>
+              <line *ngIf="stat.icon === 'alert-circle'" x1="12" y1="8" x2="12" y2="12"></line>
+              <line *ngIf="stat.icon === 'alert-circle'" x1="12" y1="16" x2="12.01" y2="16"></line>
+            </svg>
+          </div>
         </div>
-        <div class="kpi-info">
-          <div class="kpi-label">{{ stat.label }}</div>
-          <div class="kpi-value">{{ stat.value }}</div>
+        <div class="kpi-value">{{ stat.value }}</div>
+        <div class="kpi-footer">
+          <span class="kpi-indicator"></span>
+          <span class="kpi-context">Updated live from ERP</span>
         </div>
       </div>
     </div>

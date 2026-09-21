@@ -8,6 +8,7 @@ import { Subject, Observable, of } from 'rxjs';
 import { debounceTime, distinctUntilChanged, switchMap, catchError } from 'rxjs/operators';
 import { ConfigService } from '../../shared/config.service';
 import { ModuleLoaderComponent } from '../../shared/components/module-loader/module-loader.component';
+import { SharedTableComponent, TableColumn } from '../../shared/components/shared-table/shared-table.component';
 import { environment } from '../../../environments/environment';
 import { AuthService } from '../../shared/services/auth.service';
 
@@ -64,7 +65,7 @@ import { FormBuilderService, FormTemplate } from '../../pages/form-builder/form-
 @Component({
   selector: 'app-quality-inspection-reports',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterModule, ModuleLoaderComponent],
+  imports: [CommonModule, FormsModule, RouterModule, ModuleLoaderComponent, SharedTableComponent],
   templateUrl: './quality-inspection-reports.component.html',
   styleUrls: ['./quality-inspection-reports.component.scss']
 })
@@ -108,6 +109,38 @@ export class QualityInspectionReportsComponent implements OnInit, OnDestroy {
   girPdfUrl!: SafeResourceUrl;
   paintPdfUrl!: SafeResourceUrl;
   criticalSpecsImage = 'assets/images/critical-specs-placeholder.png';
+
+  inspectionColumns: TableColumn[] = [
+    { key: 'index', label: '#', type: 'custom' },
+    { key: 'inspectionDate', label: 'DATE', type: 'date', sortable: true },
+    { key: 'po', label: 'PROD. ORDER #', type: 'custom' },
+    { key: 'inspectorName', label: 'INSPECTOR', sortable: true },
+    { key: 'results', label: 'RESULTS', type: 'custom' },
+    { key: 'actions', label: 'ACTIONS', type: 'custom' }
+  ];
+
+  dmwVisitColumns: TableColumn[] = [
+    { key: 'inspector', label: 'DMW Inspector', sortable: true },
+    { key: 'date', label: 'Date (Auto Generated)', type: 'date', sortable: true },
+    { key: 'comments', label: 'Create New Comments:' },
+    { key: 'signature', label: 'DMW Inspector signature' },
+    { key: 'actions', label: 'ACTIONS', type: 'custom' }
+  ];
+
+  issueColumns: TableColumn[] = [
+    { key: 'index', label: '#', type: 'custom' },
+    { key: 'date', label: 'DATE', type: 'date', sortable: true },
+    { key: 'projectNumber', label: 'PROJECT #', sortable: true },
+    { key: 'productionOrderNumber', label: 'PROD. ORDER #', sortable: true },
+    { key: 'description', label: 'ISSUE DESCRIPTION' },
+    { key: 'containment', label: 'CONTAINMENT' },
+    { key: 'preventativeAction', label: 'PREVENTATIVE ACTION' },
+    { key: 'impact', label: 'IMPACT' },
+    { key: 'resolution', label: 'RESOLUTION' },
+    { key: 'sourceOfNonConformance', label: 'SOURCE (NC)' },
+    { key: 'recordedBy', label: 'RECORDED BY' },
+    { key: 'actions', label: 'ACTIONS', type: 'custom' }
+  ];
 
   fillForm = {
     jobNo: '',

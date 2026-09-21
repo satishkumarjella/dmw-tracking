@@ -91,45 +91,21 @@
           </div>
 
           <div class="table-wrap">
-            <table>
-              <thead>
-                <tr>
-                  <th class="col-abm">ABM</th>
-                  <th class="col-desc">Description</th>
-                  <th class="col-req right">Req QTY</th>
-                  <th class="col-po">PO #</th>
-                  <th class="col-rcv right">QTY Received</th>
-                  <th class="col-open right">QTY Open</th>
-                </tr>
-              </thead>
-
-              <tbody>
-                <tr *ngFor="let r of filteredAbms">
-                  <td>
-                    <span class="abm-tag">{{ r.id }}</span>
-                  </td>
-                  <td>
-                    <div class="desc-cell">{{ r.desc }}</div>
-                    <div class="desc-sub">{{ r.descSub }}</div>
-                  </td>
-                  <td class="qty-req">{{ r.reqQty }}</td>
-                  <td><span class="po-tag">{{ r.po }}</span></td>
-                  <td>
-                    <div class="qty-rcv align-right">{{ r.rcv }}</div>
-                    <div class="row-progress">
-                      <div class="rp-bar">
-                        <div class="rp-fill" [style.width.%]="getPct(r.rcv, r.reqQty)"></div>
-                      </div>
-                      <div class="rp-pct">{{ getPct(r.rcv, r.reqQty) }}%</div>
-                    </div>
-                  </td>
-                  <td class="qty-open" [ngClass]="(r.reqQty - r.rcv) > 0 ? 'has-open' : 'no-open'">
-                    {{ r.reqQty - r.rcv }}
-                  </td>
-                </tr>
-              </tbody>
-
-              <tfoot>
+            <app-shared-table 
+              [data]="filteredAbms" 
+              [columns]="tableColumns" 
+              [enablePagination]="true"
+              emptyMessage="No matching ABM records found."
+              [customCellTemplates]="{
+                'abm': abmTpl,
+                'desc': descTpl,
+                'reqQty': reqQtyTpl,
+                'po': poTpl,
+                'rcv': rcvTpl,
+                'qtyOpen': qtyOpenTpl
+              }">
+              
+              <tfoot table-footer>
                 <tr>
                   <td class="tot-label" colspan="2">Totals</td>
                   <td class="qty-req">{{ totReq }}</td>
@@ -138,7 +114,40 @@
                   <td class="qty-open" [ngClass]="totOpen > 0 ? 'has-open' : 'no-open'">{{ totOpen }}</td>
                 </tr>
               </tfoot>
-            </table>
+            </app-shared-table>
+
+            <ng-template #abmTpl let-row>
+              <span class="abm-tag">{{ row.id }}</span>
+            </ng-template>
+            
+            <ng-template #descTpl let-row>
+              <div class="desc-cell">{{ row.desc }}</div>
+              <div class="desc-sub">{{ row.descSub }}</div>
+            </ng-template>
+            
+            <ng-template #reqQtyTpl let-row>
+              <span class="qty-req">{{ row.reqQty }}</span>
+            </ng-template>
+            
+            <ng-template #poTpl let-row>
+              <span class="po-tag">{{ row.po }}</span>
+            </ng-template>
+            
+            <ng-template #rcvTpl let-row>
+              <div class="qty-rcv align-right">{{ row.rcv }}</div>
+              <div class="row-progress">
+                <div class="rp-bar">
+                  <div class="rp-fill" [style.width.%]="getPct(row.rcv, row.reqQty)"></div>
+                </div>
+                <div class="rp-pct">{{ getPct(row.rcv, row.reqQty) }}%</div>
+              </div>
+            </ng-template>
+            
+            <ng-template #qtyOpenTpl let-row>
+              <span class="qty-open" [ngClass]="(row.reqQty - row.rcv) > 0 ? 'has-open' : 'no-open'">
+                {{ row.reqQty - row.rcv }}
+              </span>
+            </ng-template>
           </div>
         </div>
       </div>

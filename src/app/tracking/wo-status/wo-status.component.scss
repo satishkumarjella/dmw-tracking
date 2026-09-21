@@ -72,7 +72,6 @@ main {
   padding: 88px 20px;
   text-align: center;
   background: var(--bg-surface-glass);
-  backdrop-filter: blur(10px);
   border: 1px dashed var(--border-subtle);
   border-radius: var(--radius-xl);
   color: var(--text-muted);
@@ -113,8 +112,6 @@ main {
 
 .wo-strip.enhanced {
   background: var(--bg-surface-glass);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
   border-radius: var(--radius-xl) var(--radius-xl) 0 0;
   border: 1px solid var(--border-subtle);
   border-bottom: none;
@@ -485,3 +482,265 @@ main {
     grid-template-columns: repeat(2, 1fr);
   }
 }
+
+/* ==========================================================================
+   5-Card Summary & Activity Ledger Styles
+   ========================================================================== */
+.wo-summary-five {
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)) !important;
+
+  .text-shipped {
+    color: #3b82f6;
+  }
+
+  .text-received {
+    color: #10b981;
+  }
+
+  .text-transit {
+    color: #f59e0b;
+  }
+
+  .text-backorder {
+    color: #ef4444;
+  }
+}
+
+.head-action {
+  &.alt-nav {
+    background: var(--bg-surface-glass);
+    border: 1px solid var(--border-subtle);
+    color: var(--text-main);
+    box-shadow: none;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    padding: 8px 14px;
+    border-radius: var(--radius-md);
+    font-size: 0.8rem;
+    font-weight: 600;
+    transition: all 0.2s;
+
+    &:hover {
+      background: rgba(var(--color-primary-rgb), 0.1);
+      border-color: var(--color-primary);
+      color: var(--color-primary);
+    }
+  }
+}
+
+.activity-ledger-panel {
+  margin-top: 32px;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  padding: 24px;
+  box-shadow: var(--shadow-sm);
+
+  .ledger-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    gap: 16px;
+    margin-bottom: 20px;
+    border-bottom: 1px solid var(--border-subtle);
+    padding-bottom: 16px;
+
+    .panel-topline {
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--color-primary);
+      font-weight: 700;
+      margin-bottom: 3px;
+    }
+
+    h3 {
+      font-family: var(--font-family-heading);
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: var(--text-main);
+      margin: 0 0 4px 0;
+    }
+
+    p {
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      margin: 0;
+    }
+  }
+
+  .activity-tabs {
+    display: flex;
+    gap: 8px;
+    background: var(--bg-surface-glass, rgba(255,255,255,0.03));
+    padding: 4px;
+    border-radius: var(--radius-md);
+    border: 1px solid var(--border-subtle);
+
+    .tab-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 16px;
+      border-radius: var(--radius-sm, 6px);
+      border: none;
+      background: transparent;
+      color: var(--text-muted);
+      font-size: 0.82rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+
+      .tab-count {
+        background: rgba(0,0,0,0.08);
+        padding: 2px 7px;
+        border-radius: 12px;
+        font-size: 0.72rem;
+      }
+
+      &.active {
+        background: var(--color-button);
+        color: #fff;
+        box-shadow: 0 2px 8px rgba(var(--color-primary-rgb), 0.25);
+
+        .tab-count {
+          background: rgba(255,255,255,0.25);
+          color: #fff;
+        }
+      }
+    }
+  }
+
+  .tbl-responsive {
+    overflow-x: auto;
+  }
+
+  .ledger-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.84rem;
+
+    th {
+      text-align: left;
+      padding: 11px 14px;
+      background: var(--bg-surface-glass, rgba(0,0,0,0.02));
+      color: var(--text-muted);
+      font-weight: 600;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      border-bottom: 1px solid var(--border-subtle);
+
+      &.right { text-align: right; }
+      &.center { text-align: center; }
+    }
+
+    td {
+      padding: 12px 14px;
+      border-bottom: 1px solid var(--border-subtle);
+      color: var(--text-main);
+
+      &.right { text-align: right; }
+      &.center { text-align: center; }
+      &.font-semibold { font-weight: 600; }
+      &.text-green { color: #10b981; }
+      &.td-num { color: var(--text-muted); font-size: 0.8rem; }
+      &.td-notes { font-size: 0.8rem; color: var(--text-muted); max-width: 250px; }
+    }
+
+    tr:last-child td {
+      border-bottom: none;
+    }
+
+    tr:hover td {
+      background: rgba(var(--color-primary-rgb), 0.02);
+    }
+  }
+
+  .tag-truck {
+    font-family: var(--font-family-mono, monospace);
+    font-weight: 700;
+    font-size: 0.82rem;
+    padding: 3px 7px;
+    border-radius: 4px;
+    background: rgba(var(--color-primary-rgb), 0.08);
+    color: var(--color-primary);
+  }
+
+  .status-pill {
+    display: inline-block;
+    padding: 3px 9px;
+    border-radius: var(--radius-pill, 12px);
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+
+    &.status-received {
+      background: #dcfce7;
+      color: #15803d;
+    }
+    &.status-partial {
+      background: #e0e7ff;
+      color: #3730a3;
+    }
+    &.status-pending {
+      background: #fef3c7;
+      color: #b45309;
+    }
+  }
+
+  .ledger-link {
+    display: inline-flex;
+    align-items: center;
+    font-size: 0.74rem;
+    font-weight: 600;
+    padding: 3px 7px;
+    border-radius: 4px;
+    margin: 0 2px;
+    text-decoration: none;
+
+    &.doc {
+      background: rgba(59, 130, 246, 0.1);
+      color: #3b82f6;
+    }
+    &.pic {
+      background: rgba(16, 185, 129, 0.1);
+      color: #10b981;
+    }
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+
+  .empty-ledger {
+    padding: 32px 16px;
+    text-align: center;
+    color: var(--text-muted);
+
+    p {
+      margin: 0 0 12px 0;
+      font-size: 0.86rem;
+    }
+
+    .btn-ledger-action {
+      display: inline-flex;
+      padding: 8px 16px;
+      border-radius: var(--radius-md);
+      background: var(--color-button);
+      color: #fff;
+      font-size: 0.82rem;
+      font-weight: 600;
+      text-decoration: none;
+      box-shadow: 0 4px 10px rgba(var(--color-primary-rgb), 0.2);
+
+      &:hover {
+        opacity: 0.95;
+      }
+    }
+  }
+}
+

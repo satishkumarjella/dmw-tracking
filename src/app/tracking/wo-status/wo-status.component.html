@@ -47,34 +47,46 @@
               <span class="bd"></span>
               {{ activeStageLabel }}
             </div>
+            <a class="head-action alt-nav" [routerLink]="['/dashboard/shipping']" [queryParams]="{ po: selectedWo.poNumber }" title="Go to Outbound Shipping">
+              Outbound Shipping →
+            </a>
+            <a class="head-action alt-nav" [routerLink]="['/dashboard/receiving']" [queryParams]="{ po: selectedWo.poNumber }" title="Go to Inbound Receiving">
+              Inbound Receiving →
+            </a>
           </div>
         </div>
       </div>
 
       <div class="panel-body">
-        <div class="summary-grid">
+        <div class="summary-grid wo-summary-five">
           <div class="stat-card primary-stat">
-            <span class="stat-label">Total Qty</span>
+            <span class="stat-label">Planned Qty</span>
             <strong>{{ selectedWo.totalQty }}</strong>
-            <small>Planned production quantity</small>
+            <small>Total production order quantity</small>
           </div>
 
           <div class="stat-card">
-            <span class="stat-label">In Process</span>
-            <strong>{{ selectedWo.inProcessQty }}</strong>
-            <small>Currently moving through stages</small>
+            <span class="stat-label">Shipped Qty</span>
+            <strong class="text-shipped">{{ selectedWo.shippedQty }}</strong>
+            <small>Outbound quantity dispatched</small>
           </div>
 
           <div class="stat-card">
-            <span class="stat-label">Received</span>
-            <strong>{{ selectedWo.receivedQty }}</strong>
-            <small>Completed inbound quantity</small>
+            <span class="stat-label">Received Qty</span>
+            <strong class="text-received">{{ selectedWo.receivedQty }}</strong>
+            <small>Confirmed inbound dock deliveries</small>
+          </div>
+
+          <div class="stat-card">
+            <span class="stat-label">In Transit</span>
+            <strong [class.text-transit]="selectedWo.inTransitQty > 0">{{ selectedWo.inTransitQty }}</strong>
+            <small>Shipped, awaiting confirmation</small>
           </div>
 
           <div class="stat-card">
             <span class="stat-label">Back Order</span>
-            <strong>{{ selectedWo.backOrderQty }}</strong>
-            <small>Pending fulfillment</small>
+            <strong [class.text-backorder]="selectedWo.backOrderQty > 0">{{ selectedWo.backOrderQty }}</strong>
+            <small>Remaining unfulfilled</small>
           </div>
         </div>
 
@@ -117,7 +129,141 @@
             </div>
           </div>
         </div>
-      </div>
+
+        <!-- Traceability Activity Ledger: Shipments & Receipts -->
+        <div class="activity-ledger-panel">
+          <div class="ledger-header">
+            <div>
+              <div class="panel-topline">Order Fulfillment Traceability</div>
+              <h3>Shipping & Receiving Activity Ledger</h3>
+              <p>Live database records of outbound deliveries and confirmed dock receipts for this production order.</p>
+            </div>
+
+            <div class="activity-tabs">
+              <button 
+                type="button" 
+                class="tab-btn" 
+                [class.active]="activeActivityTab === 'shipments'"
+                (click)="activeActivityTab = 'shipments'">
+                <span>Outbound Shipments</span>
+                <span class="tab-count">{{ shipments.length }}</span>
+              </button>
+              <button 
+                type="button" 
+                class="tab-btn" 
+                [class.active]="activeActivityTab === 'receipts'"
+                (click)="activeActivityTab = 'receipts'">
+                <span>Inbound Receipts</span>
+                <span class="tab-count">{{ receipts.length }}</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Shipments Tab -->
+          <div *ngIf="activeActivityTab === 'shipments'" class="ledger-content">
+            <div *ngIf="shipments.length === 0" class="empty-ledger">
+              <p>No outbound shipments recorded yet for this work order.</p>
+              <a class="btn-ledger-action" [routerLink]="['/dashboard/shipping']" [queryParams]="{ po: selectedWo.poNumber }">
+                + Create Shipment in Shipping Module
+              </a>
+            </div>
+
+            <div *ngIf="shipments.length > 0" class="tbl-responsive">
+              <app-shared-table 
+                [data]="shipments" 
+                [columns]="shipmentColumns" 
+                [enablePagination]="true" 
+                [customCellTemplates]="{
+                  'index': indexTpl,
+                  'truck': truckShipTpl,
+                  'qtyShipped': qtyShippedTpl,
+                  'qtyReceived': qtyRcvTpl,
+                  'status': statusTpl,
+                  'files': filesTpl
+                }">
+              </app-shared-table>
+            </div>
+          </div>
+
+          <!-- Receipts Tab -->
+          <div *ngIf="activeActivityTab === 'receipts'" class="ledger-content">
+            <div *ngIf="receipts.length === 0" class="empty-ledger">
+              <p>No confirmed inbound receipts recorded yet for this work order.</p>
+              <a class="btn-ledger-action" [routerLink]="['/dashboard/receiving']" [queryParams]="{ po: selectedWo.poNumber }">
+                + Confirm Inbound Receipt in Receiving Module
+              </a>
+            </div>
+
+            <div *ngIf="receipts.length > 0" class="tbl-responsive">
+              <app-shared-table 
+                [data]="receipts" 
+                [columns]="receiptColumns" 
+                [enablePagination]="true" 
+                [customCellTemplates]="{
+                  'index': indexTpl,
+                  'truck': truckRcvTpl,
+                  'qtyReceived': qtyRcvGreenTpl,
+                  'qtyOpen': qtyOpenTpl,
+                  'notes': notesTpl,
+                  'files': filesTpl
+                }">
+              </app-shared-table>
+            </div>
+          </div>
+          
+          <!-- Shared Templates -->
+          <ng-template #indexTpl let-row let-index="index">
+            <span class="td-num">{{ index + 1 }}</span>
+          </ng-template>
+
+          <ng-template #truckShipTpl let-row>
+            <span class="tag-truck">{{ row.shipmentNumber }}</span>
+          </ng-template>
+          
+          <ng-template #truckRcvTpl let-row>
+            <span class="tag-truck">{{ row.truck }}</span>
+          </ng-template>
+
+          <ng-template #qtyShippedTpl let-row>
+            <div class="right font-semibold">{{ row.qtyShipped }}</div>
+          </ng-template>
+
+          <ng-template #qtyRcvTpl let-row>
+            <div class="right">{{ row.qtyReceived || 0 }}</div>
+          </ng-template>
+          
+          <ng-template #qtyRcvGreenTpl let-row>
+            <div class="right font-semibold text-green">{{ row.qtyReceived }}</div>
+          </ng-template>
+          
+          <ng-template #qtyOpenTpl let-row>
+            <div class="right">{{ row.qtyOpen }}</div>
+          </ng-template>
+
+          <ng-template #statusTpl let-row>
+            <span class="status-pill" [ngClass]="{
+              'status-received': row.status === 'RECEIVED',
+              'status-partial': row.status === 'PARTIALLY_RECEIVED',
+              'status-pending': row.status === 'PENDING_RECEIPT'
+            }">
+              {{ row.status === 'RECEIVED' ? 'Received' : (row.status === 'PARTIALLY_RECEIVED' ? 'Partially Received' : 'In Transit') }}
+            </span>
+          </ng-template>
+          
+          <ng-template #notesTpl let-row>
+            <span class="td-notes">{{ row.notes || '—' }}</span>
+          </ng-template>
+
+          <ng-template #filesTpl let-row>
+            <div class="center">
+              <a *ngIf="row.docUrl" [href]="getFileUrl(row.docUrl)" target="_blank" class="ledger-link doc" title="View Document">Doc</a>
+              <a *ngIf="row.picUrl" [href]="getFileUrl(row.picUrl)" target="_blank" class="ledger-link pic" title="View Photo">Photo</a>
+              <span *ngIf="!row.docUrl && !row.picUrl" class="text-muted">—</span>
+            </div>
+          </ng-template>
+          </div>
+        </div>
+
     </section>
   </main>
   </ng-container>

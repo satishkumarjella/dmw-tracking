@@ -5,13 +5,14 @@ import { RouterModule } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { ConfigService } from '../../shared/config.service';
 import { ModuleLoaderComponent } from '../../shared/components/module-loader/module-loader.component';
+import { SharedTableComponent, TableColumn } from '../../shared/components/shared-table/shared-table.component';
 import { environment } from '../../../environments/environment';
 import { lastValueFrom } from 'rxjs';
 
 @Component({
   selector: 'app-abm-components-status',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterModule, ModuleLoaderComponent],
+  imports: [CommonModule, FormsModule, RouterModule, ModuleLoaderComponent, SharedTableComponent],
   templateUrl: './abm-components-status.component.html',
   styleUrls: ['./abm-components-status.component.scss']
 })
@@ -30,6 +31,15 @@ export class AbmComponentsStatusComponent implements OnInit, OnDestroy {
   totOpen: number = 0;
 
   searchTerm: string = '';
+
+  tableColumns: TableColumn[] = [
+    { key: 'abm', label: 'ABM', type: 'custom' },
+    { key: 'desc', label: 'Description', type: 'custom' },
+    { key: 'reqQty', label: 'Req QTY', type: 'custom' },
+    { key: 'po', label: 'PO #', type: 'custom' },
+    { key: 'rcv', label: 'QTY Received', type: 'custom' },
+    { key: 'qtyOpen', label: 'QTY Open', type: 'custom' }
+  ];
 
   get filteredAbms(): any[] {
     if (!this.poData || !this.poData.abms) return [];

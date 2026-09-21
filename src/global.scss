@@ -1,5 +1,5 @@
 /*
- * App Global CSS & Premium Design System
+ * App Global CSS & Corporate Design System (Microsoft Fluent & Power BI)
  * ----------------------------------------------------------------------------
  */
 
@@ -19,51 +19,62 @@
 /* Dark mode auto */
 @import '@ionic/angular/css/palettes/dark.system.css';
 
+
+
 /* ------------------------------------------------------------------
-   PREMIUM DESIGN SYSTEM VARIABLES
+   CORPORATE DESIGN SYSTEM VARIABLES (Microsoft Fluent & Power BI)
    ------------------------------------------------------------------ */
 :root {
-  /* Typography */
-  --font-family-base: 'Inter', sans-serif;
-  --font-family-heading: 'Outfit', sans-serif;
+  /* Typography - Clean Corporate Font Stack */
+  --font-family-base: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", "Inter", Arial, sans-serif;
+  --font-family-heading: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", "Inter", Arial, sans-serif;
   --ion-font-family: var(--font-family-base);
 
-  /* Modern Light Theme Palette */
-  --color-primary: #6366f1; /* Vibrant Indigo */
-  --color-primary-rgb: 99, 102, 241;
-  --color-secondary: #0ea5e9; /* Sky Blue */
-  --color-success: #10b981;
-  --color-warning: #f59e0b;
-  --color-danger: #ef4444;
-  --color-dark: #0f172a;
-  --color-light: #f8fafc;
-  
-  --bg-body: #f1f5f9;
+  /* Corporate Light Theme Palette (Power BI & Excel) */
+  --color-primary: #FD7B01;
+  /* DMW&H Orange used as primary */
+  --color-primary-rgb: 253, 123, 1;
+  --color-secondary: #0061AA;
+  /* DMW&H Blue */
+  --color-button: #fd7b01;
+  /* DMW&H Hover Orange for buttons */
+  --color-excel: #107c41;
+  /* Microsoft Excel Green */
+  --color-excel-rgb: 16, 124, 65;
+  --color-success: #107c41;
+  --color-warning: #d83b01;
+  --color-danger: #a80000;
+  --color-dark: #201f1e;
+  --color-light: #f3f2f1;
+
+  --bg-body: #f3f2f1;
+  /* Office/Power BI Canvas Neutral */
   --bg-surface: #ffffff;
-  --bg-surface-glass: rgba(255, 255, 255, 0.75);
-  --text-main: #1e293b;
-  --text-muted: #64748b;
-  
-  --border-subtle: rgba(15, 23, 42, 0.08);
-  --border-strong: rgba(15, 23, 42, 0.15);
+  --bg-surface-glass: #ffffff;
+  --text-main: #201f1e;
+  --text-muted: #605e5c;
 
-  /* Premium Shadows */
-  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.08), 0 2px 4px -1px rgba(0, 0, 0, 0.04);
-  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-  --shadow-glow: 0 8px 16px -4px rgba(var(--color-primary-rgb), 0.35);
-  --inner-highlight: inset 0 1px 1px rgba(255, 255, 255, 0.5);
+  --border-subtle: #edebe9;
+  --border-strong: #c8c6c4;
 
-  /* Radius */
-  --radius-md: 12px;
-  --radius-lg: 16px;
-  --radius-xl: 24px;
-  --radius-pill: 9999px;
+  /* Microsoft Fluent Enterprise Shadows (Subtle, Crisp) */
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 1.6px 3.6px 0 rgba(0, 0, 0, 0.13), 0 0.3px 0.9px 0 rgba(0, 0, 0, 0.11);
+  --shadow-lg: 0 6.4px 14.4px 0 rgba(0, 0, 0, 0.13), 0 1.2px 3.6px 0 rgba(0, 0, 0, 0.11);
+  --shadow-glow: none;
+  --inner-highlight: none;
+
+  /* Crisp Enterprise Radius - Flat */
+  --radius-sm: 0px;
+  --radius-md: 2px;
+  --radius-lg: 2px;
+  --radius-xl: 4px;
+  --radius-pill: 2px;
 
   /* Transitions */
-  --transition-fast: 0.15s ease-in-out;
-  --transition-normal: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  
+  --transition-fast: 0.12s ease-in-out;
+  --transition-normal: 0.2s ease;
+
   /* Ionic Overrides */
   --ion-color-primary: var(--color-primary);
   --ion-color-success: var(--color-success);
@@ -75,23 +86,22 @@
 }
 
 /* ------------------------------------------------------------------
-   DARK THEME OVERRIDES
+   DARK THEME OVERRIDES (Clean Slate / VS Code Dark)
    ------------------------------------------------------------------ */
 body.dark {
-  --bg-body: #050b14; /* Deep Modern Space Blue */
-  --bg-surface: #0d1526;
-  --bg-surface-glass: rgba(13, 21, 38, 0.65);
-  --text-main: #f8fafc;
-  --text-muted: #cbd5e1;
-  
-  --border-subtle: rgba(255, 255, 255, 0.08);
-  --border-strong: rgba(255, 255, 255, 0.15);
+  --bg-body: #181818;
+  --bg-surface: #252526;
+  --bg-surface-glass: #252526;
+  --text-main: #f3f3f3;
+  --text-muted: #a6a6a6;
+
+  --border-subtle: #333333;
+  --border-strong: #454545;
 
   --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.3);
-  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.5), 0 2px 4px -1px rgba(0, 0, 0, 0.3);
-  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.6), 0 4px 6px -2px rgba(0, 0, 0, 0.35);
-  --inner-highlight: inset 0 1px 1px rgba(255, 255, 255, 0.05);
-  
+  --shadow-md: 0 2px 6px 0 rgba(0, 0, 0, 0.4);
+  --shadow-lg: 0 8px 16px 0 rgba(0, 0, 0, 0.5);
+
   /* Ionic Overrides */
   --ion-color-primary: var(--color-primary);
   --ion-background-color: var(--bg-body);
@@ -99,107 +109,138 @@ body.dark {
   --ion-item-background: var(--bg-surface);
 }
 
-@media (prefers-color-scheme: dark) {
-  body:not(.light) {
-    --bg-body: #050b14; /* Deep Modern Space Blue */
-    --bg-surface: #0d1526;
-    --bg-surface-glass: rgba(13, 21, 38, 0.65);
-    --text-main: #f8fafc;
-    --text-muted: #cbd5e1;
-    
-    --border-subtle: rgba(255, 255, 255, 0.08);
-    --border-strong: rgba(255, 255, 255, 0.15);
-
-    --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.3);
-    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.5), 0 2px 4px -1px rgba(0, 0, 0, 0.3);
-    --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.6), 0 4px 6px -2px rgba(0, 0, 0, 0.35);
-    --inner-highlight: inset 0 1px 1px rgba(255, 255, 255, 0.05);
-  }
-}
-
 /* ------------------------------------------------------------------
    GLOBAL STYLES
    ------------------------------------------------------------------ */
-html, body {
+html,
+body {
   font-family: var(--font-family-base);
   background-color: var(--bg-body);
   color: var(--text-main);
-  transition: background-color var(--transition-normal), color var(--transition-normal);
   -webkit-font-smoothing: antialiased;
 }
 
-h1, h2, h3, h4, h5, h6, .heading-font {
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+.heading-font {
   font-family: var(--font-family-heading);
-  font-weight: 700;
-  letter-spacing: -0.02em;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: var(--text-main);
 }
 
 /* ------------------------------------------------------------------
-   GLASSMORPHISM UTILITIES
+   CORPORATE CARD UTILITIES (Clean, Flat, Crisp)
    ------------------------------------------------------------------ */
-.glass-panel {
-  background: var(--bg-surface-glass);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border: 1px solid var(--border-subtle);
-  border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-md), var(--inner-highlight);
-}
-
+.glass-panel,
 .glass-card {
-  background: var(--bg-surface-glass);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
+  background: var(--bg-surface);
   border: 1px solid var(--border-subtle);
   border-radius: var(--radius-md);
-  box-shadow: var(--shadow-sm), var(--inner-highlight);
-  transition: transform var(--transition-normal), box-shadow var(--transition-normal), border-color var(--transition-normal);
+  box-shadow: none;
+  transition: border-color var(--transition-fast);
 }
 
 .glass-card:hover {
-  transform: translateY(-3px) scale(1.005);
-  box-shadow: var(--shadow-lg), var(--inner-highlight);
-  border-color: rgba(var(--color-primary-rgb), 0.3);
+  box-shadow: var(--shadow-md);
+  border-color: var(--border-strong);
 }
 
 /* ------------------------------------------------------------------
-   BUTTONS
+   BUTTONS (Corporate Enterprise)
    ------------------------------------------------------------------ */
 .btn-premium {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 8px;
-  background: linear-gradient(135deg, var(--color-primary), var(--color-secondary));
-  background-size: 200% auto;
-  color: white;
-  border: none;
-  border-radius: var(--radius-pill);
-  padding: 12px 24px;
+  background-color: var(--color-button);
+  color: #ffffff;
+  border: 1px solid transparent;
+  border-radius: var(--radius-md);
+  padding: 8px 18px;
   font-family: var(--font-family-base);
   font-weight: 600;
-  font-size: 1rem;
+  font-size: 0.875rem;
   cursor: pointer;
-  box-shadow: var(--shadow-md), var(--inner-highlight);
-  transition: all var(--transition-normal);
-  text-shadow: 0 1px 2px rgba(0,0,0,0.2);
+  box-shadow: var(--shadow-sm);
+  transition: background-color var(--transition-fast), box-shadow var(--transition-fast);
 }
 
 .btn-premium:hover:not(:disabled) {
-  transform: translateY(-2px);
-  box-shadow: var(--shadow-glow), var(--inner-highlight);
-  background-position: right center;
+  background-color: #9a4a01;
+  box-shadow: var(--shadow-md);
 }
 
 .btn-premium:active:not(:disabled) {
-  transform: translateY(1px);
-  box-shadow: var(--shadow-sm), var(--inner-highlight);
+  background-color: #833e01;
 }
 
 .btn-premium:disabled {
   opacity: 0.5;
   cursor: not-allowed;
-  filter: grayscale(0.8);
+}
+
+/* Excel Export Button */
+.btn-excel {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  background-color: var(--color-excel);
+  color: #ffffff;
+  border: 1px solid #0e6b37;
+  border-radius: var(--radius-md);
+  padding: 7px 14px;
+  font-family: var(--font-family-base);
+  font-weight: 600;
+  font-size: 0.84rem;
+  cursor: pointer;
+  box-shadow: var(--shadow-sm);
+  transition: all var(--transition-fast);
+
+  svg {
+    width: 16px;
+    height: 16px;
+    fill: currentColor;
+  }
+}
+
+.btn-excel:hover:not(:disabled) {
+  background-color: #0e6b37;
+  box-shadow: var(--shadow-md);
+}
+
+.btn-excel:active:not(:disabled) {
+  background-color: #0b532b;
+}
+
+/* Secondary Button */
+.btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  background-color: var(--bg-surface);
+  color: var(--text-main);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-md);
+  padding: 7px 14px;
+  font-family: var(--font-family-base);
+  font-weight: 500;
+  font-size: 0.84rem;
+  cursor: pointer;
+  box-shadow: var(--shadow-sm);
+  transition: all var(--transition-fast);
+}
+
+.btn-secondary:hover:not(:disabled) {
+  background-color: #f8f9fa;
+  border-color: #a19f9d;
 }
 
 /* ------------------------------------------------------------------
@@ -211,96 +252,84 @@ h1, h2, h3, h4, h5, h6, .heading-font {
   color: var(--text-main);
   border: 1px solid var(--border-strong);
   border-radius: var(--radius-md);
-  padding: 12px 16px;
+  padding: 8px 12px;
   font-family: var(--font-family-base);
-  font-size: 1rem;
-  transition: border-color var(--transition-normal), box-shadow var(--transition-normal), background-color var(--transition-normal);
-  box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);
+  font-size: 0.875rem;
+  transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
 }
 
 .input-modern:focus {
   outline: none;
   border-color: var(--color-primary);
-  box-shadow: 0 0 0 4px rgba(var(--color-primary-rgb), 0.15), inset 0 2px 4px rgba(0,0,0,0.02);
-  background: var(--bg-surface);
-}
-
-.input-modern:hover:not(:disabled) {
-  border-color: rgba(var(--color-primary-rgb), 0.4);
+  box-shadow: 0 0 0 1px var(--color-primary);
 }
 
 .input-modern::placeholder {
   color: var(--text-muted);
-  opacity: 0.7;
 }
 
 /* ------------------------------------------------------------------
    UTILITIES
    ------------------------------------------------------------------ */
 .text-gradient {
-  background: linear-gradient(135deg, var(--color-primary), var(--color-secondary));
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-}
-
-.animate-fade-in {
-  animation: fadeIn 0.5s ease-out forwards;
-}
-
-.animate-slide-up {
-  animation: slideUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-}
-
-@keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
-}
-
-@keyframes slideUp {
-  from { opacity: 0; transform: translateY(20px); }
-  to { opacity: 1; transform: translateY(0); }
+  color: var(--color-primary);
 }
 
 /* ------------------------------------------------------------------
-   TOASTS
+   AG GRID CORPORATE THEME OVERRIDES (Power BI & Excel Style)
    ------------------------------------------------------------------ */
-ion-toast.glass-toast {
-  --background: rgba(15, 23, 42, 0.95);
-  --color: #fff;
-  --border-radius: 12px;
-  --box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-  pointer-events: none;
-  
-  &::part(message) {
-    font-weight: 500;
-    font-size: 14px;
-    letter-spacing: 0.3px;
+.ag-theme-quartz {
+  --ag-font-family: var(--font-family-base);
+  --ag-font-size: 13px;
+  --ag-background-color: #ffffff;
+  --ag-header-background-color: #f8f9fa;
+  --ag-header-foreground-color: #323130;
+  --ag-border-color: #edebe9;
+  --ag-row-border-color: #edebe9;
+  --ag-odd-row-background-color: #fafbfc;
+  --ag-row-hover-color: #f3f8fd;
+  --ag-selected-row-background-color: #deecf9;
+  --ag-range-selection-border-color: #fd7b01;
+  --ag-cell-horizontal-padding: 12px;
+  --ag-borders: solid 1px;
+  --ag-border-radius: 4px;
+
+  .ag-header-cell-label {
+    font-weight: 600;
+    font-size: 12px;
+    letter-spacing: 0.02em;
+    color: #323130;
+  }
+
+  .ag-cell {
+    display: flex;
+    align-items: center;
+    line-height: normal;
+  }
+
+  .ag-cell.numeric-cell {
+    font-variant-numeric: tabular-nums;
+    justify-content: flex-end;
   }
 }
 
-body.dark ion-toast.glass-toast {
-  --background: rgba(2, 6, 23, 0.9);
-  --border-color: rgba(255, 255, 255, 0.1);
-  --border-width: 1px;
-  --border-style: solid;
-}
-
-@media (prefers-color-scheme: dark) {
-  body:not(.light) ion-toast.glass-toast {
-    --background: rgba(2, 6, 23, 0.9);
-    --border-color: rgba(255, 255, 255, 0.1);
-    --border-width: 1px;
-    --border-style: solid;
-  }
+body.dark .ag-theme-quartz {
+  --ag-background-color: #252526;
+  --ag-header-background-color: #1e1e1e;
+  --ag-header-foreground-color: #cccccc;
+  --ag-border-color: #333333;
+  --ag-row-border-color: #333333;
+  --ag-odd-row-background-color: #2a2d2e;
+  --ag-row-hover-color: #094771;
+  --ag-selected-row-background-color: #04395e;
 }
 
 /* ------------------------------------------------------------------
    CUSTOM SCROLLBARS
    ------------------------------------------------------------------ */
 ::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
+  width: 7px;
+  height: 7px;
 }
 
 ::-webkit-scrollbar-track {
@@ -308,11 +337,10 @@ body.dark ion-toast.glass-toast {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: var(--text-muted);
-  border-radius: var(--radius-pill);
-  border: 2px solid var(--bg-body);
+  background: #c8c6c4;
+  border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--color-primary);
+  background: #8a8886;
 }

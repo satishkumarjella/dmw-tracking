@@ -149,70 +149,74 @@
               <!-- View: Fabricator Tab -->
               <ng-container *ngIf="activeGirTab === 'fabricator'">
                 <div class="tbl-wrap" style="margin-top: 24px;" *ngIf="inspections.length > 0">
-                  <table class="issue-table">
-                  <thead>
-                    <tr>
-                      <th>#</th>
-                      <th>DATE</th>
-                      <th>PROD. ORDER #</th>
-                      <th>INSPECTOR</th>
-                      <th>RESULTS</th>
-                      <th style="text-align: right;">ACTIONS</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr *ngFor="let insp of inspections; let i = index">
-                      <td>{{ inspections.length - i }}</td>
-                      <td class="date-cell">{{ insp.inspectionDate | date:'shortDate' }}</td>
-                      <td class="po-cell">{{ insp.purchaseOrderId === selectedRecord.id ? selectedRecord.productionOrderNumber : insp.purchaseOrderId }}</td>
-                      <td>{{ insp.inspectorName }}</td>
-                      <td class="results-cell">
-                        <ng-container *ngIf="getInspectionStats(insp) as stats">
-                          <div class="result-bar-wrapper">
-                            <div class="rb-text">
-                              <span class="rb-success">{{ stats.successPct }}% OK</span>
-                              <span class="rb-fail" *ngIf="stats.failPct > 0">{{ stats.failPct }}% Fail</span>
-                            </div>
-                            <div class="result-bar">
-                              <div class="rb-fill-success" [style.width.%]="stats.successPct"></div>
-                              <div class="rb-fill-fail" [style.width.%]="stats.failPct"></div>
-                            </div>
-                            
-                            <div class="info-popup" *ngIf="stats.failPct > 0">
-                              <div class="ip-icon" (click)="openAnalysisModal(stats)" title="View Analysis">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                                  <circle cx="12" cy="12" r="10"></circle>
-                                  <line x1="12" y1="16" x2="12" y2="12"></line>
-                                  <line x1="12" y1="8" x2="12.01" y2="8"></line>
-                                </svg>
-                              </div>
-                            </div>
+                  <app-shared-table 
+                    [data]="inspections" 
+                    [columns]="inspectionColumns" 
+                    [enablePagination]="true"
+                    emptyMessage="No inspections logged yet for this production order."
+                    [customCellTemplates]="{
+                      'index': inspIndexTpl,
+                      'po': inspPoTpl,
+                      'results': inspResultsTpl,
+                      'actions': inspActionsTpl
+                    }">
+                  </app-shared-table>
+                  
+                  <ng-template #inspIndexTpl let-row let-index="index">
+                    {{ inspections.length - index }}
+                  </ng-template>
+                  
+                  <ng-template #inspPoTpl let-row>
+                    <span class="po-cell">{{ row.purchaseOrderId === selectedRecord.id ? selectedRecord.productionOrderNumber : row.purchaseOrderId }}</span>
+                  </ng-template>
+                  
+                  <ng-template #inspResultsTpl let-row>
+                    <ng-container *ngIf="getInspectionStats(row) as stats">
+                      <div class="result-bar-wrapper">
+                        <div class="rb-text">
+                          <span class="rb-success">{{ stats.successPct }}% OK</span>
+                          <span class="rb-fail" *ngIf="stats.failPct > 0">{{ stats.failPct }}% Fail</span>
+                        </div>
+                        <div class="result-bar">
+                          <div class="rb-fill-success" [style.width.%]="stats.successPct"></div>
+                          <div class="rb-fill-fail" [style.width.%]="stats.failPct"></div>
+                        </div>
+                        
+                        <div class="info-popup" *ngIf="stats.failPct > 0">
+                          <div class="ip-icon" (click)="openAnalysisModal(stats)" title="View Analysis">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                              <circle cx="12" cy="12" r="10"></circle>
+                              <line x1="12" y1="16" x2="12" y2="12"></line>
+                              <line x1="12" y1="8" x2="12.01" y2="8"></line>
+                            </svg>
                           </div>
-                        </ng-container>
-                      </td>
-                      <td class="action-cell" style="text-align: right; white-space: nowrap;">
-                        <button class="btn-icon" (click)="downloadFilledPdf(insp)" title="Download PDF">
-                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" width="16" height="16">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
-                          </svg>
-                        </button>
-                        <button class="btn-icon" (click)="editInspection(insp)" title="Edit Inspection">
-                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" width="16" height="16">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path>
-                          </svg>
-                        </button>
-                        <button *ngIf="isAdmin" class="btn-icon text-danger" (click)="deleteInspection(insp.id)" title="Delete Inspection">
-                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" width="16" height="16">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
-                          </svg>
-                        </button>
-                      </td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
+                        </div>
+                      </div>
+                    </ng-container>
+                  </ng-template>
+                  
+                  <ng-template #inspActionsTpl let-row>
+                    <div style="text-align: right; white-space: nowrap;">
+                      <button class="btn-icon" (click)="downloadFilledPdf(row)" title="Download PDF">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" width="16" height="16">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
+                        </svg>
+                      </button>
+                      <button class="btn-icon" (click)="editInspection(row)" title="Edit Inspection">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" width="16" height="16">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path>
+                        </svg>
+                      </button>
+                      <button *ngIf="isAdmin" class="btn-icon text-danger" (click)="deleteInspection(row.id)" title="Delete Inspection">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" width="16" height="16">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                        </svg>
+                      </button>
+                    </div>
+                  </ng-template>
+                </div>
 
-              <div class="empty-state" style="margin-top: 40px;" *ngIf="inspections.length === 0">
+                <div class="empty-state" style="margin-top: 40px;" *ngIf="inspections.length === 0">
                 <p>No inspection logs have been submitted yet. Click "+ Fill Inspection Form" to create one.</p>
               </div>
               </ng-container>
@@ -227,42 +231,30 @@
                 </div>
                 
                 <div class="tbl-wrap editable-table" style="margin-top: 16px;">
-                  <table class="issue-table">
-                    <thead style="background-color: #f39c12; color: #fff;">
-                      <tr>
-                        <th>DMW Inspector</th>
-                        <th>Date (Auto Generated)</th>
-                        <th>Create New Comments:</th>
-                        <th>DMW Inspector signature</th>
-                        <th style="text-align: right;">ACTIONS</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <tr *ngFor="let visit of dmwSiteVisits; let i = index">
-                        <td>{{ visit.inspector }}</td>
-                        <td class="date-cell">{{ visit.date | date:'shortDate' }}</td>
-                        <td>{{ visit.comments }}</td>
-                        <td>{{ visit.signature }}</td>
-                        <td class="action-cell" style="text-align: right; white-space: nowrap;">
-                          <button class="btn-icon" (click)="editDmwVisit(i)" title="Edit Log">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" width="16" height="16">
-                              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path>
-                            </svg>
-                          </button>
-                          <button class="btn-icon text-danger" (click)="deleteDmwVisit(i)" title="Delete Log">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" width="16" height="16">
-                              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
-                            </svg>
-                          </button>
-                        </td>
-                      </tr>
-                      <tr *ngIf="dmwSiteVisits.length === 0">
-                        <td colspan="5" class="empty-state" style="padding: 24px; text-align: center;">
-                          No site visits tracked yet. Click "+ Add Log" to create one.
-                        </td>
-                      </tr>
-                    </tbody>
-                  </table>
+                  <app-shared-table 
+                    [data]="dmwSiteVisits" 
+                    [columns]="dmwVisitColumns" 
+                    [enablePagination]="true"
+                    emptyMessage="No site visits logged for this order. Click + Add Log to create one."
+                    [customCellTemplates]="{
+                      'actions': dmwActionsTpl
+                    }">
+                  </app-shared-table>
+                  
+                  <ng-template #dmwActionsTpl let-row let-index="index">
+                    <div style="text-align: right; white-space: nowrap;">
+                      <button class="btn-icon" (click)="editDmwVisit(index)" title="Edit Log">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" width="16" height="16">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path>
+                        </svg>
+                      </button>
+                      <button class="btn-icon text-danger" (click)="deleteDmwVisit(index)" title="Delete Log">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" width="16" height="16">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                        </svg>
+                      </button>
+                    </div>
+                  </ng-template>
                 </div>
               </ng-container>
             </div>
@@ -279,57 +271,35 @@
               </div>
 
               <div class="tbl-wrap">
-                <table class="issue-table">
-                  <thead>
-                    <tr>
-                      <th>#</th>
-                      <th>DATE</th>
-                      <th>PROJECT #</th>
-                      <th>PROD. ORDER #</th>
-                      <th>ISSUE DESCRIPTION</th>
-                      <th>CONTAINMENT</th>
-                      <th>PREVENTATIVE ACTION</th>
-                      <th>IMPACT</th>
-                      <th>RESOLUTION</th>
-                      <th>SOURCE (NC)</th>
-                      <th>RECORDED BY</th>
-                      <th style="text-align: right;">ACTIONS</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr *ngFor="let iss of issues; let i = index">
-                      <td>{{ issues.length - i }}</td>
-                      <td class="date-cell">{{ iss.date | date:'shortDate' }}</td>
-                      <td>{{ iss.projectNumber || 'N/A' }}</td>
-                      <td class="po-cell">{{ iss.productionOrderNumber }}</td>
-                      <td>{{ iss.description }}</td>
-                      <td>{{ iss.containment }}</td>
-                      <td>{{ iss.preventativeAction }}</td>
-                      <td>{{ iss.impact }}</td>
-                      <td>{{ iss.resolution }}</td>
-                      <td>{{ iss.sourceOfNonConformance }}</td>
-                      <td>{{ iss.recordedBy }}</td>
-                      <td class="action-cell" style="text-align: right; white-space: nowrap;">
-                        <button class="btn-icon" (click)="editIssue(iss)" title="Edit Issue">
-                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" width="16" height="16">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path>
-                          </svg>
-                        </button>
-                        <button *ngIf="isAdmin" class="btn-icon text-danger" (click)="deleteIssue(iss.id)" title="Delete Issue">
-                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" width="16" height="16">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
-                          </svg>
-                        </button>
-                      </td>
-                    </tr>
-                    <tr *ngIf="issues.length === 0">
-                      <td colspan="12" class="empty-state">
-                        <div class="es-icon">!</div>
-                        <p>No issues reported yet for this production order.</p>
-                      </td>
-                    </tr>
-                  </tbody>
-                </table>
+                <app-shared-table 
+                  [data]="issues" 
+                  [columns]="issueColumns" 
+                  [enablePagination]="true"
+                  emptyMessage="No issues logged for this production order."
+                  [customCellTemplates]="{
+                    'index': issueIndexTpl,
+                    'actions': issueActionsTpl
+                  }">
+                </app-shared-table>
+                
+                <ng-template #issueIndexTpl let-row let-index="index">
+                  {{ issues.length - index }}
+                </ng-template>
+
+                <ng-template #issueActionsTpl let-row>
+                  <div style="text-align: right; white-space: nowrap;">
+                    <button class="btn-icon" (click)="editIssue(row)" title="Edit Issue">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" width="16" height="16">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path>
+                      </svg>
+                    </button>
+                    <button *ngIf="isAdmin" class="btn-icon text-danger" (click)="deleteIssue(row.id)" title="Delete Issue">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" width="16" height="16">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                      </svg>
+                    </button>
+                  </div>
+                </ng-template>
               </div>
             </div>
 

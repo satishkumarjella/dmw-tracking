@@ -1,12 +1,13 @@
 @use './theme/modern-ui.scss';
+
 /* Global Theming & Variables */
 :root {
   --bg: #eef0f4;
   --surface: #fff;
   --dark: #1a1d24;
   --darker: #0f1117;
-  --orange: #e8680a;
-  --blue: #1a5fa8;
+  --orange: #b15601;
+  --blue: #b15601;
   --blue-lt: #eff6ff;
   --blue-bd: #bfdbfe;
   --green: #16a34a;
@@ -21,13 +22,15 @@
   --silver: #9ca3af;
   --border: #dde1e9;
   --muted: #6b7280;
-  --shadow-sm: 0 1px 4px rgba(0,0,0,.07);
-  --shadow-md: 0 6px 24px rgba(0,0,0,.10);
-  --shadow-lg: 0 16px 48px rgba(0,0,0,.14);
+  --shadow-sm: 0 1px 4px rgba(0, 0, 0, .07);
+  --shadow-md: 0 6px 24px rgba(0, 0, 0, .10);
+  --shadow-lg: 0 16px 48px rgba(0, 0, 0, .14);
 }
 
 /* Global Resets */
-*, *::before, *::after {
+*,
+*::before,
+*::after {
   box-sizing: border-box;
   margin: 0;
   padding: 0;

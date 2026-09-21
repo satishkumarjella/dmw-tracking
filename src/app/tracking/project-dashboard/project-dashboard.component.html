@@ -1,0 +1,102 @@
+<div class="module-container cyber-module project-dashboard-container">
+  <app-module-loader *ngIf="isLoading" moduleName="Project Dashboard"></app-module-loader>
+
+  <!-- Initial Empty State -->
+  <div class="empty-search-state" *ngIf="workOrders.length === 0 && !isLoading && !projectDefInput">
+    <div class="empty-icon">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+        <circle cx="11" cy="11" r="8"></circle>
+        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+      </svg>
+    </div>
+    <h3>No Project Selected</h3>
+    <p>Use the search bar in the header to find a Project Definition and view its dashboard.</p>
+  </div>
+
+  <ng-container *ngIf="!isLoading && workOrders.length > 0">
+    <div class="charts-grid">
+    <!-- Chart 1: Delivery Dates -->
+    <div class="chart-card">
+      <h3>Delivery Dates (Required By)</h3>
+      <div class="chart-wrapper">
+        <canvas baseChart 
+          [data]="deliveryDatesChartData" 
+          [options]="barChartOptions" 
+          [type]="'bar'">
+        </canvas>
+      </div>
+    </div>
+
+    <!-- Chart 2: Fabricators -->
+    <div class="chart-card">
+      <h3>Fabricator Allocation</h3>
+      <div class="chart-wrapper">
+        <canvas baseChart 
+          [data]="fabricatorsChartData" 
+          [options]="barChartOptions" 
+          [type]="'bar'">
+        </canvas>
+      </div>
+    </div>
+
+    <!-- Chart 3: WBS Elements -->
+    <div class="chart-card">
+      <h3>WBS Elements</h3>
+      <div class="chart-wrapper">
+        <canvas baseChart 
+          [data]="wbsElementsChartData" 
+          [options]="barChartOptions" 
+          [type]="'bar'">
+        </canvas>
+      </div>
+    </div>
+
+    <!-- Chart 4: Unit Allocation -->
+    <div class="chart-card">
+      <h3>Unit Allocation</h3>
+      <div class="chart-wrapper">
+        <canvas baseChart 
+          [data]="unitAllocationChartData" 
+          [options]="barChartOptions" 
+          [type]="'bar'">
+        </canvas>
+      </div>
+    </div>
+    </div> <!-- Close charts-grid -->
+
+    <div class="content-panel" style="margin-top: 24px;">
+      <div class="panel-topline">Work Orders Register</div>
+      
+      <div class="table-toolbar" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+        <div class="toolbar-meta">
+          <span class="meta-pill live">Project: {{ projectDefInput }}</span>
+          <span class="meta-pill neutral">{{ workOrders.length }} entries</span>
+        </div>
+      </div>
+
+      <div class="tbl-wrap">
+        <app-shared-table 
+          [data]="workOrders" 
+          [columns]="tableColumns"
+          [enableSearch]="true"
+          [enablePagination]="true"
+          [isRowClickable]="true"
+          (rowClick)="onRowClick($event)">
+        </app-shared-table>
+      </div>
+    </div>
+  </ng-container>
+
+  <!-- No Results State -->
+  <div class="empty-search-state" *ngIf="workOrders.length === 0 && !isLoading && projectDefInput">
+    <div class="empty-icon">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+        <circle cx="12" cy="12" r="10"></circle>
+        <line x1="12" y1="8" x2="12" y2="12"></line>
+        <line x1="12" y1="16" x2="12.01" y2="16"></line>
+      </svg>
+    </div>
+    <h3>No Results</h3>
+    <p>No Work Orders found for project "{{ projectDefInput }}"</p>
+  </div>
+</div>

@@ -63,16 +63,16 @@
         <div class="search-input-wrapper">
           <ion-searchbar 
             class="cyber-searchbar-mini" 
-            placeholder="PO# or Scan" 
+            [placeholder]="activeModule === 'project-dashboard' ? 'Search Project Definition...' : 'PO# or Scan'" 
             [value]="globalPoSearch"
             (ionInput)="onSearchChange($any($event).detail.value)" 
-            (keydown.enter)="searchTriggered.emit()"
+            (keydown.enter)="activeModule === 'project-dashboard' ? projectSearchTriggered.emit(globalPoSearch) : searchTriggered.emit()"
             (ionBlur)="hideDropdownDelayed()">
           </ion-searchbar>
           <div class="shortcut-hint" *ngIf="!globalPoSearch">{{ shortcutHint }}</div>
         </div>
         
-        <button class="mini-scan-btn" (click)="cameraScanTriggered.emit()">
+        <button class="mini-scan-btn" *ngIf="activeModule !== 'project-dashboard'" (click)="cameraScanTriggered.emit()">
           <ion-icon name="barcode-outline"></ion-icon>
         </button>
 
@@ -86,12 +86,30 @@
 
           <!-- Empty State -->
           <ng-container *ngIf="!isLoading && hasSearched">
-            <div class="dropdown-state-item empty-state" *ngIf="results.length === 0 && globalPoSearch">
+            <div class="dropdown-state-item empty-state" *ngIf="results.length === 0 && projectResults.length === 0 && globalPoSearch">
               <ion-icon name="search-outline"></ion-icon>
               <span>No results found for "{{ globalPoSearch }}"</span>
             </div>
             
-            <!-- Results -->
+            <!-- Project Definition Results -->
+            <ng-container *ngIf="activeModule === 'project-dashboard'">
+              <div 
+                class="dropdown-item" 
+                *ngFor="let proj of projectResults"
+                (click)="selectProject(proj)">
+                
+                <div class="po-header">
+                  <ion-icon name="folder-outline" class="item-icon"></ion-icon>
+                  <span class="po-number" [innerHTML]="highlightMatch(proj)"></span>
+                </div>
+                <div class="po-details">
+                  <span class="po-desc">Project Definition</span>
+                </div>
+              </div>
+            </ng-container>
+
+            <!-- PO Results -->
+            <ng-container *ngIf="activeModule !== 'project-dashboard'">
             <div 
               class="dropdown-item" 
               *ngFor="let result of results"
@@ -113,6 +131,7 @@
                 </span>
               </div>
             </div>
+            </ng-container>
           </ng-container>
         </div>
       </div>

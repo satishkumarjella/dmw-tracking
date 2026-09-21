@@ -42,6 +42,7 @@ export class DashboardHeaderComponent implements OnInit {
   isDark = this.themeService.isDarkMode;
 
   @Output() globalPoSearchChange = new EventEmitter<string>();
+  @Output() projectSearchTriggered = new EventEmitter<string>();
   @Output() searchTriggered = new EventEmitter<void>();
   @Output() profileOpened = new EventEmitter<void>();
   @Output() preferencesOpened = new EventEmitter<void>();
@@ -54,6 +55,7 @@ export class DashboardHeaderComponent implements OnInit {
 
   private searchTerms = new Subject<string>();
   results: SearchResult[] = [];
+  projectResults: string[] = [];
   showDropdown = false;
   isLoading = false;
   hasSearched = false;
@@ -79,17 +81,35 @@ export class DashboardHeaderComponent implements OnInit {
           this.isLoading = false;
           this.hasSearched = false;
           this.showDropdown = false;
-          return of([]);
+          return of({ type: 'empty', data: [] });
         }
         this.isLoading = true;
         this.hasSearched = true;
         this.showDropdown = true;
-        return this.http.get<SearchResult[]>(`${environment.apiUrl}/purchase-orders/search?q=${term}`).pipe(
-          catchError(() => of([]))
-        );
+        
+        if (this.activeModule === 'project-dashboard') {
+          return this.http.get<string[]>(`${environment.apiUrl}/purchase-orders/project-definitions/unique?q=${term}`).pipe(
+            switchMap(data => of({ type: 'project', data })),
+            catchError(() => of({ type: 'project', data: [] }))
+          );
+        } else {
+          return this.http.get<SearchResult[]>(`${environment.apiUrl}/purchase-orders/search?q=${term}`).pipe(
+            switchMap(data => of({ type: 'po', data })),
+            catchError(() => of({ type: 'po', data: [] }))
+          );
+        }
       })
-    ).subscribe(results => {
-      this.results = results;
+    ).subscribe((res: any) => {
+      if (res.type === 'project') {
+        this.projectResults = res.data;
+        this.results = [];
+      } else if (res.type === 'po') {
+        this.results = res.data;
+        this.projectResults = [];
+      } else {
+        this.results = [];
+        this.projectResults = [];
+      }
       this.isLoading = false;
       // We keep showDropdown true if hasSearched is true, so we can show "No results"
       if (this.hasSearched && !this.globalPoSearch.trim()) {
@@ -130,5 +150,12 @@ export class DashboardHeaderComponent implements OnInit {
     this.globalPoSearchChange.emit(poNumber);
     this.showDropdown = false;
     this.searchTriggered.emit();
+  }
+
+  selectProject(projectDef: string) {
+    this.globalPoSearch = projectDef;
+    this.globalPoSearchChange.emit(projectDef);
+    this.showDropdown = false;
+    this.projectSearchTriggered.emit(projectDef);
   }
 }

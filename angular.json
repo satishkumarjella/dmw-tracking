@@ -37,6 +37,7 @@
             ],
             "styles": ["src/global.scss", "src/theme/variables.scss", "src/styles.scss", "src/theme/modern-ui.scss"],
             "scripts": [],
+            "allowedCommonJsDependencies": ["exceljs"],
             "browser": "src/main.ts"
           },
           "configurations": {
