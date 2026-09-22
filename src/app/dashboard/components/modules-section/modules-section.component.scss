@@ -11,21 +11,21 @@
    ------------------------------------------------------------- */
 .grid-bottom {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-    gap: 16px;
-    max-width: 1000px;
-    margin: 24px auto 0;
-    padding: 0 20px;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 12px;
+    max-width: 850px;
+    margin: 16px auto 0;
+    padding: 0 16px;
 }
 
 .card {
     background: var(--bg-surface);
     border: 1px solid var(--border-subtle);
     border-radius: var(--radius-md);
-    padding: 12px;
+    padding: 10px 12px;
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: 6px;
     text-decoration: none;
     color: inherit;
     position: relative;
@@ -48,7 +48,7 @@
 }
 
 .card:hover {
-    background: #f8fafc;
+    background: rgba(var(--color-primary-rgb), 0.03);
     border-color: var(--border-strong);
 }
 
@@ -81,8 +81,8 @@
 }
 
 .icon-badge {
-    height: 38px;
-    width: 38px;
+    height: 28px;
+    width: 28px;
     border-radius: var(--radius-md);
     background: rgba(var(--card-accent-rgb, var(--color-primary-rgb)), 0.1);
     border: 1px solid rgba(var(--card-accent-rgb, var(--color-primary-rgb)), 0.2);
@@ -104,8 +104,8 @@
 }
 
 .icon-badge svg {
-    width: 18px;
-    height: 18px;
+    width: 14px;
+    height: 14px;
     stroke: var(--card-accent, var(--color-primary));
     fill: none;
     stroke-width: 2;
@@ -141,10 +141,10 @@
 }
 
 .card-title {
-    font-family: var(--font-family-heading);
-    font-size: 1.15rem;
-    font-weight: 600;
-    letter-spacing: 0.03em;
+    font-family: var(--font-family-base);
+    font-size: 0.9rem;
+    font-weight: 500;
+    letter-spacing: 0.02em;
     color: var(--card-accent, var(--color-primary));
     line-height: 1.2;
     transition: color 0.22s;
@@ -158,7 +158,7 @@
 }
 
 .card-desc {
-    font-size: 0.85rem;
+    font-size: 0.75rem;
     color: var(--text-muted);
     line-height: 1.4;
     flex: 1;
@@ -175,7 +175,7 @@
     align-items: center;
     gap: 6px;
     font-family: var(--font-family-base);
-    font-size: 0.75rem;
+    font-size: 0.7rem;
     font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 0.05em;
@@ -188,8 +188,8 @@
 }
 
 .card-cta svg {
-    width: 14px;
-    height: 14px;
+    width: 12px;
+    height: 12px;
     stroke: currentColor;
     fill: none;
     stroke-width: 2;
@@ -200,16 +200,16 @@
    ------------------------------------------------------------- */
 @media(min-width: 769px) {
     .modules-section.compact {
-        width: 240px;
+        width: 220px;
         flex: none;
         padding: 16px 12px;
-        background: var(--bg-surface-glass);
+        background: var(--bg-surface);
         border-right: 1px solid var(--border-subtle);
         display: flex;
         flex-direction: column;
         justify-content: flex-start;
-        gap: 10px;
-        box-shadow: var(--shadow-sm);
+        gap: 4px;
+        box-shadow: 2px 0 8px rgba(0,0,0,0.02);
         transition: width var(--transition-normal), padding var(--transition-normal);
         overflow-x: hidden;
         z-index: 10;
@@ -217,7 +217,7 @@
     }
 
     .dashboard-layout.sidebar-collapsed .modules-section.compact {
-        width: 76px;
+        width: 64px;
         padding: 16px 8px;
     }
 
@@ -225,7 +225,7 @@
         display: flex;
         justify-content: center;
         align-items: center;
-        margin-bottom: 16px;
+        margin-bottom: 20px;
         color: var(--text-main);
     }
 
@@ -234,27 +234,29 @@
     }
 
     .sidebar-logo img {
-        height: 24px;
+        height: 22px;
         width: auto;
     }
 
     .modules-section.compact .grid-bottom {
         display: flex;
         flex-direction: column;
-        gap: 6px;
+        gap: 4px;
         padding: 0;
         margin: 0;
     }
 
     .modules-section.compact .card {
-        padding: 10px;
+        padding: 8px 10px;
         flex-direction: row;
         align-items: center;
-        gap: 12px;
+        gap: 10px;
         background: transparent;
         border: 1px solid transparent;
+        border-left: 3px solid transparent;
         box-shadow: none;
         border-radius: var(--radius-md);
+        transition: all 0.2s ease;
     }
 
     .modules-section.compact .card-desc,
@@ -264,7 +266,7 @@
     }
 
     .modules-section.compact .card-title {
-        font-size: 0.85rem;
+        font-size: 0.82rem;
         font-weight: 500;
         color: var(--text-muted);
         transition: color var(--transition-fast);
@@ -274,16 +276,20 @@
     }
 
     .modules-section.compact .icon-badge {
-        width: 32px;
-        height: 32px;
+        width: 28px;
+        height: 28px;
         margin: 0;
         flex-shrink: 0;
         border-radius: var(--radius-md);
+        background: transparent;
+        border: none;
     }
 
     .modules-section.compact .icon-badge svg {
-        width: 16px;
-        height: 16px;
+        width: 14px;
+        height: 14px;
+        stroke: var(--text-muted);
+        transition: stroke 0.2s;
     }
 
     .modules-section.compact .card:hover {
@@ -451,44 +457,57 @@
     }
 
     @keyframes gradientShift {
-        0% { background-position: 0% 50%; }
-        50% { background-position: 100% 50%; }
-        100% { background-position: 0% 50%; }
+        0% {
+            background-position: 0% 50%;
+        }
+
+        50% {
+            background-position: 100% 50%;
+        }
+
+        100% {
+            background-position: 0% 50%;
+        }
     }
 
     .modules-section.compact .card.active .icon-badge svg {
         stroke: var(--color-button);
         filter: drop-shadow(0 2px 4px rgba(177, 86, 1, 0.4));
     }
-    
+
     .modules-section.compact .card.active .card-title {
         color: var(--color-button);
         font-weight: 700;
     }
 }
+
 @media (max-width: 600px) {
     .modules-section:not(.compact) .grid-bottom {
         gap: 12px;
         padding: 0 16px;
     }
+
     .modules-section:not(.compact) .card {
         padding: 16px;
         gap: 6px;
     }
+
     .modules-section:not(.compact) .card-title {
         font-size: 1rem;
     }
+
     .modules-section:not(.compact) .card-desc {
         font-size: 0.8rem;
     }
+
     .modules-section:not(.compact) .icon-badge {
         height: 36px;
         width: 36px;
         margin-bottom: 2px;
     }
+
     .modules-section:not(.compact) .icon-badge svg {
         width: 18px;
         height: 18px;
     }
 }
-

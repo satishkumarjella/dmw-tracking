@@ -189,25 +189,74 @@
 /* Popover Mini Styling */
 ::ng-deep .custom-portal-popover::part(content) {
   --background: var(--bg-surface);
-  border-radius: var(--radius-md);
-  width: 240px;
-  box-shadow: var(--shadow-lg);
+  border-radius: 12px;
+  width: 260px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
   border: 1px solid var(--border-subtle);
   overflow: hidden;
 }
 
+.popover-inner {
+  padding: 8px;
+}
+
 ::ng-deep .custom-portal-popover ion-item {
-  --min-height: 40px;
-  --padding-start: 10px;
-  font-size: 13px;
-  font-family: var(--font-family-base);
+  --min-height: 44px;
+  --padding-start: 12px;
+  --padding-end: 12px;
+  --border-radius: 8px;
+  --background: transparent;
+  margin-bottom: 4px;
   --color: var(--text-main);
+  cursor: pointer;
+  transition: --background 0.2s ease;
+}
+
+::ng-deep .custom-portal-popover ion-item:hover {
+  --background: rgba(var(--color-primary-rgb), 0.05);
+}
+
+::ng-deep .custom-portal-popover ion-item:last-child {
+  margin-bottom: 0;
 }
 
 .item-icon-box {
-  font-size: 18px;
-  margin-right: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 8px;
+  background: rgba(var(--text-muted-rgb, 100, 116, 139), 0.1);
+  font-size: 16px;
+  margin-right: 12px;
   color: var(--text-muted);
+  transition: all 0.2s ease;
+}
+
+::ng-deep .custom-portal-popover ion-item:hover .item-icon-box {
+  background: rgba(var(--color-primary-rgb), 0.1);
+  color: var(--color-primary);
+}
+
+::ng-deep .custom-portal-popover .logout-item {
+  --color: var(--color-danger, #ef4444);
+}
+
+::ng-deep .custom-portal-popover .logout-item .item-icon-box {
+  background: rgba(239, 68, 68, 0.1);
+  color: var(--color-danger, #ef4444);
+}
+
+::ng-deep .custom-portal-popover .logout-item:hover .item-icon-box {
+  background: rgba(239, 68, 68, 0.2);
+  color: var(--color-danger, #ef4444);
+}
+
+.menu-title {
+  font-size: 0.85rem;
+  font-weight: 500;
+  letter-spacing: 0.01em;
 }
 
 @keyframes pulse-smooth {
@@ -271,6 +320,7 @@
   display: flex;
   flex-direction: column;
   padding: 8px 0;
+  color: var(--text-main);
 
   .dropdown-state-item {
     padding: 16px;
@@ -384,4 +434,5 @@
   font-weight: bold;
   border-radius: 2px;
   padding: 0 2px;
+  color: var(--text-main);
 }

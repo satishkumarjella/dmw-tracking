@@ -10,6 +10,7 @@ import { searchOutline, chevronUpOutline, chevronDownOutline } from 'ionicons/ic
 import { ModuleLoaderComponent } from '../../shared/components/module-loader/module-loader.component';
 import { FormBuilderComponent } from '../../pages/form-builder/form-builder.component';
 import { SharedTableComponent, TableColumn } from '../../shared/components/shared-table/shared-table.component';
+import { SharedSelectComponent } from '../../shared/components/shared-select/shared-select.component';
 import { ConfigService } from '../../shared/config.service';
 
 @Component({
@@ -17,7 +18,7 @@ import { ConfigService } from '../../shared/config.service';
   templateUrl: './admin.component.html',
   styleUrls: ['./admin.component.scss'],
   standalone: true,
-  imports: [CommonModule, FormsModule, IonIcon, ModuleLoaderComponent, FormBuilderComponent, SharedTableComponent]
+  imports: [CommonModule, FormsModule, IonIcon, ModuleLoaderComponent, FormBuilderComponent, SharedTableComponent, SharedSelectComponent]
 })
 export class AdminComponent implements OnInit {
   isLoading = true;
@@ -26,12 +27,19 @@ export class AdminComponent implements OnInit {
   availableModules = ['wo-status', 'abm-status', 'quality-inspection', 'shipping', 'receiving', 'project-dashboard'];
   currentUserRole = 'user';
 
+  roleOptions = [
+    { label: 'User', value: 'user' },
+    { label: 'DMW User', value: 'DMW User' },
+    { label: 'Admin', value: 'admin' },
+    { label: 'Super Admin', value: 'super_admin' }
+  ];
+
   userColumns: TableColumn[] = [
-    { key: 'email', label: 'Email', sortable: true },
-    { key: 'createdAt', label: 'Created At', type: 'date', sortable: true },
-    { key: 'role', label: 'Role', type: 'custom', sortable: true },
-    { key: 'modules', label: 'Modules', type: 'custom' },
-    { key: 'actions', label: 'Actions', type: 'custom' }
+    { key: 'user', label: 'User Details', type: 'custom', sortable: false },
+    { key: 'createdAt', label: 'Joined Date', type: 'date', sortable: true },
+    { key: 'role', label: 'Role Level', type: 'custom', sortable: true },
+    { key: 'modules', label: 'Module Access', type: 'custom' },
+    { key: 'actions', label: 'Actions', type: 'custom', width: '120px' }
   ];
 
   // Search State
@@ -111,9 +119,11 @@ export class AdminComponent implements OnInit {
     }).subscribe(users => this.users = users);
   }
 
-  changeUserRole(userId: string, event: Event) {
-    const select = event.target as HTMLSelectElement;
-    const newRole = select.value;
+  changeUserRole(userId: string, newRole: string) {
+    if (!confirm(`Are you sure you want to change this user's role to ${newRole}?`)) {
+      this.loadUsers(); // Reset view
+      return;
+    }
     const tenantId = this.authService.getTenantId();
     this.http.patch(`http://localhost:3000/user/${userId}/role`, { role: newRole }, {
       headers: { 'x-tenant-id': tenantId || '', Authorization: `Bearer ${this.authService.getToken()}` }

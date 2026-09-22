@@ -24,42 +24,55 @@
         [enablePagination]="true"
         emptyMessage="No users found matching your search."
         [customCellTemplates]="{
+          'user': userTpl,
           'role': roleTpl,
           'modules': modulesTpl,
           'actions': actionsTpl
         }">
       </app-shared-table>
       
+      <ng-template #userTpl let-user>
+        <div class="user-profile-cell">
+          <div class="avatar" [ngStyle]="{'--hue': (user.email.length * 15) % 360}">
+            {{ user.email ? user.email.charAt(0).toUpperCase() : 'U' }}
+          </div>
+          <div class="user-info">
+            <span class="email">{{ user.email }}</span>
+            <span class="user-id">ID: {{ user.id | slice:0:8 }}...</span>
+          </div>
+        </div>
+      </ng-template>
+
       <ng-template #roleTpl let-user>
-        <select [value]="user.role" (change)="changeUserRole(user.id, $event)" 
-                [disabled]="(currentUserRole === 'admin' && (user.role === 'super_admin' || user.role === 'admin')) || currentUserRole === 'user'">
-          <option value="user" [selected]="user.role === 'user'">End User</option>
-          <option value="DMW User" [selected]="user.role === 'DMW User'">DMW User</option>
-          <option value="admin" [selected]="user.role === 'admin'">Admin</option>
-          <option *ngIf="currentUserRole === 'super_admin' || user.role === 'super_admin'" value="super_admin" [selected]="user.role === 'super_admin'">Superadmin</option>
-        </select>
+        <app-shared-select 
+          [options]="roleOptions" 
+          [ngModel]="user.role" 
+          (valueChange)="changeUserRole(user.id, $event)" 
+          cssClass="role-select"
+          style="min-width: 140px; display: block;">
+        </app-shared-select>
       </ng-template>
 
       <ng-template #modulesTpl let-user>
         <div class="module-checkboxes" *ngIf="user.role === 'user' || user.role === 'DMW User'">
-          <label *ngFor="let module of availableModules">
+          <label *ngFor="let module of availableModules" [class.checked]="hasModule(user, module)">
             <input type="checkbox" [checked]="hasModule(user, module)" (change)="toggleModule(user, module, $event)" 
                    [disabled]="currentUserRole === 'user' || (currentUserRole === 'admin' && (user.role === 'super_admin' || user.role === 'admin'))">
             {{ module }}
           </label>
         </div>
-        <div *ngIf="user.role !== 'user' && user.role !== 'DMW User'" style="color: #4ade80; font-size: 0.9em; margin-bottom: 12px;">
-          All Modules (Inherited)
+        <div *ngIf="user.role !== 'user' && user.role !== 'DMW User'" class="inherited-modules">
+          <ion-icon name="checkmark-circle"></ion-icon> All Modules (Inherited)
         </div>
       </ng-template>
 
       <ng-template #actionsTpl let-user>
         <div class="action-buttons">
-          <button class="save-btn" (click)="saveUserModules(user)" 
+          <button class="action-btn save-btn" title="Save Modules" (click)="saveUserModules(user)" 
                   *ngIf="(user.role === 'user' || user.role === 'DMW User') && (currentUserRole === 'super_admin' || currentUserRole === 'admin')">
             Save
           </button>
-          <button class="delete-btn" (click)="deleteUser(user)" 
+          <button class="action-btn delete-btn" title="Delete User" (click)="deleteUser(user)" 
                   *ngIf="currentUserRole === 'super_admin' || (currentUserRole === 'admin' && (user.role === 'user' || user.role === 'DMW User'))">
             Delete
           </button>

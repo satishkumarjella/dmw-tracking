@@ -25,13 +25,7 @@ export interface WorkOrder {
   backOrderQty: number;
   deliveryDate: string;
   daysRemaining: number;
-  stages: Record<string, StageState>;
-}
-
-interface StageConfig {
-  key: string;
-  label: string;
-  icon: string;
+  percentageCompletion: number;
 }
 
 @Component({
@@ -73,64 +67,6 @@ export class WoStatusComponent implements OnInit, OnDestroy {
     { key: 'files', label: 'Files', type: 'custom' }
   ];
 
-  readonly stageConfig: StageConfig[] = [
-    {
-      key: 'cutting',
-      label: 'Cutting',
-      icon: `
-        <svg viewBox="0 0 24 24">
-          <circle cx="6" cy="6" r="2"></circle>
-          <circle cx="6" cy="18" r="2"></circle>
-          <line x1="20" y1="4" x2="8.12" y2="15.88"></line>
-          <line x1="14.47" y1="14.48" x2="20" y2="20"></line>
-          <line x1="8.12" y1="8.12" x2="12" y2="12"></line>
-        </svg>
-      `
-    },
-    {
-      key: 'sewing',
-      label: 'Sewing',
-      icon: `
-        <svg viewBox="0 0 24 24">
-          <path d="M12 3v18"></path>
-          <path d="M8 7h8"></path>
-          <path d="M9 21h6"></path>
-        </svg>
-      `
-    },
-    {
-      key: 'finishing',
-      label: 'Finishing',
-      icon: `
-        <svg viewBox="0 0 24 24">
-          <polyline points="20 6 9 17 4 12"></polyline>
-        </svg>
-      `
-    },
-    {
-      key: 'packing',
-      label: 'Packing',
-      icon: `
-        <svg viewBox="0 0 24 24">
-          <path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"></path>
-          <path d="M3.29 7 12 12l8.71-5"></path>
-          <path d="M12 22V12"></path>
-        </svg>
-      `
-    },
-    {
-      key: 'dispatch',
-      label: 'Dispatch',
-      icon: `
-        <svg viewBox="0 0 24 24">
-          <rect x="1" y="3" width="15" height="13"></rect>
-          <polygon points="16 8 20 8 23 11 23 16 16 16 16 8"></polygon>
-          <circle cx="5.5" cy="18.5" r="2.5"></circle>
-          <circle cx="18.5" cy="18.5" r="2.5"></circle>
-        </svg>
-      `
-    }
-  ];
 
   constructor(
     private configService: ConfigService,
@@ -184,25 +120,6 @@ export class WoStatusComponent implements OnInit, OnDestroy {
         const inTransitQty = summary.inTransitQty || Math.max(0, shippedQty - receivedQty);
         const backOrderQty = summary.backOrderQty || Math.max(0, totalQty - receivedQty);
 
-        // Dynamically compute production workflow stages based on actual progress
-        const stages: Record<string, StageState> = {
-          cutting: 'done',
-          sewing: 'done',
-          finishing: 'done',
-          packing: 'done',
-          dispatch: 'pending'
-        };
-
-        if (receivedQty >= totalQty && totalQty > 0) {
-          stages['dispatch'] = 'done';
-        } else if (shippedQty > 0) {
-          stages['dispatch'] = 'active';
-        } else {
-          stages['finishing'] = 'active';
-          stages['packing'] = 'pending';
-          stages['dispatch'] = 'pending';
-        }
-
         const poDetails = summary.poDetails;
         this.selectedWo = {
           poNumber: summary.poNumber,
@@ -219,7 +136,7 @@ export class WoStatusComponent implements OnInit, OnDestroy {
           backOrderQty,
           deliveryDate: poDetails?.deliveryDate || '2026-10-15',
           daysRemaining: 14,
-          stages
+          percentageCompletion: poDetails?.percentageCompletion || 0
         };
       } else {
         this.errorMessage = `No production order records found for "${value}".`;
@@ -234,27 +151,12 @@ export class WoStatusComponent implements OnInit, OnDestroy {
 
   get activeStageLabel(): string {
     if (!this.selectedWo) return 'Unknown';
-
-    if (this.selectedWo.stages['dispatch'] === 'done') {
-      return 'Completed & Delivered';
+    if (this.selectedWo.percentageCompletion === 100) {
+      return 'Production Completed';
     }
-
-    const activeStage = this.stageConfig.find(
-      s => this.selectedWo?.stages[s.key] === 'active'
-    );
-
-    if (activeStage) return `${activeStage.label} in progress`;
-
-    const doneCount = Object.values(this.selectedWo.stages).filter(
-      s => s === 'done'
-    ).length;
-
-    return `${doneCount} of 5 stages complete`;
+    return `${this.selectedWo.percentageCompletion}% Completed`;
   }
 
-  trackByStage(index: number, stage: StageConfig): string {
-    return stage.key;
-  }
 
   fmtDate(date: string): string {
     if (!date) return '—';

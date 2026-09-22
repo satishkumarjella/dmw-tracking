@@ -23,6 +23,7 @@ export interface ProductionRecord {
   shortText?: string;
   quantity?: number;
   orderQuantity?: number;
+  percentageCompletion?: number;
   fabricatorName?: string;
   supplierPlant?: string;
   requiredBy?: string;
@@ -60,12 +61,13 @@ interface InspectionItem {
   status?: string;
 }
 
+import { SharedSelectComponent } from '../../shared/components/shared-select/shared-select.component';
 import { FormBuilderService, FormTemplate } from '../../pages/form-builder/form-builder.service';
 
 @Component({
   selector: 'app-quality-inspection-reports',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterModule, ModuleLoaderComponent, SharedTableComponent],
+  imports: [CommonModule, FormsModule, RouterModule, ModuleLoaderComponent, SharedTableComponent, SharedSelectComponent],
   templateUrl: './quality-inspection-reports.component.html',
   styleUrls: ['./quality-inspection-reports.component.scss']
 })
@@ -76,6 +78,7 @@ export class QualityInspectionReportsComponent implements OnInit, OnDestroy {
 
   templates: FormTemplate[] = [];
   selectedTemplate: FormTemplate | null = null;
+  templateOptions: {label: string, value: any}[] = [];
   dynamicFormData: any = {};
 
   activeView: 'gir' | 'issue' | 'paint' | 'specs' = 'gir';
@@ -90,6 +93,8 @@ export class QualityInspectionReportsComponent implements OnInit, OnDestroy {
   showIssueModal = false;
   showAnalysisModal = false;
   showDmwModal = false;
+  showProgressModal = false;
+  tempProgressValue = 0;
   selectedAnalysisStats: any = null;
   toastMessage = '';
   
@@ -168,7 +173,7 @@ export class QualityInspectionReportsComponent implements OnInit, OnDestroy {
     recordedBy: ''
   };
 
-  dmwForm = {
+  dmwForm: any = {
     inspector: '',
     date: '',
     comments: '',
@@ -210,6 +215,7 @@ export class QualityInspectionReportsComponent implements OnInit, OnDestroy {
   fetchTemplates() {
     this.http.get<FormTemplate[]>(`${environment.apiUrl}/form-templates`).subscribe(res => {
       this.templates = res;
+      this.templateOptions = [{label: 'Select a template...', value: null}, ...this.templates.map(t => ({label: t.name, value: t}))];
       if (this.templates.length > 0) {
         this.selectTemplate(this.templates[0]);
       }
@@ -347,11 +353,29 @@ export class QualityInspectionReportsComponent implements OnInit, OnDestroy {
       this.dmwSiteVisits[this.editingDmwIndex] = { ...this.dmwForm };
       this.showToast('Log updated successfully');
     } else {
-      this.dmwSiteVisits.push({ ...this.dmwForm });
+      this.dmwSiteVisits.unshift({ ...this.dmwForm });
       this.showToast('Log added successfully');
     }
     
     this.closeDmwModal();
+  }
+
+  updateProgress(value: number): void {
+    if (!this.selectedRecord?.id) return;
+    this.selectedRecord.percentageCompletion = value;
+    
+    // Update backend
+    this.http.put(`${environment.apiUrl}/purchase-orders/${this.selectedRecord.id}`, {
+      percentageCompletion: value
+    }, {
+      headers: {
+        'x-tenant-id': this.authService.getTenantId() || '',
+        'Authorization': `Bearer ${this.authService.getToken()}`
+      }
+    }).subscribe({
+      next: () => this.showToast('Production Progress updated successfully'),
+      error: (err) => console.error('Failed to update progress', err)
+    });
   }
 
   closeDmwModal(): void {
@@ -362,6 +386,26 @@ export class QualityInspectionReportsComponent implements OnInit, OnDestroy {
     if ((event.target as HTMLElement).classList.contains('modal-overlay')) {
       this.closeDmwModal();
     }
+  }
+
+  openProgressModal(): void {
+    this.tempProgressValue = this.selectedRecord?.percentageCompletion || 0;
+    this.showProgressModal = true;
+  }
+
+  closeProgressModal(): void {
+    this.showProgressModal = false;
+  }
+
+  closeProgressModalByOverlay(event: MouseEvent): void {
+    if ((event.target as HTMLElement).classList.contains('modal-overlay')) {
+      this.closeProgressModal();
+    }
+  }
+
+  submitProgressUpdate(): void {
+    this.updateProgress(this.tempProgressValue);
+    this.closeProgressModal();
   }
 
   get totalSubmittedQuantity(): number {

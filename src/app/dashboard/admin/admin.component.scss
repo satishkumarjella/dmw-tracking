@@ -271,50 +271,98 @@
     }
   }
 
-  .action-buttons {
+  .inherited-modules {
+    color: var(--success, #107c41);
+    font-size: 0.85rem;
+    font-weight: 500;
     display: flex;
-    justify-content: space-between;
     align-items: center;
-    gap: 8px;
-    margin-top: 8px;
-    min-width: 140px;
+    gap: 6px;
+    margin-bottom: 8px;
+    ion-icon {
+      font-size: 1.1rem;
+    }
+  }
 
-    .save-btn {
-      background: linear-gradient(135deg, var(--color-primary), var(--color-secondary));
-      color: #ffffff;
-      border: none;
-      padding: 4px 12px;
-      border-radius: 6px;
+  .user-profile-cell {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+
+    .avatar {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: hsl(var(--hue, 0), 70%, 50%);
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
       font-weight: 600;
-      font-size: 12px;
-      cursor: pointer;
-      transition: all 0.2s;
-      opacity: 0.9;
-
-      &:hover {
-        opacity: 1;
-        transform: translateY(-1px);
-        box-shadow: 0 2px 8px rgba(var(--color-primary-rgb), 0.3);
-      }
+      font-size: 1.1rem;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      text-shadow: 0 1px 2px rgba(0,0,0,0.2);
     }
 
-    .delete-btn {
-      background: linear-gradient(135deg, #ef4444, #f87171);
-      color: #ffffff;
-      border: none;
-      padding: 4px 12px;
-      border-radius: 6px;
+    .user-info {
+      display: flex;
+      flex-direction: column;
+
+      .email {
+        font-weight: 600;
+        color: var(--text-main);
+        font-size: 0.9rem;
+      }
+      .user-id {
+        font-size: 0.75rem;
+        color: var(--text-muted);
+      }
+    }
+  }
+
+  .action-buttons {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 0;
+    min-width: unset;
+
+    .action-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 6px 12px;
+      font-size: 0.75rem;
       font-weight: 600;
-      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      border: none;
+      border-radius: 6px;
       cursor: pointer;
-      transition: all 0.2s;
-      margin-left: auto;
-      opacity: 0.9;
+      transition: all 0.2s ease;
+      background: var(--bg-surface);
+      color: var(--text-muted);
+      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+      border: 1px solid var(--border-subtle);
 
       &:hover {
-        opacity: 1;
         transform: translateY(-1px);
-        box-shadow: 0 2px 8px rgba(239, 68, 68, 0.4);
+      }
+
+      &.save-btn {
+        &:hover {
+          background: rgba(14, 165, 233, 0.1);
+          color: var(--color-primary);
+          border-color: rgba(14, 165, 233, 0.2);
+        }
+      }
+
+      &.delete-btn {
+        &:hover {
+          background: rgba(239, 68, 68, 0.1);
+          color: #ef4444;
+          border-color: rgba(239, 68, 68, 0.2);
+        }
       }
     }
   }

@@ -19,7 +19,7 @@ import { SharedTableComponent, TableColumn } from '../../shared/components/share
 })
 export class ProjectDashboardComponent implements OnInit {
   projectDefInput: string = '';
-  isLoading: boolean = false;
+  isLoading: boolean = true;
   workOrders: any[] = [];
   
   deliveryDatesChartData: ChartConfiguration['data'] = { datasets: [], labels: [] };
@@ -41,11 +41,16 @@ export class ProjectDashboardComponent implements OnInit {
     { key: 'material', label: 'Material', sortable: true },
     { key: 'description', label: 'Description', valueGetter: (row) => row.shortText || row.description, sortable: true },
     { key: 'quantity', label: 'Qty', valueGetter: (row) => row.quantity || row.stillToBeDeliveredQty, sortable: true },
+    { key: 'percentageCompletion', label: '% Completed', valueGetter: (row) => row.percentageCompletion != null ? row.percentageCompletion + '%' : '0%', sortable: true },
   ];
 
   constructor(private http: HttpClient, private router: Router) {}
 
-  ngOnInit() {}
+  ngOnInit() {
+    setTimeout(() => {
+      this.isLoading = false;
+    }, 600);
+  }
 
   lookup() {
     this.executeSearch(this.projectDefInput);

@@ -13,6 +13,7 @@ export interface PoDetails {
   customer?: string;
   customerName?: string;
   deliveryDate?: string;
+  percentageCompletion?: number;
 }
 
 export interface ShipmentItem {

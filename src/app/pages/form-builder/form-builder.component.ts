@@ -2,11 +2,12 @@ import { Component, OnInit, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { FormBuilderService, FormField, FormSection, FormTemplate } from './form-builder.service';
+import { SharedSelectComponent } from '../../shared/components/shared-select/shared-select.component';
 
 @Component({
   selector: 'app-form-builder',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, SharedSelectComponent],
   templateUrl: './form-builder.component.html',
   styleUrls: ['./form-builder.component.scss'],
   schemas: [CUSTOM_ELEMENTS_SCHEMA]
@@ -20,6 +21,17 @@ export class FormBuilderComponent implements OnInit {
   sections: FormSection[] = [];
   isParsing = false;
   showPreview = false;
+
+  fieldTypeOptions = [
+    { label: 'Text (Single Line)', value: 'text' },
+    { label: 'Textarea (Multi Line)', value: 'textarea' },
+    { label: 'Number', value: 'number' },
+    { label: 'Date', value: 'date' },
+    { label: 'Time', value: 'time' },
+    { label: 'Checkbox', value: 'checkbox' },
+    { label: 'Radio Group', value: 'radio' },
+    { label: 'Dropdown Select', value: 'select' }
+  ];
 
   constructor(private fbService: FormBuilderService) {}
 

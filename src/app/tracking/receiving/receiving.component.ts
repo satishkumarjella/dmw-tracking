@@ -139,14 +139,14 @@ export class ReceivingComponent implements OnInit, OnDestroy {
     try {
       // 1. Fetch PO details from backend
       const po = await firstValueFrom(this.shipmentService.getPoDetails(raw)).catch(() => null);
-      if (po) {
-        this.currentTotalQty = Number(po.quantity) || 48;
+      if (po && (po.productionOrderNumber || po.quantity)) {
+        this.currentTotalQty = Number(po.quantity) || 0;
         this.poMark = po.markNumber || 'Mark N/A';
         this.poDesc = po.description || po.customerName || 'Production Order';
       } else {
-        this.currentTotalQty = 48;
-        this.poMark = '36785-A01-01-01';
-        this.poDesc = 'Conveyor Assembly Section';
+        this.showError = true;
+        this.showResultPanel = false;
+        return;
       }
 
       this.showResultPanel = true;
@@ -165,40 +165,11 @@ export class ReceivingComponent implements OnInit, OnDestroy {
   async loadShipments(poNumber: string): Promise<void> {
     try {
       const items = await firstValueFrom(this.shipmentService.getShipments(poNumber));
-      this.pendingShipments = items || [];
+      // Filter out shipments that are already fully received
+      this.pendingShipments = (items || []).filter(s => s.status !== 'RECEIVED' && (s.qtyShipped > (s.qtyReceived || 0)));
     } catch (err) {
       console.error('Failed to load shipments for receiving:', err);
       this.pendingShipments = [];
-    }
-
-    // Temporary mock data for UI testing if DB is empty or backend is down
-    if (this.pendingShipments.length === 0) {
-      this.pendingShipments = [
-        {
-          id: 'mock-1',
-          productionOrderNumber: poNumber,
-          shipmentNumber: 'TRK-9823',
-          shipDate: new Date().toISOString(),
-          qtyRequired: this.currentTotalQty,
-          qtyShipped: 12,
-          qtyReceived: 0,
-          qtyOpen: 12,
-          shippedBy: 'Mock Shipper',
-          status: 'PENDING_RECEIPT'
-        },
-        {
-          id: 'mock-2',
-          productionOrderNumber: poNumber,
-          shipmentNumber: 'RXO-5412',
-          shipDate: new Date().toISOString(),
-          qtyRequired: this.currentTotalQty,
-          qtyShipped: 5,
-          qtyReceived: 0,
-          qtyOpen: 5,
-          shippedBy: 'Mock Shipper 2',
-          status: 'PENDING_RECEIPT'
-        }
-      ];
     }
   }
 

@@ -223,11 +223,17 @@
 
               <!-- View: DMW Inspector Tab -->
               <ng-container *ngIf="activeGirTab === 'dmw-inspector'">
-                <div class="hist-header" style="margin-top: 24px; padding-top: 0;">
-                  <div>
-                    <h3 style="font-size: 1.1rem;">Site Visit Tracking</h3>
+                <div class="hist-header" style="margin-top: 24px; padding-top: 0; align-items: center;">
+                  <div style="flex: 1;">
+                    <h3 style="font-size: 1.1rem; margin-bottom: 4px;">Site Visit Tracking</h3>
+                    <div style="font-size: 0.9rem; color: var(--text-muted); font-weight: 500;">
+                      Production Progress: <span style="font-weight: 700; color: var(--color-primary);">{{ selectedRecord.percentageCompletion || 0 }}%</span>
+                    </div>
                   </div>
-                  <button class="btn btn-secondary" (click)="addDmwVisit()">+ Add Log</button>
+                  <div style="display: flex; gap: 12px;">
+                    <button class="btn btn-secondary" (click)="openProgressModal()">Update Progress</button>
+                    <button class="btn btn-secondary" (click)="addDmwVisit()">+ Add Log</button>
+                  </div>
                 </div>
                 
                 <div class="tbl-wrap editable-table" style="margin-top: 16px;">
@@ -363,10 +369,16 @@
         
       <div *ngIf="selectedTemplate" class="mt-14" style="margin-top: 24px;">
         <div class="form-field mb-3" style="margin-bottom: 24px;">
-          <label class="form-label text-muted text-uppercase fw-bold" style="font-size: 0.75rem;">Selected Template</label>
-          <select class="form-control" [ngModel]="selectedTemplate" (ngModelChange)="selectTemplate($event)" name="templateSelect">
-            <option *ngFor="let t of templates" [ngValue]="t">{{ t.name }}</option>
-          </select>
+          <div class="col-md-6 form-group">
+            <label class="section-subtitle">Inspection Template</label>
+            <app-shared-select 
+              [options]="templateOptions" 
+              [ngModel]="selectedTemplate" 
+              (valueChange)="selectTemplate($event)" 
+              name="templateSelect"
+              cssClass="form-control">
+            </app-shared-select>
+          </div>
         </div>
         
         <div class="stepper-wrapper">
@@ -419,10 +431,13 @@
                       </label>
                     </div>
 
-                    <select *ngSwitchCase="'select'" [name]="field.id" [(ngModel)]="dynamicFormData[field.id]" [required]="!!field.required" style="width: 100%; background: var(--bg-surface); border: 1px solid var(--border-subtle); border-radius: var(--radius-sm); padding: 6px 10px; color: var(--text-main); font-size: 0.8rem;">
-                      <option value="">Select option</option>
-                      <option *ngFor="let opt of field.options" [value]="opt">{{ opt }}</option>
-                    </select>
+                    <app-shared-select 
+                      *ngSwitchCase="'select'" 
+                      [options]="field.options || []"
+                      [name]="field.id" 
+                      [(ngModel)]="dynamicFormData[field.id]" 
+                      cssClass="w-full">
+                    </app-shared-select>
 
                     <div *ngSwitchCase="'radio'" style="display: flex; gap: 16px; padding-top: 2px; flex-wrap: wrap;">
                       <label *ngFor="let opt of field.options" style="display: flex; align-items: center; color: var(--text-main); font-weight: 500; font-size: 0.8rem; cursor: pointer;">
@@ -723,6 +738,58 @@
         <button type="submit" class="btn btn-orange">{{ isDmwEditMode ? 'Update Log' : 'Save Log' }}</button>
       </div>
     </form>
+  </div>
+</div>
+
+<!-- Modal: Update Production Progress -->
+<div class="modal-overlay" *ngIf="showProgressModal" (click)="closeProgressModalByOverlay($event)">
+  <div class="modal-box issue-modal" (click)="$event.stopPropagation()" style="max-width: 450px;">
+    <div class="modal-header-strip"></div>
+    <button class="modal-close" (click)="closeProgressModal()">&times;</button>
+    
+    <div class="modal-header">
+      <div class="mh-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+        </svg>
+      </div>
+      <div>
+        <div class="modal-title">Update Production Progress</div>
+        <div class="modal-sub">Set the current manufacturing completion percentage.</div>
+      </div>
+    </div>
+
+    <div class="form-grid single-col" style="margin-top: 24px;">
+      <div class="form-field">
+        <label>Progress (%) <span style="font-weight: 700; color: var(--color-primary); margin-left: 8px;">{{ tempProgressValue }}%</span></label>
+        <div style="padding: 12px 0;">
+          <input type="range" [(ngModel)]="tempProgressValue" min="0" max="100" step="10" list="steppermarks" style="width: 100%; accent-color: var(--color-primary); cursor: pointer;">
+          <datalist id="steppermarks">
+            <option value="0"></option>
+            <option value="10"></option>
+            <option value="20"></option>
+            <option value="30"></option>
+            <option value="40"></option>
+            <option value="50"></option>
+            <option value="60"></option>
+            <option value="70"></option>
+            <option value="80"></option>
+            <option value="90"></option>
+            <option value="100"></option>
+          </datalist>
+          <div style="display: flex; justify-content: space-between; margin-top: 8px; color: var(--text-muted); font-size: 0.75rem; padding: 0; font-weight: 500;">
+            <span style="transform: translateX(4px);">0%</span>
+            <span>50%</span>
+            <span style="transform: translateX(-4px);">100%</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="form-actions" style="margin-top: 24px;">
+      <button type="button" class="btn btn-clear" (click)="closeProgressModal()">Cancel</button>
+      <button type="button" class="btn btn-orange" (click)="submitProgressUpdate()">Save Progress</button>
+    </div>
   </div>
 </div>
 

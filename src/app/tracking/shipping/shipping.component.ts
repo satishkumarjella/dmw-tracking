@@ -79,14 +79,7 @@ export class ShippingComponent implements OnInit, OnDestroy {
     { key: 'picture', label: 'Picture', type: 'custom' }
   ];
 
-  // Fallback records for demo continuity
-  readonly DB: Record<string, ShippingRecord> = {
-    '25280-A01-01': {
-      mark: '36785-A01-01-01',
-      markDesc: 'Conveyor Drive Assembly Section A01',
-      totalQty: 48
-    }
-  };
+
 
   constructor(
     private configService: ConfigService,
@@ -140,12 +133,8 @@ export class ShippingComponent implements OnInit, OnDestroy {
         this.selectedRecord = {
           mark: poData.markNumber || 'Mark N/A',
           markDesc: poData.description || poData.customerName || 'Production Order Assembly',
-          totalQty: Number(poData.quantity) || 48
+          totalQty: Number(poData.quantity) || 0
         };
-      } else if (this.DB[raw]) {
-        // Fallback to local record
-        this.currentPO = raw;
-        this.selectedRecord = this.DB[raw];
       } else {
         this.showError = true;
         return;
@@ -155,12 +144,7 @@ export class ShippingComponent implements OnInit, OnDestroy {
       await this.loadShipments(this.currentPO);
     } catch (err) {
       console.error('Error during PO lookup in shipping:', err);
-      if (this.DB[raw]) {
-        this.currentPO = raw;
-        this.selectedRecord = this.DB[raw];
-      } else {
-        this.showError = true;
-      }
+      this.showError = true;
     }
   }
 

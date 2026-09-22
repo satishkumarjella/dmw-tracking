@@ -1,6 +1,6 @@
 .hero-container {
     position: relative;
-    padding: 28px 32px 24px;
+    padding: 16px 24px 12px;
     background: var(--bg-body);
     border-bottom: 1px solid var(--border-subtle);
     display: flex;
@@ -26,7 +26,7 @@
 }
 
 .company-badge {
-    font-size: 0.72rem;
+    font-size: 0.65rem;
     font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 0.08em;
@@ -36,8 +36,8 @@
 
 .greeting-title {
     font-family: var(--font-family-base);
-    font-size: 1.75rem;
-    font-weight: 600;
+    font-size: 1.25rem;
+    font-weight: 500;
     letter-spacing: -0.01em;
     color: var(--text-main);
     margin: 0 0 4px;
@@ -45,7 +45,7 @@
 }
 
 .greeting-subtitle {
-    font-size: 0.9rem;
+    font-size: 0.85rem;
     color: var(--text-muted);
     margin: 0;
 }
@@ -82,17 +82,18 @@
     background: var(--bg-surface);
     border: 1px solid var(--border-subtle);
     border-radius: var(--radius-md);
-    padding: 16px 20px;
+    padding: 12px 14px;
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 6px;
     box-shadow: var(--shadow-sm);
-    transition: box-shadow var(--transition-fast), border-color var(--transition-fast);
+    transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
 }
 
 .kpi-card:hover {
-    box-shadow: var(--shadow-md);
-    border-color: var(--border-strong);
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-lg);
+    border-color: var(--color-primary);
 }
 
 .kpi-top {
@@ -102,7 +103,7 @@
 }
 
 .kpi-label {
-    font-size: 0.75rem;
+    font-size: 0.7rem;
     font-weight: 600;
     color: var(--text-muted);
     text-transform: uppercase;
@@ -110,8 +111,8 @@
 }
 
 .kpi-icon-pill {
-    width: 28px;
-    height: 28px;
+    width: 24px;
+    height: 24px;
     border-radius: 4px;
     display: flex;
     align-items: center;
@@ -121,7 +122,7 @@
 
 .kpi-value {
     font-family: var(--font-family-base);
-    font-size: 1.85rem;
+    font-size: 1.3rem;
     font-weight: 600;
     color: var(--text-main);
     line-height: 1;
@@ -133,7 +134,7 @@
     align-items: center;
     gap: 6px;
     padding-top: 6px;
-    border-top: 1px solid #f3f2f1;
+    border-top: 1px solid var(--border-subtle);
 }
 
 .kpi-indicator {
@@ -144,7 +145,7 @@
 }
 
 .kpi-context {
-    font-size: 0.72rem;
+    font-size: 0.65rem;
     color: var(--text-muted);
 }
 
@@ -152,6 +153,7 @@
     .kpi-grid {
         grid-template-columns: repeat(2, 1fr);
     }
+
     .hero-header {
         flex-direction: column;
         align-items: flex-start;
@@ -161,14 +163,46 @@
 
 @media (max-width: 600px) {
     .hero-container {
-        padding: 16px;
+        padding: 12px 16px;
     }
+
     .kpi-grid {
-        grid-template-columns: 1fr;
-        gap: 10px;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 6px;
     }
+
+    .kpi-card {
+        padding: 10px 12px;
+        gap: 4px;
+    }
+
+    .kpi-value {
+        font-size: 1.15rem;
+    }
+
+    .kpi-label {
+        font-size: 0.6rem;
+    }
+
+    .kpi-icon-pill {
+        width: 20px;
+        height: 20px;
+        
+        svg {
+            width: 12px;
+            height: 12px;
+        }
+    }
+
+    .kpi-footer {
+        padding-top: 4px;
+    }
+
+    .kpi-context {
+        font-size: 0.6rem;
+    }
+
     .greeting-title {
-        font-size: 1.35rem;
+        font-size: 1.15rem;
     }
 }
-

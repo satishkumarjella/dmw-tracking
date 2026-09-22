@@ -75,16 +75,10 @@
               </div>
               <div class="fg">
                 <label>Input Type</label>
-                <select [(ngModel)]="field.type">
-                  <option value="text">Text (Single Line)</option>
-                  <option value="textarea">Textarea (Multi Line)</option>
-                  <option value="number">Number</option>
-                  <option value="date">Date</option>
-                  <option value="time">Time</option>
-                  <option value="checkbox">Checkbox</option>
-                  <option value="radio">Radio Group</option>
-                  <option value="select">Dropdown Select</option>
-                </select>
+                <app-shared-select 
+                  [options]="fieldTypeOptions" 
+                  [(ngModel)]="field.type">
+                </app-shared-select>
               </div>
               <div class="fg">
                 <label>PDF Bind Name</label>
@@ -162,10 +156,11 @@
             
             <textarea *ngIf="field.type === 'textarea'" class="ps-input" rows="3" [placeholder]="'Enter ' + field.label"></textarea>
             
-            <select *ngIf="field.type === 'select'" class="ps-input">
-              <option value="">Select an option</option>
-              <option *ngFor="let opt of field.options" [value]="opt">{{ opt }}</option>
-            </select>
+            <app-shared-select 
+              *ngIf="field.type === 'select'" 
+              [options]="field.options || []" 
+              cssClass="ps-input">
+            </app-shared-select>
             
             <div *ngIf="field.type === 'radio'" class="ps-radio-group">
               <label *ngFor="let opt of field.options" class="ps-radio">

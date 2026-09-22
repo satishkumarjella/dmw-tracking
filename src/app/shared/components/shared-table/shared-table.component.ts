@@ -1,6 +1,7 @@
 import { Component, Input, Output, EventEmitter, TemplateRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { SharedSelectComponent } from '../shared-select/shared-select.component';
 
 export interface TableColumn {
   key: string;       // The property key (supports dot notation, e.g., 'user.name')
@@ -15,7 +16,7 @@ export interface TableColumn {
 @Component({
   selector: 'app-shared-table',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, SharedSelectComponent],
   templateUrl: './shared-table.component.html',
   styleUrls: ['./shared-table.component.scss']
 })
