@@ -6,7 +6,7 @@ import { AuthService } from '../../shared/services/auth.service';
 import { ToastService } from '../../shared/services/toast.service';
 import { IonIcon } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
-import { searchOutline, chevronUpOutline, chevronDownOutline } from 'ionicons/icons';
+import { searchOutline, chevronUpOutline, chevronDownOutline, cloudUploadOutline, downloadOutline, documentTextOutline, checkmarkCircleOutline, alertCircleOutline, syncOutline } from 'ionicons/icons';
 import { ModuleLoaderComponent } from '../../shared/components/module-loader/module-loader.component';
 import { FormBuilderComponent } from '../../pages/form-builder/form-builder.component';
 import { SharedTableComponent, TableColumn } from '../../shared/components/shared-table/shared-table.component';
@@ -23,10 +23,24 @@ import { environment } from '../../../environments/environment';
 })
 export class AdminComponent implements OnInit {
   isLoading = true;
-  activeTab: 'users' | 'forms' | 'theme' = 'users';
+  activeTab: 'users' | 'forms' | 'theme' | 'data' = 'users';
   users: any[] = [];
   availableModules = ['wo-status', 'abm-status', 'quality-inspection', 'shipping', 'receiving', 'project-dashboard'];
   currentUserRole = 'user';
+
+  // Data Import state
+  uploadingType: string | null = null;
+  importMode: { [key: string]: 'upsert' | 'replace' } = {
+    'purchase-orders': 'upsert',
+    'pilot-materials': 'upsert',
+    'abm': 'upsert'
+  };
+  lastUploadResult: { [key: string]: { success: boolean; message: string; timestamp: Date } } = {};
+  selectedFiles: { [key: string]: File | null } = {
+    'purchase-orders': null,
+    'pilot-materials': null,
+    'abm': null
+  };
 
   roleOptions = [
     { label: 'User', value: 'user' },
@@ -69,7 +83,17 @@ export class AdminComponent implements OnInit {
     private toastService: ToastService,
     private configService: ConfigService
   ) {
-    addIcons({ searchOutline, chevronUpOutline, chevronDownOutline });
+    addIcons({
+      searchOutline,
+      chevronUpOutline,
+      chevronDownOutline,
+      cloudUploadOutline,
+      downloadOutline,
+      documentTextOutline,
+      checkmarkCircleOutline,
+      alertCircleOutline,
+      syncOutline
+    });
     this.authService.currentUser$.subscribe(user => {
       if (user) this.currentUserRole = user.role;
     });
@@ -174,6 +198,79 @@ export class AdminComponent implements OnInit {
         this.loadUsers();
       },
       error: (err) => this.toastService.error('Failed to delete user: ' + (err.error?.message || err.message))
+    });
+  }
+
+  // --- Data Import Methods ---
+  downloadTemplate(type: 'purchase-orders' | 'pilot-materials' | 'abm') {
+    const tenantId = this.authService.getTenantId() || 'dmw';
+    this.http.get(`${environment.apiUrl}/data-import/template/${type}`, {
+      headers: { 'x-tenant-id': tenantId },
+      responseType: 'blob'
+    }).subscribe({
+      next: (blob) => {
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `${type}-template.xlsx`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        window.URL.revokeObjectURL(url);
+        this.toastService.success(`Template for ${type} downloaded!`);
+      },
+      error: (err) => this.toastService.error('Failed to download template: ' + (err.error?.message || err.message))
+    });
+  }
+
+  onFileSelected(type: string, event: Event) {
+    const input = event.target as HTMLInputElement;
+    if (input.files && input.files.length > 0) {
+      this.selectedFiles[type] = input.files[0];
+    }
+  }
+
+  uploadDataset(type: 'purchase-orders' | 'pilot-materials' | 'abm') {
+    const file = this.selectedFiles[type];
+    if (!file) {
+      this.toastService.error('Please choose an Excel file (.xlsx) first.');
+      return;
+    }
+
+    const tenantId = this.authService.getTenantId() || 'dmw';
+    const mode = this.importMode[type] || 'upsert';
+
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('mode', mode);
+
+    this.uploadingType = type;
+
+    this.http.post<{ success: boolean; totalRows: number; inserted: number; updated: number; message: string }>(
+      `${environment.apiUrl}/data-import/upload/${type}`,
+      formData,
+      { headers: { 'x-tenant-id': tenantId } }
+    ).subscribe({
+      next: (res) => {
+        this.uploadingType = null;
+        this.selectedFiles[type] = null;
+        this.lastUploadResult[type] = {
+          success: true,
+          message: res.message,
+          timestamp: new Date()
+        };
+        this.toastService.success(res.message);
+      },
+      error: (err) => {
+        this.uploadingType = null;
+        const msg = err.error?.message || err.message || 'Import failed. Check spreadsheet format.';
+        this.lastUploadResult[type] = {
+          success: false,
+          message: msg,
+          timestamp: new Date()
+        };
+        this.toastService.error('Upload error: ' + msg);
+      }
     });
   }
 

@@ -5,6 +5,7 @@
     <button [class.active]="activeTab === 'users'" (click)="activeTab = 'users'">User Management</button>
     <button [class.active]="activeTab === 'forms'" (click)="activeTab = 'forms'">Form Builder</button>
     <button [class.active]="activeTab === 'theme'" (click)="activeTab = 'theme'">Theme Settings</button>
+    <button [class.active]="activeTab === 'data'" (click)="activeTab = 'data'">Data Import</button>
   </div>
 
   <div class="tab-content" *ngIf="activeTab === 'users'">
@@ -151,6 +152,177 @@
           <label>Danger</label>
           <input type="color" [(ngModel)]="themeConfig['danger']" />
           <span>{{ themeConfig['danger'] }}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Data Import Tab Content -->
+  <div class="tab-content data-import-tab" *ngIf="activeTab === 'data'">
+    <div class="data-header-banner">
+      <div class="banner-text">
+        <h3>Master Data Import Center</h3>
+        <p>Maintainers can download the required Excel templates, fill in the production data, and upload them directly into the database.</p>
+      </div>
+    </div>
+
+    <div class="import-cards-grid">
+      <!-- Card 1: Purchase Orders -->
+      <div class="import-card">
+        <div class="card-top">
+          <div class="icon-bubble orange">
+            <ion-icon name="document-text-outline"></ion-icon>
+          </div>
+          <div class="card-titles">
+            <h4>Production & Purchase Orders</h4>
+            <span class="file-tag">Excel File 1</span>
+          </div>
+        </div>
+        <p class="card-desc">Project definition, work order group numbers, production order numbers, quantities, delivery dates, and SAP details.</p>
+
+        <div class="import-mode-section">
+          <span class="section-label">Import Mode:</span>
+          <div class="mode-options">
+            <label class="radio-option">
+              <input type="radio" [(ngModel)]="importMode['purchase-orders']" value="upsert" name="mode-po" />
+              <span>Upsert (Update & Insert)</span>
+            </label>
+            <label class="radio-option">
+              <input type="radio" [(ngModel)]="importMode['purchase-orders']" value="replace" name="mode-po" />
+              <span>Replace All</span>
+            </label>
+          </div>
+        </div>
+
+        <div class="dropzone" [class.selected]="selectedFiles['purchase-orders']">
+          <input type="file" accept=".xlsx, .xls" (change)="onFileSelected('purchase-orders', $event)" id="file-po" />
+          <label for="file-po">
+            <ion-icon name="cloud-upload-outline"></ion-icon>
+            <span class="drop-text" *ngIf="!selectedFiles['purchase-orders']">Choose or drop .xlsx file</span>
+            <span class="file-name" *ngIf="selectedFiles['purchase-orders']">{{ selectedFiles['purchase-orders']?.name }}</span>
+          </label>
+        </div>
+
+        <div class="result-banner" *ngIf="lastUploadResult['purchase-orders']" [class.success]="lastUploadResult['purchase-orders'].success" [class.error]="!lastUploadResult['purchase-orders'].success">
+          <ion-icon [name]="lastUploadResult['purchase-orders'].success ? 'checkmark-circle-outline' : 'alert-circle-outline'"></ion-icon>
+          <span>{{ lastUploadResult['purchase-orders'].message }}</span>
+        </div>
+
+        <div class="card-actions">
+          <button type="button" class="btn-template" (click)="downloadTemplate('purchase-orders')">
+            <ion-icon name="download-outline"></ion-icon>
+            Template
+          </button>
+          <button type="button" class="btn-import" (click)="uploadDataset('purchase-orders')" [disabled]="!selectedFiles['purchase-orders'] || uploadingType === 'purchase-orders'">
+            <ion-icon [name]="uploadingType === 'purchase-orders' ? 'sync-outline' : 'cloud-upload-outline'" [class.spin]="uploadingType === 'purchase-orders'"></ion-icon>
+            {{ uploadingType === 'purchase-orders' ? 'Processing...' : 'Upload & Import' }}
+          </button>
+        </div>
+      </div>
+
+      <!-- Card 2: Pilot Materials -->
+      <div class="import-card">
+        <div class="card-top">
+          <div class="icon-bubble blue">
+            <ion-icon name="document-text-outline"></ion-icon>
+          </div>
+          <div class="card-titles">
+            <h4>Pilot Materials</h4>
+            <span class="file-tag">Excel File 2</span>
+          </div>
+        </div>
+        <p class="card-desc">Purchasing documents, WBS elements, supplying plants, net prices, remaining delivery quantities, and tracking numbers.</p>
+
+        <div class="import-mode-section">
+          <span class="section-label">Import Mode:</span>
+          <div class="mode-options">
+            <label class="radio-option">
+              <input type="radio" [(ngModel)]="importMode['pilot-materials']" value="upsert" name="mode-pilot" />
+              <span>Upsert (Update & Insert)</span>
+            </label>
+            <label class="radio-option">
+              <input type="radio" [(ngModel)]="importMode['pilot-materials']" value="replace" name="mode-pilot" />
+              <span>Replace All</span>
+            </label>
+          </div>
+        </div>
+
+        <div class="dropzone" [class.selected]="selectedFiles['pilot-materials']">
+          <input type="file" accept=".xlsx, .xls" (change)="onFileSelected('pilot-materials', $event)" id="file-pilot" />
+          <label for="file-pilot">
+            <ion-icon name="cloud-upload-outline"></ion-icon>
+            <span class="drop-text" *ngIf="!selectedFiles['pilot-materials']">Choose or drop .xlsx file</span>
+            <span class="file-name" *ngIf="selectedFiles['pilot-materials']">{{ selectedFiles['pilot-materials']?.name }}</span>
+          </label>
+        </div>
+
+        <div class="result-banner" *ngIf="lastUploadResult['pilot-materials']" [class.success]="lastUploadResult['pilot-materials'].success" [class.error]="!lastUploadResult['pilot-materials'].success">
+          <ion-icon [name]="lastUploadResult['pilot-materials'].success ? 'checkmark-circle-outline' : 'alert-circle-outline'"></ion-icon>
+          <span>{{ lastUploadResult['pilot-materials'].message }}</span>
+        </div>
+
+        <div class="card-actions">
+          <button type="button" class="btn-template" (click)="downloadTemplate('pilot-materials')">
+            <ion-icon name="download-outline"></ion-icon>
+            Template
+          </button>
+          <button type="button" class="btn-import" (click)="uploadDataset('pilot-materials')" [disabled]="!selectedFiles['pilot-materials'] || uploadingType === 'pilot-materials'">
+            <ion-icon [name]="uploadingType === 'pilot-materials' ? 'sync-outline' : 'cloud-upload-outline'" [class.spin]="uploadingType === 'pilot-materials'"></ion-icon>
+            {{ uploadingType === 'pilot-materials' ? 'Processing...' : 'Upload & Import' }}
+          </button>
+        </div>
+      </div>
+
+      <!-- Card 3: ABM Components -->
+      <div class="import-card">
+        <div class="card-top">
+          <div class="icon-bubble green">
+            <ion-icon name="document-text-outline"></ion-icon>
+          </div>
+          <div class="card-titles">
+            <h4>ABM Components Status</h4>
+            <span class="file-tag">Excel File 3</span>
+          </div>
+        </div>
+        <p class="card-desc">Material descriptions, final assemblies, production order required quantities, inventory issue quantities, and goods receipts.</p>
+
+        <div class="import-mode-section">
+          <span class="section-label">Import Mode:</span>
+          <div class="mode-options">
+            <label class="radio-option">
+              <input type="radio" [(ngModel)]="importMode['abm']" value="upsert" name="mode-abm" />
+              <span>Upsert (Update & Insert)</span>
+            </label>
+            <label class="radio-option">
+              <input type="radio" [(ngModel)]="importMode['abm']" value="replace" name="mode-abm" />
+              <span>Replace All</span>
+            </label>
+          </div>
+        </div>
+
+        <div class="dropzone" [class.selected]="selectedFiles['abm']">
+          <input type="file" accept=".xlsx, .xls" (change)="onFileSelected('abm', $event)" id="file-abm" />
+          <label for="file-abm">
+            <ion-icon name="cloud-upload-outline"></ion-icon>
+            <span class="drop-text" *ngIf="!selectedFiles['abm']">Choose or drop .xlsx file</span>
+            <span class="file-name" *ngIf="selectedFiles['abm']">{{ selectedFiles['abm']?.name }}</span>
+          </label>
+        </div>
+
+        <div class="result-banner" *ngIf="lastUploadResult['abm']" [class.success]="lastUploadResult['abm'].success" [class.error]="!lastUploadResult['abm'].success">
+          <ion-icon [name]="lastUploadResult['abm'].success ? 'checkmark-circle-outline' : 'alert-circle-outline'"></ion-icon>
+          <span>{{ lastUploadResult['abm'].message }}</span>
+        </div>
+
+        <div class="card-actions">
+          <button type="button" class="btn-template" (click)="downloadTemplate('abm')">
+            <ion-icon name="download-outline"></ion-icon>
+            Template
+          </button>
+          <button type="button" class="btn-import" (click)="uploadDataset('abm')" [disabled]="!selectedFiles['abm'] || uploadingType === 'abm'">
+            <ion-icon [name]="uploadingType === 'abm' ? 'sync-outline' : 'cloud-upload-outline'" [class.spin]="uploadingType === 'abm'"></ion-icon>
+            {{ uploadingType === 'abm' ? 'Processing...' : 'Upload & Import' }}
+          </button>
         </div>
       </div>
     </div>
