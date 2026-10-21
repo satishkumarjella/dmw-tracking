@@ -12,6 +12,7 @@ import { FormBuilderComponent } from '../../pages/form-builder/form-builder.comp
 import { SharedTableComponent, TableColumn } from '../../shared/components/shared-table/shared-table.component';
 import { SharedSelectComponent } from '../../shared/components/shared-select/shared-select.component';
 import { ConfigService } from '../../shared/config.service';
+import { environment } from '../../../environments/environment';
 
 @Component({
   selector: 'app-admin',
@@ -94,7 +95,7 @@ export class AdminComponent implements OnInit {
     const tenantId = this.authService.getTenantId();
     if (!tenantId) return;
 
-    this.http.post('http://localhost:3000/config', { theme: this.themeConfig }, {
+    this.http.post(`${environment.apiUrl}/config`, { theme: this.themeConfig }, {
       headers: { 'x-tenant-id': tenantId, Authorization: `Bearer ${this.authService.getToken()}` }
     }).subscribe({
       next: (res: any) => {
@@ -114,7 +115,7 @@ export class AdminComponent implements OnInit {
 
   loadUsers() {
     const tenantId = this.authService.getTenantId();
-    this.http.get<any[]>('http://localhost:3000/user', {
+    this.http.get<any[]>(`${environment.apiUrl}/user`, {
       headers: { 'x-tenant-id': tenantId || '', Authorization: `Bearer ${this.authService.getToken()}` }
     }).subscribe(users => this.users = users);
   }
@@ -125,7 +126,7 @@ export class AdminComponent implements OnInit {
       return;
     }
     const tenantId = this.authService.getTenantId();
-    this.http.patch(`http://localhost:3000/user/${userId}/role`, { role: newRole }, {
+    this.http.patch(`${environment.apiUrl}/user/${userId}/role`, { role: newRole }, {
       headers: { 'x-tenant-id': tenantId || '', Authorization: `Bearer ${this.authService.getToken()}` }
     }).subscribe({
       next: () => this.toastService.success('Role assigned successfully'),
@@ -153,7 +154,7 @@ export class AdminComponent implements OnInit {
 
   saveUserModules(user: any) {
     const tenantId = this.authService.getTenantId();
-    this.http.patch(`http://localhost:3000/user/${user.id}/modules`, { modules: user.modules }, {
+    this.http.patch(`${environment.apiUrl}/user/${user.id}/modules`, { modules: user.modules }, {
       headers: { 'x-tenant-id': tenantId || '', Authorization: `Bearer ${this.authService.getToken()}` }
     }).subscribe({
       next: () => this.toastService.success('Modules assigned successfully'),
@@ -165,7 +166,7 @@ export class AdminComponent implements OnInit {
     if (!confirm(`Are you sure you want to completely delete ${user.email}? This action cannot be undone.`)) return;
     
     const tenantId = this.authService.getTenantId();
-    this.http.delete(`http://localhost:3000/user/${user.id}`, {
+    this.http.delete(`${environment.apiUrl}/user/${user.id}`, {
       headers: { 'x-tenant-id': tenantId || '', Authorization: `Bearer ${this.authService.getToken()}` }
     }).subscribe({
       next: () => {

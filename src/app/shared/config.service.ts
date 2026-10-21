@@ -1,4 +1,5 @@
 import { Injectable, signal } from '@angular/core';
+import { environment } from '../../environments/environment';
 
 export interface AppModule {
   id: string;
@@ -46,7 +47,7 @@ export class ConfigService {
 
       if (tenantId && data) {
         try {
-          const response = await fetch('http://localhost:3000/config', {
+          const response = await fetch(`${environment.apiUrl}/config`, {
             headers: { 'x-tenant-id': tenantId }
           });
           if (response.ok) {
